@@ -28,3 +28,4 @@ frontend/debug.log
 # django
 backend/venv/
 **/__pychache__
+backend/.idea

@@ -36,6 +36,9 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'cuser',
+	'tasks',
+	'accounts',
 ]
 
 MIDDLEWARE = [
@@ -77,6 +80,14 @@ DATABASES = {
 		'ENGINE': 'django.db.backends.sqlite3',
 		'NAME': BASE_DIR / 'db.sqlite3',
 	}
+}
+
+# Custom user model
+AUTH_USER_MODEL = "accounts.User"
+
+CUSER = {
+    'app_verbose_name': 'Authentication and Authorization',
+    'register_proxy_auth_group_model': True,
 }
 
 # Password validation

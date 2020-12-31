@@ -3,7 +3,7 @@
 
 # Installation steps
 1. Install Python (3.8+)
-2. Navigate to HelpWhoNeeds folder
+2. Navigate to backend folder
 3. Create a virtual environment with a preferable name
 4. Activate virtual environment
 5. run `pip install -r requirements.txt`
