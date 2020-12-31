@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Link } from "react-router-dom"
 import { makeStyles, Button } from "@material-ui/core"
 
@@ -19,8 +18,7 @@ const useStyles = makeStyles({
 const Landing = () => {
     
     const classes = useStyles();
-    const [user, setUser] = useState(" ");
-
+   
     return (
             <div className={classes.divContentWrapper} >
                 <h1>Help Who Needs</h1>
@@ -32,7 +30,7 @@ const Landing = () => {
                     helping with chores such as shopping, GP visits, prescriptions, dog
                     walking or just some social contact with the appropriate measures in
                     place. We hope this app brings some comfort and relief to the users
-                    with a sense of moral and social obligation. {user}
+                    with a sense of moral and social obligation. 
         </p>
 
         <p className={classes.pInfo}> If you would like help or need any assistant using our system, please call <strong>0800 123 4567</strong>.</p>
@@ -41,10 +39,7 @@ const Landing = () => {
                     variant="outlined"
                     color="default"
                     component={Link}
-                    to={"/login/Vulnerable"}
-                    onClick={() => {
-                        setUser("Vulnerable");
-                }}
+                    to={"/login/AssistanceRequester"}                   
                 >
                     I need Help
                 </Button>
@@ -54,9 +49,7 @@ const Landing = () => {
                     variant="outlined"
                     color="default"
                     component={Link}
-                    to={"/login/Volunteer"}
-                    onClick={() => {
-                        setUser("Volunteer");}}
+                    to={"/login/Volunteer"}                  
                 >
                     I can Help
         </Button>
