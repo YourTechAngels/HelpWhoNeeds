@@ -43,10 +43,10 @@ function App() {
                 <Route path="/registrationPage/:user">
                     <RegistrationPage />
                 </Route> 
-                <Route path="/volunteerSearchTask">
+                <Route path="/searchTask">
                     <VolunteerSearchTask />
                 </Route>   
-                <Route path="/volunteerWelcomePage">
+                <Route path="/myTask">
                     <VolunteerWelcome />
                 </Route>           
                 </Switch>

@@ -355,7 +355,7 @@ export default function VolunteerSearchTask({ myTask }) {
                         color="default"
                         style={{ marginLeft: 16 }}
                         component={Link}
-                        to={"/volunteerWelcomePage"}
+                        to={"/myTask"}
                     >
                         View My Tasks
                     </Button>

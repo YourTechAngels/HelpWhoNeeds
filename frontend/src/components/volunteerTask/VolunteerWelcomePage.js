@@ -11,7 +11,7 @@ const VolunteerWelcome = () => {
              color="default"
         style={{ marginLeft: 16 }}
         component={Link}
-        to={"/volunteerSearchTask"}
+        to={"/searchTask"}
       >
         Search New Tasks
       </Button>
