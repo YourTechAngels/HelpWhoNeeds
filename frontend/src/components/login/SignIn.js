@@ -96,7 +96,7 @@ export default function SignIn() {
                         color="primary"
                         className={classes.submit}
                         component={Link}
-                        to={"/volunteerSearchTask"}
+                        to={"/volunteerWelcomePage"}
                     >
                         Sign In
         </Button>
