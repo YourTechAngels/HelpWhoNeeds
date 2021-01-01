@@ -9,6 +9,7 @@ import SignIn from "./components/login/SignIn"
 import SignUp from "./components/login/SignUp"
 import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
+import VolunteerWelcome from "./components/volunteerTask/VolunteerWelcomePage"
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute"
@@ -44,7 +45,10 @@ function App() {
                 </Route> 
                 <Route path="/volunteerSearchTask">
                     <VolunteerSearchTask />
-                </Route>             
+                </Route>   
+                <Route path="/volunteerWelcomePage">
+                    <VolunteerWelcome />
+                </Route>           
                 </Switch>
                 </div>
                 <Footer />
