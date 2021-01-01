@@ -11,6 +11,7 @@ import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
+import PrivateRoute from "./components/PrivateRoute"
 //import firebase from "./firebase/app"
 
 function App() {
