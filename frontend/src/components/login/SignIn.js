@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: "100%", // Fix IE 11 issue.
+        width: "100%", 
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -66,7 +66,10 @@ export default function SignIn() {
         setError("")
         setLoading(true)
         await login(emailRef.current.value, passwordRef.current.value)
-        history.push("/volunteerSearchTask")
+        if (`${user}` === 'Volunteer')
+        { history.push("/volunteerSearchTask") }
+        else {
+            history.push("/addTask") }
       } catch {
         setError("Failed to log in")
       }
@@ -84,7 +87,7 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
         </Typography>
-                <p> {error} </p>
+                <p> {error} {user} </p>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         variant="outlined"
@@ -117,8 +120,6 @@ export default function SignIn() {
                         variant="contained"
                         color="primary"
                         disabled = {loading}
-                        // component={Link}
-                        // to={"/volunteerSearchTask"}
                     >
                         Sign In
                     </Button>
