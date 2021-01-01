@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { useAuth } from "../../contexts/AuthContext"
 
 function Copyright() {
     return (
@@ -50,6 +51,28 @@ export default function SignIn() {
     const classes = useStyles();
     const param = useParams();
     const user = param.userType;
+    const emailRef = useRef()
+    const passwordRef = useRef()
+    const { login } = useAuth()
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
+    const history = useHistory()
+    
+  
+    async function handleSubmit(e) {
+      e.preventDefault()
+  
+      try {
+        setError("")
+        setLoading(true)
+        await login(emailRef.current.value, passwordRef.current.value)
+        history.push("/volunteerSearchTask")
+      } catch {
+        setError("Failed to log in")
+      }
+  
+      setLoading(false)
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -61,17 +84,17 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
         </Typography>
-                <p>user: {user} </p>
-                <form className={classes.form} noValidate>
+                <p> {error} </p>
+                <form onSubmit={handleSubmit}>
                     <TextField
                         variant="outlined"
                         margin="normal"
                         required
                         fullWidth
+                        type="email" 
+                        inputRef={emailRef} 
                         id="email"
                         label="Email Address"
-                        name="email"
-                        autoComplete="email"
                         autoFocus
                     />
                     <TextField
@@ -79,11 +102,10 @@ export default function SignIn() {
                         margin="normal"
                         required
                         fullWidth
-                        name="password"
+                        type="password" 
+                        inputRef={passwordRef}
                         label="Password"
-                        type="password"
                         id="password"
-                        autoComplete="current-password"
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
@@ -94,32 +116,26 @@ export default function SignIn() {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        className={classes.submit}
-                        component={Link}
-                        to={"/volunteerWelcomePage"}
+                        disabled = {loading}
+                        // component={Link}
+                        // to={"/volunteerSearchTask"}
                     >
                         Sign In
-        </Button>
+                    </Button>
                     <Grid container>
                         <Grid item xs>
                             <Link to="#" variant="body2">
                                 Forgot password?
-        </Link>
+                            </Link>
                         </Grid>
-                        <Grid >
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                component={Link}
-                                to={`/registrationPage/${user}`}
-                                className={classes.submit}
-
-                            >Sign Up
-                    </Button>
+                    <Grid container>
+                        <Grid item xs>
+                            <div  className="w-100 text-center mt-2">
+                            New User ?<Link to={`/signUp/${user}`} variant="body2">
+                                Sign Up </Link> 
+                            </div>
                         </Grid>
-                    </Grid>
+                     </Grid></Grid>
                 </form>
             </div>
             <Box mt={8}>

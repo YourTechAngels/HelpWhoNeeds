@@ -18,15 +18,18 @@ const useStyles = {
     marginLeft: 10,
     marginTop: '10px',
   },
+  p: {
+     textAlign:"left"
+  },
 };
 
   export default function RegistrationPage(props) {
 
-    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"", email:"", password:""  } 
+    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"" } 
     
     const [formData, setFormData] = useState({initialInputState})
 
-    const { firstName , lastName, DateOfBirth , email, password } = formData
+    const { firstName , lastName, DateOfBirth } = formData
     
 
     const handleChange= (e) => {
@@ -46,9 +49,9 @@ const useStyles = {
      
    <React.Fragment>
      
-      <Typography variant="h5" align="center"> { user }  Registration </Typography>
+      <Typography variant="h4" align="center"> Registration form</Typography>
 
-      <p style = {{ marginLeft: '10px' }}> Please enter your details here</p>
+      <p style = {useStyles.p}> Please enter your details here</p>
       <form onSubmit={handleSubmit} >      
       <Grid container spacing={3} >
         <Grid item xs={12} sm={6}>
@@ -65,7 +68,7 @@ const useStyles = {
             autoComplete="given-name"
           />
         </Grid>
-         <Grid item xs={12} sm={6}>
+         <Grid item xs={12} sm={6} >
           <TextField
             required
             id="lastName"
@@ -96,43 +99,7 @@ const useStyles = {
         </Grid>
         <Grid item xs={12} sm={12}>
         <AddressForm />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-           required
-            id="emailId"
-            name="email"
-            label="Email Address"
-            variant="outlined"
-            onChange = { handleChange }
-            value= {email || ''}
-            style = {useStyles.textFld}
-          />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="password"
-            name="password"
-            label="Password"
-            type ="password"
-            variant="outlined"
-            onChange = { handleChange }
-            value= {password || ''}
-            style = {useStyles.textFld}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="confirmpassword"
-            name="confirmpassword"
-            label="Confirm Password"
-            type ="password"
-            variant="outlined"
-            style = {useStyles.textFld}
-          />
-        </Grid>
+        </Grid>  
        
         <Grid item xs={12}>
          
@@ -143,9 +110,9 @@ const useStyles = {
           /> }  
 
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} align="center">
 
-        <Button variant = "contained" justify-content ='center' type="submit">Submit</Button>
+        <Button variant = "contained"  className = "btn btn-primary w-100" type="submit">Submit</Button>
         </Grid>
         </Grid>
         </form>
