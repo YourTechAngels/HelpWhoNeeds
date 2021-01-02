@@ -8,11 +8,15 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
+import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
+    root: {
+        padding: "8px 0px 8px 0px"
+    }
 })
 
 function FormDialog({ open, handleClose, taskType, addTask }) {
@@ -63,9 +67,47 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
 
     const watchAll = watch()
 
+<<<<<<< HEAD
     // TODO Call through DB
     // Minimum time needed to perform a task *in minutes*
     const minDuration = 30
+=======
+    const createItem = (data) => {
+        const backendTaskTypes = {
+            "shop": "GRO",
+            "pharm": "PHA",
+            "dog": "DOG",
+            "hospital": "HOS",
+            "phone": "CHAT",
+            "any": "ANY", }
+        let item = {}
+        item["task_type"] = backendTaskTypes[taskType]
+        item["description"] = data.taskDetails || null
+        item["dbs_needed"] = data.dbsReq
+        item["start_time"] = data.startDate
+        item["end_time"] = data.endDate
+        console.log("item created: ", item)
+        return item
+    }
+
+    const onSubmit = (data) => {
+        console.log("SUBMITTED: ", data)
+        // setSubmittedData(data)
+        const startHours = getHours(data.startTime)
+        const startMins = getMinutes(data.startTime)
+        const endHours = getHours(data.endTime)
+        const endMins = getMinutes(data.endTime)
+        data.startDate = setMinutes(setHours(data.startDate, startHours), startMins)
+        data.endDate = setMinutes(setHours(data.endDate, endHours), endMins)
+
+        const item = createItem(data)
+        axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
+            console.log(error.request); console.log(error.config)})
+        addTask({tasType: taskType, taskDetails: data.taskDetails,
+                startTime: data.startDate, endTime: data.endTime, dbsReq: false})
+        handleClose()
+    };
+>>>>>>> implement initial API call to add tasks to backend DB
 
     const validateTimes = () => {
         const start = new Date(watchAll.startDate + "T" + watchAll.startTime)

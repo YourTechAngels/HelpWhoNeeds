@@ -11,7 +11,10 @@ import ForgotPassword from "./components/login/ForgotPassword"
 import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
 import AddTask from "./components/task/AddTask"
+<<<<<<< HEAD
 import VolunteerWelcome from "./components/volunteerTask/VolunteerWelcomePage"
+=======
+>>>>>>> implement initial API call to add tasks to backend DB
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute"
