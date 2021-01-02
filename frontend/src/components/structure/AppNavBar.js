@@ -1,8 +1,21 @@
-import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { AppBar, Toolbar, Typography, Button, IconButton,  Switch, FormControlLabel, FormGroup, MenuItem, Menu, SvgIcon } from "@material-ui/core"
-import AccountCircle from "@material-ui/icons/AccountCircle"
-import { Link } from "react-router-dom"
+import React, { useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    IconButton,
+    Switch,
+    FormControlLabel,
+    FormGroup,
+    MenuItem,
+    Menu,
+    SvgIcon,
+} from "@material-ui/core";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import { Link, useHistory } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -10,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
         "& > svg": {
             margin: theme.spacing(2),
         },
-    },   
+    },
     title: {
         flexGrow: 1,
     },
@@ -29,9 +42,17 @@ function HomeIcon(props) {
 
 const AppNavBar = () => {
     const classes = useStyles();
-    const [auth, setAuth] = React.useState(false); //change to true
+    const { currentUser, signout } = useAuth();
+    const [auth, setAuth] = React.useState(false); // React.useState(currentUser === null ? false : true); //change to true
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+    useEffect(() => {
+        setAuth(currentUser === null ? false : true);
+    }, [currentUser]);
+    console.log("user" + currentUser);
+    console.log("auth" + auth);
     const open = Boolean(anchorEl);
+    const history = useHistory();
 
     const handleChange = (event) => {
         setAuth(event.target.checked);
@@ -44,10 +65,20 @@ const AppNavBar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const handleSignOut = () =>{
-        setAuth(false);          
+    async function handleSignOut() {
+        try {
+            await signout();
+            setAuth(false);
+            history.push("/");
+        } catch (error) {
+            setAuth(currentUser === null ? false : true);
+            console.log(error);
+            alert("failed to log out");
+        }
+
+        console.log("auth" + auth);
         handleClose();
-    };
+    }
 
     return (
         <div className={classes.root}>
@@ -65,18 +96,21 @@ const AppNavBar = () => {
             </FormGroup>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
-                    <HomeIcon color="action" fontSize="large" onClick={event =>  window.location.href='/'} />
+                    <HomeIcon
+                        color="action"
+                        fontSize="large"
+                        onClick={(event) => (window.location.href = "/")}
+                    />
                     <Typography variant="h6" className={classes.title}>
                         Help Who Needs
-            </Typography>
+          </Typography>
 
-                    
                     <Button color="inherit" component={Link} to={"/about"}>
                         About
-                    </Button>
+          </Button>
                     <Button color="inherit" component={Link} to={"/contact"}>
                         Contact
-                    </Button>
+          </Button>
                     {auth && (
                         <div>
                             <IconButton

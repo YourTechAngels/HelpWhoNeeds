@@ -7,12 +7,14 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { Link, useParams, useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { useAuth } from "../../contexts/AuthContext"
+import { useAuth } from "../../contexts/AuthContext";
 
 function Copyright() {
     return (
@@ -67,10 +69,11 @@ export default function SignIn() {
         setLoading(true)
         await login(emailRef.current.value, passwordRef.current.value)
         if (`${user}` === 'Volunteer')
-        { history.push("/volunteerSearchTask") }
+        { history.push("/myTask") }
         else {
             history.push("/addTask") }
-      } catch {
+        }
+     catch {
         setError("Failed to log in")
       }
   
@@ -86,8 +89,10 @@ export default function SignIn() {
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign in
-        </Typography>
-                <p> {error} {user} </p>
+                </Typography>
+            { error && <Alert severity="error">
+            <AlertTitle>Error: {error}</AlertTitle>
+            </Alert>}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         variant="outlined"
@@ -125,7 +130,7 @@ export default function SignIn() {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link to="#" variant="body2">
+                            <Link to={`/forgotPassword/${user}`} variant="body2">
                                 Forgot password?
                             </Link>
                         </Grid>
