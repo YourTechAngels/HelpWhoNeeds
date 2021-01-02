@@ -40,5 +40,5 @@ class Task(models.Model):
         if max(self.start_time, timezone.now()) + self.min_duration > self.end_time:
             raise ValidationError("Not enough time to complete your task. Consider increasing End time value.")
 
-    # def _str_(self):
-    #     return f"{self.get_type_display()}: {self.description}"
+    def _str_(self):
+        return f"{self.get_type_display()}: {self.description}"
