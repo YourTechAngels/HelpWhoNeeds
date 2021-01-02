@@ -36,7 +36,6 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-	'cuser',
 	'tasks',
 	'accounts',
 ]
@@ -84,11 +83,6 @@ DATABASES = {
 
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"
-
-CUSER = {
-    'app_verbose_name': 'Authentication and Authorization',
-    'register_proxy_auth_group_model': True,
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
