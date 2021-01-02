@@ -1,12 +1,12 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PetsIcon from '@material-ui/icons/Pets';
-import PhoneIcon from '@material-ui/icons/Phone';
-import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
-import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
-import LiveHelpIcon from '@material-ui/icons/LiveHelp';
+import { makeStyles } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
+import PetsIcon from '@material-ui/icons/Pets'
+import PhoneIcon from '@material-ui/icons/Phone'
+import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy'
+import LocalHospitalIcon from '@material-ui/icons/LocalHospital'
+import LiveHelpIcon from '@material-ui/icons/LiveHelp'
 import NewTaskForm from './NewTaskForm'
 
 const useStyles =

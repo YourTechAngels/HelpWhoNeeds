@@ -8,6 +8,7 @@ import Footer from "./components/structure/Footer"
 import SignIn from "./components/login/SignIn"
 import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
+import AddTask from "./components/task/AddTask"
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import './App.css'
 
@@ -35,7 +36,10 @@ function App() {
                 </Route> 
                 <Route path="/volunteerSearchTask">
                     <VolunteerSearchTask />
-                </Route>             
+                </Route>
+                <Route path="/tasks/add">
+                    <AddTask />
+                </Route>
                 </Switch>
                 </div>
                 <Footer />
