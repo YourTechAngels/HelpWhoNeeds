@@ -60,10 +60,10 @@ function AddTask() {
     }
 
     const classes = useStyles();
-    // return <ThemeProvider theme={theme}>
-    return <div className="App">
 
-        <h1 className={classes.h1}>I need help with...</h1>
+    return <div>
+
+        <h1 className="text">I need help with...</h1>
 
         <Button classes={{ root: classes.largeButton, label: classes.label }}
             onClick={(e) => handleClickOpen(e, "shop")}>

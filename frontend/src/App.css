@@ -10,21 +10,25 @@ p {
   text-align: justify;
 }
 
-span {
-  margin: 0 10px;
-}
-
 .AppContent{
    display: flex;
    flex-direction: column;
    min-height: 80vh;
    background-color: #f1eae0;
    align-items: center;
+   align-content: center;
    justify-content: center;
    font-size: calc(10px + 2vmin);
 }
 
 .App-link {
   color: #61dafb;
+}
+
+.text {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: rgb(80, 80, 80);
 }
 
