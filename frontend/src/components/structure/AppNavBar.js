@@ -49,8 +49,9 @@ const AppNavBar = () => {
     useEffect(() => {
         setAuth(currentUser === null ? false : true);
     }, [currentUser]);
-    console.log("user" + currentUser);
-    console.log("auth" + auth);
+  
+     console.log(currentUser );
+     console.log("auth" + auth);
     const open = Boolean(anchorEl);
     const history = useHistory();
 

@@ -4,10 +4,11 @@ import Button from "@material-ui/core/Button"
 import moment from "moment"
 import { useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"; //not working
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"//not working
 import TaskDialog from "./TaskDetail"
 import { Link } from "react-router-dom"
-//import Alert from "@material-ui/lab/Alert"
+import Notification from "./Notification"
+import ConfirmDailog from "./CofirmDailog"
 
 const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
@@ -18,12 +19,12 @@ const options = {
     count: 5,
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     h5: {
         color: "#4C4B51",
         textAlign: "center",
     },
-});
+}));
 const intialTasks = [
     {
         id: 1,
@@ -158,6 +159,16 @@ export default function VolunteerSearchTask({ myTask }) {
     );
     const [showDialog, setShowDialog] = React.useState(false);
     const [dialogData, setDialogData] = React.useState(null);
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
+    const [confirmDailog, setConfirmDialog] = useState({
+        isOpen: false,
+        title: "",
+        subTitle: "",
+    });
 
     const handleClickOpen = (e, dialogData) => {
         setShowDialog(true);
@@ -255,11 +266,12 @@ export default function VolunteerSearchTask({ myTask }) {
 
         {
             name: "id",
-            label: "Accept",
+            label: "Action",
 
             options: {
                 sort: false,
                 filter: false,
+                display: isMyTask === true ? false : true,
                 customBodyRender: (value, tableMeta) => {
                     return (
                         <Button
@@ -275,7 +287,7 @@ export default function VolunteerSearchTask({ myTask }) {
                             className="button"
                             value={value}
                             onClick={() => {
-                                console.log(tableMeta.rowData[1]);
+                                //console.log(tableMeta.rowData[1]);
 
                                 setPendingTasks(
                                     pendingTasks.map((task) =>
@@ -288,6 +300,11 @@ export default function VolunteerSearchTask({ myTask }) {
                                     );
                                     setPendingTasks(updatedPendingTask);
                                 }
+                                setNotifyMsg({
+                                    isOpen: true,
+                                    message: "Task is successfully assigned to you.",
+                                    type: "success",
+                                });
                             }}
                         >
                             Accept
@@ -298,7 +315,7 @@ export default function VolunteerSearchTask({ myTask }) {
         },
         {
             name: "id",
-            label: "Cancel",
+            label: "Action",
 
             options: {
                 sort: false,
@@ -315,12 +332,37 @@ export default function VolunteerSearchTask({ myTask }) {
                             className="button"
                             value={value}
                             onClick={() => {
-                                console.log(tableMeta.rowData[1]);
-                                setPendingTasks(
-                                    pendingTasks.map((task) =>
-                                        task.id === value ? { ...task, volId: null } : task
-                                    )
-                                );
+                                // if(window.confirm("Are you sure want to return your assigned Task?")){}
+                                setConfirmDialog({
+                                    isOpen: true,
+                                    title: "Are you sure to return your assigned Task?",
+                                    subTitle:
+                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+                                    onConfirm: () => {
+                                        setConfirmDialog({
+                                            ...confirmDailog,
+                                            isOpen: false,
+                                        });
+                                        console.log(tableMeta.rowData[1]);
+                                        setPendingTasks(
+                                            pendingTasks.map((task) =>
+                                                task.id === value ? { ...task, volId: null } : task
+                                            )
+                                        );
+                                        console.log(pendingTasks);
+                                        if (isMyTask === true) {
+                                            const updatedPendingTask = pendingTasks.filter(
+                                                (task) => task.id !== value
+                                            );
+                                            setPendingTasks(updatedPendingTask);
+                                        }
+                                        setNotifyMsg({
+                                            isOpen: true,
+                                            message: "Task is unssigned from you",
+                                            type: "warning",
+                                        });
+                                    },
+                                });
                             }}
                         >
                             Reject
@@ -366,6 +408,11 @@ export default function VolunteerSearchTask({ myTask }) {
                     handleClose={handleClose}
                     title="Task Summary"
                     data={dialogData}
+                />
+                <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                <ConfirmDailog
+                    confirmDialog={confirmDailog}
+                    setConfirmDialog={setConfirmDialog}
                 />
             </div>
         </React.Fragment>
