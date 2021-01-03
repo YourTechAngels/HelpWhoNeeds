@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cuser.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin
 # from .models import User, Requester, Volunteer
 #
 #

@@ -1,17 +1,19 @@
-import React, {useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import { useAuth } from "../../contexts/AuthContext";
+import { Link, useParams } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import { useAuth } from "../../contexts/AuthContext"
+import TextField from "@material-ui/core/TextField";
+
 
 function Copyright() {
     return (
@@ -47,40 +49,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Signup() {
+export default function ForgotPassword() {
+
+  const classes = useStyles();  
   const emailRef = useRef()
-  const passwordRef = useRef()
-  const passwordConfirmRef = useRef()
-  const { signup } = useAuth()
+  const { resetPassword } = useAuth()
   const [error, setError] = useState("")
+  const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
-  const history = useHistory()
-  const classes = useStyles();
   const param = useParams();
   const user = param.user;
-  
 
-    async function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    console.log({user})
-    console.log(emailRef.current.value,passwordRef.current.value, passwordConfirmRef.current.value)
-
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError("Passwords does not match")
-    }
 
     try {
+      setMessage("")
       setError("")
       setLoading(true)
-      await signup(emailRef.current.value, passwordRef.current.value)
-      history.push(`/registrationPage/${user}`)
+      await resetPassword(emailRef.current.value)
+      setMessage("Check your inbox for password reset instructions")
     } catch {
-      setError("Failed to create an account")
+      setError("Failed to reset password")
     }
 
-    setLoading(false)  
-   
-}
+    setLoading(false)
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -89,13 +83,14 @@ export default function Signup() {
             <Avatar className={classes.avatar}>
                 <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-                Sign Up
-           </Typography>
-           { error && <Alert severity="error">
+            <Typography component="h1" variant="h5"> Forgot Password </Typography>
+            { error && <Alert severity="error">
             <AlertTitle>Error: {error}</AlertTitle>
             </Alert>}
-           <form onSubmit={handleSubmit} > 
+            { message && <Alert severity="success">
+            <AlertTitle>{message}</AlertTitle>
+            </Alert>}
+            <form onSubmit={handleSubmit} > 
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -107,41 +102,36 @@ export default function Signup() {
                     label="Email Address"
                     autoFocus
                 />
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    type="password" 
-                    inputRef={passwordRef}
-                    label="Password"
-                    id="password"
-                />
-                 <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    type="password" 
-                    inputRef={passwordConfirmRef}
-                    label="Confirm Password"
-                    id="passwordConfirm"
-                />
-                        <Button
+                <Button            
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 disabled = {loading}
                                 color="primary"
-                            >Sign Up
-                    </Button>
+                            >Reset Password
+                </Button>
               </form>
-      {/* <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Log In</Link>
-      </div> */}
-      </div>  <Box mt={8}>
-                <Copyright />
-            </Box>
-        </Container>
-  )
+             <Grid container>
+                        <Grid item xs>
+                            <div  className="w-100 text-center mt-2">
+                            Go to <Link to={`/login/${user}`} variant="body2">
+                                Sign In</Link> 
+                            </div>
+                        </Grid>
+              </Grid>
+              <Grid container>          
+                        <Grid item xs>
+                            <div  className="w-100 text-center mt-3">
+                            New User ?<Link to={`/signUp/${user}`} variant="body2">
+                                Sign Up </Link> 
+                            </div>
+                        </Grid>
+                       
+        </Grid>
+
+    </div>  <Box mt={8}>
+    <Copyright />
+</Box>
+</Container>
+)
 }
