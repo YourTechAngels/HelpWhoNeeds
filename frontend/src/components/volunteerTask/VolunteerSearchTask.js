@@ -1,14 +1,14 @@
-import React from "react"
-import MUIDataTable from "mui-datatables"
-import Button from "@material-ui/core/Button"
-import moment from "moment"
-import { useState } from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"//not working
-import TaskDialog from "./TaskDetail"
-import { Link } from "react-router-dom"
-import Notification from "./Notification"
-import ConfirmDailog from "./CofirmDailog"
+import React from "react";
+import MUIDataTable from "mui-datatables";
+import Button from "@material-ui/core/Button";
+import moment from "moment";
+import { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"; //not working
+import TaskDialog from "./TaskDetail";
+import { Link } from "react-router-dom";
+import Notification from "./Notification";
+import ConfirmDailog from "./CofirmDailog";
 
 const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
@@ -288,22 +288,34 @@ export default function VolunteerSearchTask({ myTask }) {
                             value={value}
                             onClick={() => {
                                 //console.log(tableMeta.rowData[1]);
-
-                                setPendingTasks(
-                                    pendingTasks.map((task) =>
-                                        task.id === value ? { ...task, volId: 1 } : task
-                                    )
-                                );
-                                if (isMyTask === false) {
-                                    const updatedPendingTask = pendingTasks.filter(
-                                        (task) => task.id !== value
-                                    );
-                                    setPendingTasks(updatedPendingTask);
-                                }
-                                setNotifyMsg({
+                                setConfirmDialog({
                                     isOpen: true,
-                                    message: "Task is successfully assigned to you.",
-                                    type: "success",
+                                    title: "Do you agree to accept this Task?",
+                                    subTitle:
+                                        "Once accepted it will be assigned to you.To return the task you need to go to you task and reject it.",
+                                    onConfirm: () => {
+                                        setConfirmDialog({
+                                            ...confirmDailog,
+                                            isOpen: false,
+                                        });
+
+                                        setPendingTasks(
+                                            pendingTasks.map((task) =>
+                                                task.id === value ? { ...task, volId: 1 } : task
+                                            )
+                                        );
+                                        if (isMyTask === false) {
+                                            const updatedPendingTask = pendingTasks.filter(
+                                                (task) => task.id !== value
+                                            );
+                                            setPendingTasks(updatedPendingTask);
+                                        }
+                                        setNotifyMsg({
+                                            isOpen: true,
+                                            message: "Task is successfully assigned to you.",
+                                            type: "success",
+                                        });
+                                    },
                                 });
                             }}
                         >
