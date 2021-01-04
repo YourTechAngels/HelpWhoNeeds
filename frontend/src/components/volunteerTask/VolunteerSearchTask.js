@@ -1,13 +1,14 @@
-import React from "react"
-import MUIDataTable from "mui-datatables"
-import Button from "@material-ui/core/Button"
-import moment from "moment"
-import { useState } from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import React from "react";
+import MUIDataTable from "mui-datatables";
+import Button  from "@material-ui/core/Button";
+import moment from "moment";
+import { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"; //not working
-import TaskDialog from "./TaskDetail"
-import { Link } from "react-router-dom"
-//import Alert from "@material-ui/lab/Alert"
+import TaskDialog from "./TaskDetail";
+import { Link } from "react-router-dom";
+import Notification from "./Notification";
+import ConfirmDailog from "./CofirmDailog";
 
 const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
@@ -15,15 +16,16 @@ const options = {
     filterType: "multiselect",
     selectableRows: "none", //can also be single/mulitple
     selectableRowsOnClick: true,
-    count: 5,
+   
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     h5: {
         color: "#4C4B51",
         textAlign: "center",
     },
-});
+}));
+
 const intialTasks = [
     {
         id: 1,
@@ -125,6 +127,66 @@ const intialTasks = [
         distance: 3,
         volId: null,
     },
+    {
+        id: 11,
+        lastName: "Paanas",
+        firstName: "Thapa",
+        taskType: "Medical",
+        taskSummary: "I need help with picking up my prescription",
+        date: "2021-01-20",
+        distance: 3,
+        volId: null,
+    },
+    {
+        id: 12,
+        lastName: "Paanas",
+        firstName: "Thapa",
+        taskType: "Medical",
+        taskSummary: "I need help with picking up my prescription",
+        date: "2021-01-20",
+        distance: 3,
+        volId: null,
+    },
+    {
+        id: 13,
+        lastName: "Kate",
+        firstName: "Middleton",
+        taskType: "Medical",
+        taskSummary: "I need help with picking up my prescription",
+        date: "2021-01-20",
+        distance: 3,
+        volId: null,
+    },
+    {
+        id: 14,
+        lastName: "Joe",
+        firstName: "Kelly",
+        taskType: "Shopping",
+        taskSummary: "I need help with Shopping from Tesco",
+        date: "2021-01-20",
+        distance: 4,
+        volId: null,
+    },
+    {
+        id: 15,
+        lastName: "Frances",
+        firstName: "Rai",
+        taskType: "Other",
+        taskSummary: "I need help with mowing my garden",
+        date: "2021-01-20",
+        distance: 2,
+        volId: null,
+    },
+    {
+        id: 16,
+        lastName: "Roxie",
+        firstName: "Raymond",
+        taskType: "Shopping",
+        taskSummary: "I need help with Shopping from Sainsbuyrys",
+        date: "2021-01-20",
+        distance: 3,
+        volId: null,
+    },
 ];
 
 export default function VolunteerSearchTask({ myTask }) {
@@ -137,20 +199,21 @@ export default function VolunteerSearchTask({ myTask }) {
                     width: "min-content",
                 },
                 responsiveScroll: {
-                    maxHeight: "300px", //not working
+                    maxHeight: "none", //not working
                 },
             },
             MUIDataTableBodyCell: {
                 root: {
                     backgroundColor: "#FFF",
-                    width: "100px",
-                },
+                    width: "90px",
+                },                
             },
+           
         },
     });
 
     const isMyTask = myTask === undefined ? false : myTask;
-    console.log(myTask);
+    //console.log(myTask);
     const [pendingTasks, setPendingTasks] = useState(
         isMyTask === false
             ? intialTasks.filter((task) => task.volId === null)
@@ -158,6 +221,16 @@ export default function VolunteerSearchTask({ myTask }) {
     );
     const [showDialog, setShowDialog] = React.useState(false);
     const [dialogData, setDialogData] = React.useState(null);
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
+    const [confirmDailog, setConfirmDialog] = useState({
+        isOpen: false,
+        title: "",
+        subTitle: "",
+    });
 
     const handleClickOpen = (e, dialogData) => {
         setShowDialog(true);
@@ -169,20 +242,23 @@ export default function VolunteerSearchTask({ myTask }) {
         setShowDialog(false);
     };
 
+
     const columns = [
         {
             name: "id",
             label: "ID",
-            options: { display: false, sort: false, filter: false },
+            options: { display: false,
+                 sort: false, filter: false,viewColumns:false },
         },
         {
             name: "volId",
             label: "volunteer ID",
-            options: { display: false, sort: false, filter: false },
+            options: { display: false,
+                 sort: false, filter: false },
         },
         {
             name: "firstName",
-            label: "First Name",
+            label: "First name",
 
             options: {
                 filter: true,
@@ -213,15 +289,14 @@ export default function VolunteerSearchTask({ myTask }) {
             label: "Start Date",
             options: {
                 filter: true,
-                sort: true,
-
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
+                sort: true,               
+               customBodyRender: (value) =>
+                    moment(new Date(value)).format(SPACED_DATE_FORMAT),            
             },
         },
         {
             name: "distance",
-            label: "Distance(miles)",
+            label: "Distance",
             options: {
                 filter: true,
                 sort: true,
@@ -236,6 +311,7 @@ export default function VolunteerSearchTask({ myTask }) {
             options: {
                 filter: false,
                 sort: false,
+                viewColumns: false,
                 customBodyRender: (value, tableMeta, updateValue) => {
                     return (
                         <Button
@@ -255,11 +331,13 @@ export default function VolunteerSearchTask({ myTask }) {
 
         {
             name: "id",
-            label: "Accept",
+            label: "Action",
 
             options: {
                 sort: false,
                 filter: false,
+                viewColumns: false,
+                display: isMyTask === true ? false : true,
                 customBodyRender: (value, tableMeta) => {
                     return (
                         <Button
@@ -275,19 +353,37 @@ export default function VolunteerSearchTask({ myTask }) {
                             className="button"
                             value={value}
                             onClick={() => {
-                                console.log(tableMeta.rowData[1]);
+                                //console.log(tableMeta.rowData[1]);
+                                setConfirmDialog({
+                                    isOpen: true,
+                                    title: "Do you agree to accept this task?",
+                                    subTitle:
+                                        "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
+                                    onConfirm: () => {
+                                        setConfirmDialog({
+                                            ...confirmDailog,
+                                            isOpen: false,
+                                        });
 
-                                setPendingTasks(
-                                    pendingTasks.map((task) =>
-                                        task.id === value ? { ...task, volId: 1 } : task
-                                    )
-                                );
-                                if (isMyTask === false) {
-                                    const updatedPendingTask = pendingTasks.filter(
-                                        (task) => task.id !== value
-                                    );
-                                    setPendingTasks(updatedPendingTask);
-                                }
+                                        const assignTasks = pendingTasks.map((task) =>
+                                        task.id === value ? { ...task, volId: 1 } : task );
+                                        setPendingTasks(assignTasks);
+                                        
+                                        //console.log(pendingTasks);                                       
+                                       if (isMyTask === false) {
+                                            const updatedPendingTask = pendingTasks.filter(
+                                                (task) => task.id !== value
+                                               // (task) => task.volId === null 
+                                            );
+                                            setPendingTasks(updatedPendingTask);
+                                        }
+                                        setNotifyMsg({
+                                            isOpen: true,
+                                            message: "Task is successfully assigned to you.",
+                                            type: "success",
+                                        });
+                                    },
+                                });
                             }}
                         >
                             Accept
@@ -298,11 +394,12 @@ export default function VolunteerSearchTask({ myTask }) {
         },
         {
             name: "id",
-            label: "Cancel",
+            label: "Action",
 
             options: {
                 sort: false,
                 filter: false,
+                viewColumns: false,
                 display: isMyTask === true ? true : false,
                 customBodyRender: (value, tableMeta) => {
                     return (
@@ -315,12 +412,38 @@ export default function VolunteerSearchTask({ myTask }) {
                             className="button"
                             value={value}
                             onClick={() => {
-                                console.log(tableMeta.rowData[1]);
-                                setPendingTasks(
-                                    pendingTasks.map((task) =>
-                                        task.id === value ? { ...task, volId: null } : task
-                                    )
-                                );
+                                // if(window.confirm("Are you sure want to return your assigned Task?")){}
+                                setConfirmDialog({
+                                    isOpen: true,
+                                    title: "Are you sure to return your assigned Task?",
+                                    subTitle:
+                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+                                    onConfirm: () => {
+                                        setConfirmDialog({
+                                            ...confirmDailog,
+                                            isOpen: false,
+                                        });
+                                        console.log(tableMeta.rowData[1]);
+                                        
+                                        setPendingTasks(
+                                            pendingTasks.map((task) =>
+                                                task.id === value ? { ...task, volId: null } : task
+                                            )
+                                        );
+                                        //console.log(pendingTasks);
+                                       if (isMyTask === true) {
+                                                const updatedPendingTask = pendingTasks.filter(
+                                                (task) => task.id !== value
+                                            );
+                                            setPendingTasks(updatedPendingTask);
+                                        }
+                                        setNotifyMsg({
+                                            isOpen: true,
+                                            message: "Task is unssigned from you",
+                                            type: "warning",
+                                        });
+                                    },
+                                });
                             }}
                         >
                             Reject
@@ -333,7 +456,7 @@ export default function VolunteerSearchTask({ myTask }) {
 
     return (
         <React.Fragment>
-            <div style={{ height: "100%" }}>
+            <div style={{height:"100%"}}>
                 <h4 className={classes.h5}>
                     {" "}
                     {isMyTask === false ? "Search New Tasks" : "My Assigned Tasks"}
@@ -366,6 +489,11 @@ export default function VolunteerSearchTask({ myTask }) {
                     handleClose={handleClose}
                     title="Task Summary"
                     data={dialogData}
+                />
+                <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                <ConfirmDailog
+                    confirmDialog={confirmDailog}
+                    setConfirmDialog={setConfirmDialog}
                 />
             </div>
         </React.Fragment>
