@@ -253,7 +253,7 @@ export default function VolunteerSearchTask({ myTask }) {
         {
             name: "volId",
             label: "volunteer ID",
-            options: {// display: false,
+            options: { display: false,
                  sort: false, filter: false },
         },
         {
@@ -368,11 +368,12 @@ export default function VolunteerSearchTask({ myTask }) {
                                         const assignTasks = pendingTasks.map((task) =>
                                         task.id === value ? { ...task, volId: 1 } : task );
                                         setPendingTasks(assignTasks);
-                                        console.log(pendingTasks);
-                                       
+                                        
+                                        //console.log(pendingTasks);                                       
                                        if (isMyTask === false) {
                                             const updatedPendingTask = pendingTasks.filter(
                                                 (task) => task.id !== value
+                                               // (task) => task.volId === null 
                                             );
                                             setPendingTasks(updatedPendingTask);
                                         }
@@ -423,12 +424,13 @@ export default function VolunteerSearchTask({ myTask }) {
                                             isOpen: false,
                                         });
                                         console.log(tableMeta.rowData[1]);
+                                        
                                         setPendingTasks(
                                             pendingTasks.map((task) =>
                                                 task.id === value ? { ...task, volId: null } : task
                                             )
                                         );
-                                        console.log(pendingTasks);
+                                        //console.log(pendingTasks);
                                        if (isMyTask === true) {
                                                 const updatedPendingTask = pendingTasks.filter(
                                                 (task) => task.id !== value
@@ -454,7 +456,7 @@ export default function VolunteerSearchTask({ myTask }) {
 
     return (
         <React.Fragment>
-            <div style={{display: 'table', tableLayout:'fixed', width:'100%'}}>
+            <div style={{height:"100%"}}>
                 <h4 className={classes.h5}>
                     {" "}
                     {isMyTask === false ? "Search New Tasks" : "My Assigned Tasks"}
