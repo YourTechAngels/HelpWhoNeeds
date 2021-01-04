@@ -104,7 +104,6 @@ const useStyles = {
         </Grid>
         
         <Grid item xs={12} sm={12}> 
-        {/* <Grid container  spacing={0} direction='row'>          */}
         <ButtonGroup>     
          <TextField
             required
@@ -116,10 +115,9 @@ const useStyles = {
             value= {postcode || ''}
             style = {useStyles.textFld}
             autoComplete=" postal-code"/>
-            {/* // InputProps={{endAdornment:*/}
         
           <Grid item xs={12} sm={6}>            
-            <Button variant="outlined" type='submit' onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
+            <Button variant="outlined"  onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
    
         <Grid item xs={12}>
