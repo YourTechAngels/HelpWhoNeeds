@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { makeStyles, Button } from "@material-ui/core"
+import { useAuth } from "../../contexts/AuthContext";
 
 const useStyles = makeStyles({
     button:{
@@ -15,9 +16,22 @@ const useStyles = makeStyles({
     }
 
 });
+
+
+
+
 const Landing = () => {
     
     const classes = useStyles();
+    const { currentUser } = useAuth();
+    const history = useHistory();
+    const handleClick =() => { 
+        (currentUser ? history.push("/myTask") : history.push("/login/Volunteer") )           
+    } 
+    const handleUserClick =() => {
+         (currentUser ? history.push("/addTask") : history.push("/login/AssistanceRequester") )
+    }     
+      
    
     return (
             <div className={classes.divContentWrapper} >
@@ -38,8 +52,7 @@ const Landing = () => {
                     className= {classes.button}
                     variant="outlined"
                     color="default"
-                    component={Link}
-                    to={"/login/AssistanceRequester"}                   
+                    onClick = {handleUserClick}             
                 >
                     I need Help
                 </Button>
@@ -48,8 +61,7 @@ const Landing = () => {
                     className= {classes.button} 
                     variant="outlined"
                     color="default"
-                    component={Link}
-                    to={"/login/Volunteer"}                  
+                    onClick = {handleClick} 
                 >
                     I can Help
         </Button>

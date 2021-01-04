@@ -62,7 +62,6 @@ export default function Signup() {
 
     async function handleSubmit(e) {
     e.preventDefault()
-    console.log({user})
     console.log(emailRef.current.value,passwordRef.current.value, passwordConfirmRef.current.value)
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -136,10 +135,7 @@ export default function Signup() {
                             >Sign Up
                     </Button>
               </form>
-      {/* <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Log In</Link>
-      </div> */}
-      </div>  <Box mt={8}>
+              </div>  <Box mt={8}>
                 <Copyright />
             </Box>
         </Container>

@@ -117,7 +117,7 @@ const useStyles = {
             autoComplete=" postal-code"/>
         
           <Grid item xs={12} sm={6}>            
-            <Button variant="outlined"  onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
+            <Button variant="outlined" className = "btn btn-secondary w-100"  onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
    
         <Grid item xs={12}>
