@@ -2,7 +2,8 @@ import React,{useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useParams } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
@@ -23,11 +24,10 @@ const useStyles = {
 
   export default function RegistrationPage(props) {
 
-    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"" } 
-    
+    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"" }     
     const [formData, setFormData] = useState({initialInputState})
-
     const { firstName , lastName, DateOfBirth } = formData
+    const [message, setMessage] = useState("")
     
 
     const handleChange= (e) => {
@@ -36,7 +36,8 @@ const useStyles = {
 
     const handleSubmit = (evt) => {
         evt.preventDefault();
-      alert('Data has been successfully saved')
+        setMessage("Data has been saved successfully")
+         
       console.log(formData)
       }
 
@@ -48,6 +49,9 @@ const useStyles = {
    <React.Fragment>
      
       <h2 align="center"> Registration form</h2>
+      { message && <Alert severity="success">
+            <AlertTitle>{message}</AlertTitle>
+            </Alert>}
       <Grid container justify="left"  alignItems="left">
       <p style={{paddingLeft:8}}>Please enter your details here</p> </Grid>
      
