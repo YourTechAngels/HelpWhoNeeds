@@ -1,6 +1,6 @@
 import React from "react";
 import MUIDataTable from "mui-datatables";
-import Button  from "@material-ui/core/Button";
+import Button from "@material-ui/core/Button";
 import moment from "moment";
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,7 +16,6 @@ const options = {
     filterType: "multiselect",
     selectableRows: "none", //can also be single/mulitple
     selectableRowsOnClick: true,
-   
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -206,19 +205,19 @@ export default function VolunteerSearchTask({ myTask }) {
                 root: {
                     backgroundColor: "#FFF",
                     width: "90px",
-                },                
+                },
             },
-           
         },
     });
 
     const isMyTask = myTask === undefined ? false : myTask;
     //console.log(myTask);
-    const [pendingTasks, setPendingTasks] = useState(
-        isMyTask === false
-            ? intialTasks.filter((task) => task.volId === null)
-            : intialTasks.filter((task) => task.volId != null && task.volId === 1)
+    const [pendingTasks, setPendingTasks] = useState(intialTasks);
+    const myTasks = pendingTasks.filter(
+        (task) => task.volId !== null && task.volId === 1
     );
+    const unassignedTasks = pendingTasks.filter((task) => task.volId === null);
+
     const [showDialog, setShowDialog] = React.useState(false);
     const [dialogData, setDialogData] = React.useState(null);
     const [notifyMsg, setNotifyMsg] = useState({
@@ -238,23 +237,25 @@ export default function VolunteerSearchTask({ myTask }) {
     };
 
     const handleClose = () => {
-        setDialogData(null);
         setShowDialog(false);
+        //setDialogData(null);
     };
-
 
     const columns = [
         {
             name: "id",
             label: "ID",
-            options: { display: false,
-                 sort: false, filter: false,viewColumns:false },
+            options: {
+                display: false,
+                sort: false,
+                filter: false,
+                viewColumns: false,
+            },
         },
         {
             name: "volId",
             label: "volunteer ID",
-            options: { display: false,
-                 sort: false, filter: false },
+            options: { display: false, sort: false, filter: false },
         },
         {
             name: "firstName",
@@ -289,9 +290,9 @@ export default function VolunteerSearchTask({ myTask }) {
             label: "Start Date",
             options: {
                 filter: true,
-                sort: true,               
-               customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),            
+                sort: true,
+                customBodyRender: (value) =>
+                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
             },
         },
         {
@@ -305,7 +306,7 @@ export default function VolunteerSearchTask({ myTask }) {
         // { name: "startTime", label: "Start Time", width: 100, type: "time" },
         //  { name: "endTime", label: "End Time", width: 100, type: "time" },
         {
-            name: "taskSummary",
+            name: "id",
             label: " Task Detail",
 
             options: {
@@ -320,7 +321,15 @@ export default function VolunteerSearchTask({ myTask }) {
                             size="small"
                             style={{ marginLeft: 16 }}
                             value={value}
-                            onClick={(e) => handleClickOpen(e, value)}
+                            onClick={(e) => {
+                                const selectedTask = pendingTasks.find(
+                                    (task) => task.id === value
+                                );
+                                console.log(selectedTask);
+                                if (selectedTask != null) {
+                                    handleClickOpen(e, selectedTask);
+                                }
+                            }}
                         >
                             View
                         </Button>
@@ -346,7 +355,7 @@ export default function VolunteerSearchTask({ myTask }) {
                             size="small"
                             disabled={tableMeta.rowData[1] === null ? false : true}
                             style={{
-                                marginLeft: 16,
+                                marginLeft: 2,
                                 backgroundColor:
                                     tableMeta.rowData[1] === null ? "green" : "lightgrey",
                             }}
@@ -365,18 +374,11 @@ export default function VolunteerSearchTask({ myTask }) {
                                             isOpen: false,
                                         });
 
-                                        const assignTasks = pendingTasks.map((task) =>
-                                        task.id === value ? { ...task, volId: 1 } : task );
-                                        setPendingTasks(assignTasks);
-                                        
-                                        //console.log(pendingTasks);                                       
-                                       if (isMyTask === false) {
-                                            const updatedPendingTask = pendingTasks.filter(
-                                                (task) => task.id !== value
-                                               // (task) => task.volId === null 
-                                            );
-                                            setPendingTasks(updatedPendingTask);
-                                        }
+                                        const assignTask = unassignedTasks.map((task) =>
+                                            task.id === value ? { ...task, volId: 1 } : task
+                                        );
+                                        setPendingTasks(assignTask);
+
                                         setNotifyMsg({
                                             isOpen: true,
                                             message: "Task is successfully assigned to you.",
@@ -408,11 +410,11 @@ export default function VolunteerSearchTask({ myTask }) {
                             color="secondary"
                             size="small"
                             disabled={tableMeta.rowData[1] === null ? true : false}
-                            style={{ marginLeft: 16 }}
+                            style={{ marginLeft: 2 }}
                             className="button"
                             value={value}
                             onClick={() => {
-                                // if(window.confirm("Are you sure want to return your assigned Task?")){}
+                                
                                 setConfirmDialog({
                                     isOpen: true,
                                     title: "Are you sure to return your assigned Task?",
@@ -424,19 +426,12 @@ export default function VolunteerSearchTask({ myTask }) {
                                             isOpen: false,
                                         });
                                         console.log(tableMeta.rowData[1]);
-                                        
-                                        setPendingTasks(
-                                            pendingTasks.map((task) =>
-                                                task.id === value ? { ...task, volId: null } : task
-                                            )
+
+                                        const returnTask = myTasks.map((task) =>
+                                            task.id === value ? { ...task, volId: null } : task
                                         );
-                                        //console.log(pendingTasks);
-                                       if (isMyTask === true) {
-                                                const updatedPendingTask = pendingTasks.filter(
-                                                (task) => task.id !== value
-                                            );
-                                            setPendingTasks(updatedPendingTask);
-                                        }
+                                        setPendingTasks(returnTask);
+
                                         setNotifyMsg({
                                             isOpen: true,
                                             message: "Task is unssigned from you",
@@ -456,7 +451,7 @@ export default function VolunteerSearchTask({ myTask }) {
 
     return (
         <React.Fragment>
-            <div style={{height:"100%"}}>
+            <div style={{ height: "100%" }}>
                 <h4 className={classes.h5}>
                     {" "}
                     {isMyTask === false ? "Search New Tasks" : "My Assigned Tasks"}
@@ -467,7 +462,8 @@ export default function VolunteerSearchTask({ myTask }) {
                         title={
                             isMyTask === false ? "New Unassigned Task List" : "My Task List"
                         }
-                        data={pendingTasks}
+                        // data={pendingTasks}
+                        data={isMyTask === false ? unassignedTasks : myTasks}
                         columns={columns}
                         options={options}
                     />
@@ -476,7 +472,7 @@ export default function VolunteerSearchTask({ myTask }) {
                     <Button
                         variant="outlined"
                         color="default"
-                        style={{ marginLeft: 16 }}
+                        style={{ marginLeft: 2 }}
                         component={Link}
                         to={"/myTask"}
                     >
