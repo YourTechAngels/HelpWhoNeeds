@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                     inputRef={emailRef} 
                     id="email"
                     label="Email Address"
-                    autoFocus
+                    // autoFocus
                 />
                 <Button            
                                 type="submit"

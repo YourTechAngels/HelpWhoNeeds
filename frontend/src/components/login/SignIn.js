@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useAuth } from "../../contexts/AuthContext";
+import { auth } from "../../fireBase";
 
 function Copyright() {
     return (
@@ -59,7 +60,7 @@ export default function SignIn() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
-    
+    const nameLabel = (`${user}`==='AssistanceRequester'? 'Requestee': `${user}`)
   
     async function handleSubmit(e) {
       e.preventDefault()
@@ -68,6 +69,7 @@ export default function SignIn() {
         setError("")
         setLoading(true)
         await login(emailRef.current.value, passwordRef.current.value)
+
         if (`${user}` === 'Volunteer')
         { history.push("/myTask") }
         else {
@@ -88,7 +90,7 @@ export default function SignIn() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                   {nameLabel} Sign in
                 </Typography>
             { error && <Alert severity="error">
             <AlertTitle>Error: {error}</AlertTitle>

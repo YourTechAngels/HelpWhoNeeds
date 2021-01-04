@@ -18,10 +18,8 @@ const useStyles = {
     marginLeft: 10,
     marginTop: '10px',
   },
-  p: {
-     textAlign:"left"
-  },
-};
+  
+  };
 
   export default function RegistrationPage(props) {
 
@@ -49,9 +47,10 @@ const useStyles = {
      
    <React.Fragment>
      
-      <Typography variant="h4" align="center"> Registration form</Typography>
-
-      <p style = {useStyles.p}> Please enter your details here</p>
+      <h2 align="center"> Registration form</h2>
+      <Grid container justify="left"  alignItems="left">
+      <p style={{paddingLeft:8}}>Please enter your details here</p> </Grid>
+     
       <form onSubmit={handleSubmit} >      
       <Grid container spacing={3} >
         <Grid item xs={12} sm={6}>
