@@ -1,10 +1,8 @@
-import { isBefore, getHours, getMinutes, setHours, setMinutes } from "date-fns"
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import Checkbox from '@material-ui/core/Checkbox'
+// import Checkbox from '@material-ui/core/Checkbox'
 import Typography from '@material-ui/core/Typography'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Grid from "@material-ui/core/Grid"
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
@@ -12,32 +10,12 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { useForm } from 'react-hook-form'
 import { makeStyles } from '@material-ui/core/styles'
-// import axios from "axios"
 
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
 })
 
 function FormDialog({ open, handleClose, taskType, addTask }) {
-
-    const createItem = (data) => {
-        const backendTaskTypes = {
-            "shop": "GRO",
-            "pharm": "PHA",
-            "dog": "DOG",
-            "hospital": "HOS",
-            "phone": "CHAT",
-            "any": "ANY",
-        }
-        let item = {}
-        item["task_type"] = backendTaskTypes[taskType]
-        item["description"] = data.taskDetails || null
-        item["dbs_needed"] = data.dbsReq
-        item["start_time"] = data.startDate
-        item["end_time"] = data.endDate
-        console.log("item created: ", item)
-        return item
-    }
 
     const dialogHeader = {
         "shop": "Shopping",
@@ -56,58 +34,68 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
     }
 
     const defaultValues = {
-        taskDetails: null,
+        taskDetails: "",
         startDate: null,
         startTime: "08:00",
         endDate: null,
         endTime: "20:00"
     };
 
+
+    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors, control } =
+        useForm({ defaultValues: defaultValues, mode: "all" })
+
     const resetAndClose = () => {
-        clearErrors()
         reset()
         handleClose()
     }
 
-    const { register, handleSubmit, reset, errors, clearErrors, watch, setValue } =
-        useForm({ defaultValues: defaultValues, mode: "all"})
-
     const onSubmit = (data) => {
-        console.log("SUBMITTED: ", data)
-        // setSubmittedData(data)
-        // const startHours = getHours(data.startTime)
-        // const startMins = getMinutes(data.startTime)
-        // const endHours = getHours(data.endTime)
-        // const endMins = getMinutes(data.endTime)
-        // data.startDate = setMinutes(setHours(data.startDate, startHours), startMins)
-        // data.endDate = setMinutes(setHours(data.endDate, endHours), endMins)
+        const start = new Date(data.startDate + "T" + data.startTime)
+        const end = new Date(data.endDate + "T" + data.endTime)
 
-        // const item = createItem(data)
-        // axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
-        //     console.log(error.request)
-        //     // console.log(error.config)
-        // })
         addTask({
-            tasType: taskType, taskDetails: data.taskDetails,
-            startTime: data.startDate, endTime: data.endTime, dbsReq: false
+            taskType: taskType, taskDetails: data.taskDetails,
+            startTime: start, endTime: end, dbsReq: false
         })
         resetAndClose()
     };
 
-    const watchEndDate = watch("endDate", "")
-    const watchStartDate = watch("startDate", "")
+    const watchAll = watch()
+
+    // TODO Call through DB
+    // Minimum time needed to perform a task *in minutes*
+    const minDuration = 30
+
+    const validateTimes = () => {
+        const start = new Date(watchAll.startDate + "T" + watchAll.startTime)
+        const end = new Date(watchAll.endDate + "T" + watchAll.endTime)
+
+        if (!watchAll.startDate || !watchAll.startTime ||
+            !watchAll.endDate || !watchAll.endTime) {
+            clearErrors("endTime")
+            return
+        }
+
+        const minEnd = start.setMinutes(start.getMinutes() + minDuration)
+        if (minEnd > end)
+            return "Not enough time to complete your task. " +
+                "Consider at least " + minDuration + " minutes." 
+    }
 
     const handleStartDate = e => {
         if (!e.target.value) return
-        if ((!watchEndDate) ||
-            (watchEndDate && (watchEndDate < e.target.value))) 
+        if ((!watchAll.endDate) ||
+            (watchAll.endDate && (watchAll.endDate < e.target.value))) {
             setValue("endDate", e.target.value)
+        }
     }
 
     const handleEndDate = e => {
         if (!e.target.value) return
-        if (watchStartDate && (watchStartDate > e.target.value)) 
-            setValue("startDate", e.target.value) 
+        if (watchAll.startDate && (watchAll.startDate > e.target.value)) {
+            setValue("startDate", e.target.value)
+        }
     }
 
     const classes = useStyles();
@@ -122,14 +110,14 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                         {dialogHeader[taskType]}
                     </DialogTitle>
                     <DialogContent>
-                        <TextField
+                        < TextField
                             id="taskDetails"
                             name="taskDetails"
                             inputRef={register({ required: ["shop", "any"].includes(taskType) })}
-                            // autoFocus
+                            autoFocus
                             label="Details"
                             multiline
-                            rows={6}
+                            rows={5}
                             variant="outlined"
                             fullWidth
                             InputLabelProps={{
@@ -186,7 +174,7 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                         <Grid id="finish-time" container spacing={3}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    inputRef={register({ required: reqFieldMsg})}
+                                    inputRef={register({ required: reqFieldMsg })}
                                     type="date"
                                     margin="dense"
                                     inputProps={{ min: getFormDate(new Date()) }}
@@ -204,7 +192,10 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    inputRef={register({ required: reqFieldMsg })}
+                                    inputRef={register({
+                                        required: reqFieldMsg,
+                                        validate: validateTimes
+                                    })}
                                     type="time"
                                     id="endTime"
                                     name="endTime"
@@ -220,15 +211,15 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                             </Grid>
                         </Grid>
 
-
-                        <FormControlLabel disabled
+                        {/* TODO */}
+                        {/* <FormControlLabel disabled
                             control={
                                 <Checkbox
                                     name="dbsRequired"
                                     checked={false}
                                 />}
                             label="Only volunteers with DBS certificate"
-                        />
+                        /> */}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={resetAndClose} color="primary">
