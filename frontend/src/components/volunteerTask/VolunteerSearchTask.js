@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MUIDataTable from "mui-datatables";
 import Button from "@material-ui/core/Button";
 import moment from "moment";
@@ -6,7 +6,6 @@ import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"; //not working
 import TaskDialog from "./TaskDetail";
-import { Link } from "react-router-dom";
 import Notification from "./Notification";
 import ConfirmDailog from "./CofirmDailog";
 import Grid from "@material-ui/core/Grid";
@@ -189,7 +188,7 @@ const intialTasks = [
     },
 ];
 
-export default function VolunteerSearchTask({ myTask }) {
+export default function VolunteerSearchTask() {
     const classes = useStyles();
 
     const theme = createMuiTheme({
@@ -211,8 +210,6 @@ export default function VolunteerSearchTask({ myTask }) {
         },
     });
 
-   // const isMyTask = myTask === undefined ? false : myTask;
-    //console.log(myTask);
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
         (task) => task.volId !== null && task.volId === 1
@@ -239,7 +236,7 @@ export default function VolunteerSearchTask({ myTask }) {
 
     const handleClose = () => {
         setShowDialog(false);
-        //setDialogData(null);
+        setDialogData(null);
     };
 
     const myTaskCols = [
@@ -256,13 +253,15 @@ export default function VolunteerSearchTask({ myTask }) {
         {
             name: "volId",
             label: "volunteer ID",
+            viewColumns: false,
             options: { display: false, sort: false, filter: false },
         },
         {
             name: "firstName",
             label: "First name",
-
+          
             options: {
+                display: false, 
                 filter: true,
                 sort: true,
             },
@@ -272,11 +271,25 @@ export default function VolunteerSearchTask({ myTask }) {
             label: "Last name",
 
             options: {
+                display: false, 
                 filter: true,
                 sort: true,
             },
+        },    
+        {
+            name: "firstName",
+            label: "Full Name",
+            options: {
+                filter: false,
+                sort: false,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    //console.log(tableMeta.rowData, '......');
+                    return (
+                        <div>{tableMeta.rowData[2]} {tableMeta.rowData[3]}</div>
+                    );
+                }
+            }
         },
-
         {
             name: "taskType",
             label: "Task",
@@ -306,39 +319,7 @@ export default function VolunteerSearchTask({ myTask }) {
         },
         // { name: "startTime", label: "Start Time", width: 100, type: "time" },
         //  { name: "endTime", label: "End Time", width: 100, type: "time" },
-        {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{ marginLeft: 16 }}
-                            value={value}
-                            onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
-            },
-        },
-
+      
         {
             name: "id",
             label: "Action",
@@ -375,7 +356,8 @@ export default function VolunteerSearchTask({ myTask }) {
                                             isOpen: false,
                                         });
 
-                                        const assignTask = unassignedTasks.map((task) =>
+                                        //const assignTask = unassignedTasks.map((task) =>
+                                        const assignTask = intialTasks.map((task) =>
                                             task.id === value ? { ...task, volId: 1 } : task
                                         );
                                         setPendingTasks(assignTask);
@@ -433,15 +415,15 @@ export default function VolunteerSearchTask({ myTask }) {
                                         });
                                         console.log(tableMeta.rowData[1]);
 
-                                        const returnTask = myTasks.map((task) =>
+                                        //const returnTask = myTasks.map((task) =>
+                                        const returnTask = intialTasks.map((task) =>
                                             task.id === value ? { ...task, volId: null } : task
                                         );
                                         setPendingTasks(returnTask);
                                         console.log("myTask")
                                         console.log(myTasks) 
                                         console.log("assignTasks")
-                                        console.log(unassignedTasks)
-                                                                              
+                                        console.log(unassignedTasks)                                                                              
                                         console.log(pendingTasks)
 
                                         setNotifyMsg({
@@ -459,72 +441,6 @@ export default function VolunteerSearchTask({ myTask }) {
                 },
             },
         },
-    ];
-
-    const unassignedTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        // { name: "startTime", label: "Start Time", width: 100, type: "time" },
-        //  { name: "endTime", label: "End Time", width: 100, type: "time" },
         {
             name: "id",
             label: " Task Detail",
@@ -558,6 +474,86 @@ export default function VolunteerSearchTask({ myTask }) {
             },
         },
 
+    ];
+
+    const unassignedTaskCols = [
+        {
+            name: "id",
+            label: "ID",
+            options: {
+                display: false,
+                sort: false,
+                filter: false,
+                viewColumns: false,
+            },
+        },
+        {
+            name: "volId",
+            label: "volunteer ID",
+            options: { display: false, sort: false, filter: false },
+        },
+        {
+            name: "firstName",
+            label: "First name",
+            options: {
+                display: false, 
+                filter: true,
+                sort: true,
+            },
+        },
+        {
+            name: "lastName",
+            label: "Last name",
+            options: {
+                display: false, 
+                filter: true,
+                sort: true,
+            },
+        },
+        {
+            name: "firstName",
+            label: "Full Name",
+            options: {
+                filter: false,
+                sort: false,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    //console.log(tableMeta.rowData, '......');
+                    return (
+                        <div>{tableMeta.rowData[2]} {tableMeta.rowData[3]}</div>
+                    );
+                }
+            }
+        },
+        {
+            name: "taskType",
+            label: "Task",
+
+            options: {
+                filter: true,
+                sort: true,
+            },
+        },
+        {
+            name: "date",
+            label: "Start Date",
+            options: {
+                filter: true,
+                sort: true,
+                customBodyRender: (value) =>
+                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
+            },
+        },
+        {
+            name: "distance",
+            label: "Distance",
+            options: {
+                filter: true,
+                sort: true,
+            },
+        },
+        // { name: "startTime", label: "Start Time", width: 100, type: "time" },
+        //  { name: "endTime", label: "End Time", width: 100, type: "time" },
+      
         {
             name: "id",
             label: "Action",
@@ -594,7 +590,8 @@ export default function VolunteerSearchTask({ myTask }) {
                                             isOpen: false,
                                         });
 
-                                        const assignTask = unassignedTasks.map((task) =>
+                                       // const assignTask = unassignedTasks.map((task) =>
+                                       const assignTask = intialTasks.map((task) =>
                                             task.id === value ? { ...task, volId: 1 } : task
                                         );
                                         setPendingTasks(assignTask);
@@ -651,7 +648,8 @@ export default function VolunteerSearchTask({ myTask }) {
                                         });
                                         console.log(tableMeta.rowData[1]);
 
-                                        const returnTask = myTasks.map((task) =>
+                                        //const returnTask = myTasks.map((task) =>
+                                        const returnTask = intialTasks.map((task) =>
                                             task.id === value ? { ...task, volId: null } : task
                                         );
                                         setPendingTasks(returnTask);
@@ -671,6 +669,39 @@ export default function VolunteerSearchTask({ myTask }) {
                 },
             },
         },
+        {
+            name: "id",
+            label: " Task Detail",
+
+            options: {
+                filter: false,
+                sort: false,
+                viewColumns: false,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            style={{ marginLeft: 16 }}
+                            value={value}
+                            onClick={(e) => {
+                                const selectedTask = pendingTasks.find(
+                                    (task) => task.id === value
+                                );
+                                console.log(selectedTask);
+                                if (selectedTask != null) {
+                                    handleClickOpen(e, selectedTask);
+                                }
+                            }}
+                        >
+                            View
+                        </Button>
+                    );
+                },
+            },
+        },
+
     ];
     return (
         <React.Fragment>
