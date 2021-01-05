@@ -14,7 +14,7 @@ p {
    display: flex;
    flex-direction: column;
    min-height: 80vh;
-   background-color: #f1eae0;
+   /* background-color: #f1eae0; */
    align-items: center;
    align-content: center;
    justify-content: center;

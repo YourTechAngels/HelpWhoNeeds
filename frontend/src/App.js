@@ -43,7 +43,10 @@ function App() {
                 </Route>  
                 <Route path="/forgotPassword/:user">
                     <ForgotPassword />
-                </Route>  
+                </Route>   
+                <Route path="/requestee/tasks">
+                    <AddTask />
+                </Route>   
                 <PrivateRoute path="/registrationPage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchTask" component= {VolunteerSearchTask} />
                 <PrivateRoute path="/myTask" component= {VolunteerWelcome} />

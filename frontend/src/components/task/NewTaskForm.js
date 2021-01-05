@@ -56,7 +56,7 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
 
         addTask({
             taskType: taskType, taskDetails: data.taskDetails,
-            startTime: start, endTime: end, dbsReq: false
+            start: start, end: end
         })
         resetAndClose()
     };
