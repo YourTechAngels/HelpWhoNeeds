@@ -1,4 +1,4 @@
-import { Link, useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import { makeStyles, Button } from "@material-ui/core"
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -16,9 +16,6 @@ const useStyles = makeStyles({
     }
 
 });
-
-
-
 
 const Landing = () => {
     
