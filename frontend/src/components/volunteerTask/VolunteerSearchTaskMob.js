@@ -6,9 +6,9 @@ import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles"; //not working
 import TaskDialog from "./TaskDetail";
+import { Link } from "react-router-dom";
 import Notification from "./Notification";
 import ConfirmDailog from "./CofirmDailog";
-import Grid from "@material-ui/core/Grid";
 
 const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
@@ -188,7 +188,7 @@ const intialTasks = [
     },
 ];
 
-export default function VolunteerSearchTask() {
+export default function VolunteerSearchTask({ myTask }) {
     const classes = useStyles();
 
     const theme = createMuiTheme({
@@ -210,6 +210,8 @@ export default function VolunteerSearchTask() {
         },
     });
 
+    const isMyTask = myTask === undefined ? false : myTask;
+    //console.log(myTask);
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
         (task) => task.volId !== null && task.volId === 1
@@ -236,10 +238,10 @@ export default function VolunteerSearchTask() {
 
     const handleClose = () => {
         setShowDialog(false);
-        setDialogData(null);
+        //setDialogData(null);
     };
 
-    const myTaskCols = [
+    const columns = [
         {
             name: "id",
             label: "ID",
@@ -253,15 +255,13 @@ export default function VolunteerSearchTask() {
         {
             name: "volId",
             label: "volunteer ID",
-            viewColumns: false,
             options: { display: false, sort: false, filter: false },
         },
         {
             name: "firstName",
             label: "First name",
-          
+
             options: {
-                display: false, 
                 filter: true,
                 sort: true,
             },
@@ -271,25 +271,11 @@ export default function VolunteerSearchTask() {
             label: "Last name",
 
             options: {
-                display: false, 
                 filter: true,
                 sort: true,
             },
-        },    
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>{tableMeta.rowData[2]} {tableMeta.rowData[3]}</div>
-                    );
-                }
-            }
         },
+
         {
             name: "taskType",
             label: "Task",
@@ -319,128 +305,6 @@ export default function VolunteerSearchTask() {
         },
         // { name: "startTime", label: "Start Time", width: 100, type: "time" },
         //  { name: "endTime", label: "End Time", width: 100, type: "time" },
-      
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display: false,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? false : true}
-                            style={{
-                                marginLeft: 2,
-                                backgroundColor:
-                                    tableMeta.rowData[1] === null ? "green" : "lightgrey",
-                            }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                //console.log(tableMeta.rowData[1]);
-                                setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Do you agree to accept this task?",
-                                    subTitle:
-                                        "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDailog,
-                                            isOpen: false,
-                                        });
-
-                                        //const assignTask = unassignedTasks.map((task) =>
-                                        const assignTask = intialTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: 1 } : task
-                                        );
-                                        setPendingTasks(assignTask);
-                                        console.log("assignTasks")
-                                        console.log(unassignedTasks)
-                                        console.log("myTask")
-                                        console.log(myTasks)                                        
-                                        console.log(pendingTasks)
-
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is successfully assigned to you.",
-                                            type: "success",
-                                        });
-                                    },
-                                });
-                            }}
-                        >
-                            Accept
-                        </Button>
-                    );
-                },
-            },
-        },
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display:  true,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? true : false}
-                            style={{ marginLeft: 2 }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                
-                                setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Are you sure to return your assigned Task?",
-                                    subTitle:
-                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDailog,
-                                            isOpen: false,
-                                        });
-                                        console.log(tableMeta.rowData[1]);
-
-                                        //const returnTask = myTasks.map((task) =>
-                                        const returnTask = intialTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: null } : task
-                                        );
-                                        setPendingTasks(returnTask);
-                                        console.log("myTask")
-                                        console.log(myTasks) 
-                                        console.log("assignTasks")
-                                        console.log(unassignedTasks)                                                                              
-                                        console.log(pendingTasks)
-
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is unssigned from you",
-                                            type: "warning",
-                                        });
-                                    },
-                                });
-                            }}
-                        >
-                            Reject
-                        </Button>
-                    );
-                },
-            },
-        },
         {
             name: "id",
             label: " Task Detail",
@@ -474,85 +338,6 @@ export default function VolunteerSearchTask() {
             },
         },
 
-    ];
-
-    const unassignedTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
-            options: {
-                display: false, 
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-            options: {
-                display: false, 
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>{tableMeta.rowData[2]} {tableMeta.rowData[3]}</div>
-                    );
-                }
-            }
-        },
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        // { name: "startTime", label: "Start Time", width: 100, type: "time" },
-        //  { name: "endTime", label: "End Time", width: 100, type: "time" },      
         {
             name: "id",
             label: "Action",
@@ -561,7 +346,7 @@ export default function VolunteerSearchTask() {
                 sort: false,
                 filter: false,
                 viewColumns: false,
-                display: true,
+                display: isMyTask === true ? false : true,
                 customBodyRender: (value, tableMeta) => {
                     return (
                         <Button
@@ -589,16 +374,11 @@ export default function VolunteerSearchTask() {
                                             isOpen: false,
                                         });
 
-                                       // const assignTask = unassignedTasks.map((task) =>
-                                       const assignTask = intialTasks.map((task) =>
+                                        const assignTask = unassignedTasks.map((task) =>
                                             task.id === value ? { ...task, volId: 1 } : task
                                         );
                                         setPendingTasks(assignTask);
-                                        console.log("assignTasks")
-                                        console.log(unassignedTasks)
-                                        console.log("myTask")
-                                        console.log(myTasks)                                        
-                                        console.log(pendingTasks)
+
                                         setNotifyMsg({
                                             isOpen: true,
                                             message: "Task is successfully assigned to you.",
@@ -622,7 +402,7 @@ export default function VolunteerSearchTask() {
                 sort: false,
                 filter: false,
                 viewColumns: false,
-                display: false,
+                display: isMyTask === true ? true : false,
                 customBodyRender: (value, tableMeta) => {
                     return (
                         <Button
@@ -647,8 +427,7 @@ export default function VolunteerSearchTask() {
                                         });
                                         console.log(tableMeta.rowData[1]);
 
-                                        //const returnTask = myTasks.map((task) =>
-                                        const returnTask = intialTasks.map((task) =>
+                                        const returnTask = myTasks.map((task) =>
                                             task.id === value ? { ...task, volId: null } : task
                                         );
                                         setPendingTasks(returnTask);
@@ -668,83 +447,39 @@ export default function VolunteerSearchTask() {
                 },
             },
         },
-        {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{ marginLeft: 16 }}
-                            value={value}
-                            onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
-            },
-        },
-
     ];
+
     return (
         <React.Fragment>
-
             <div style={{ height: "100%" }}>
-            <Grid id="start-time" container spacing={2}>
-                <Grid item xs={12} sm={6}>
                 <h4 className={classes.h5}>
-                    {"My Assigned Tasks"}
+                    {" "}
+                    {isMyTask === false ? "Search New Tasks" : "My Assigned Tasks"}
                 </h4>
 
                 <MuiThemeProvider theme={theme}>
                     <MUIDataTable
                         title={
-                        "My Task List"
+                            isMyTask === false ? "New Unassigned Task List" : "My Task List"
                         }
                         // data={pendingTasks}
-                        data={myTasks}
-                        columns={myTaskCols}
+                        data={isMyTask === false ? unassignedTasks : myTasks}
+                        columns={columns}
                         options={options}
                     />
                 </MuiThemeProvider>
-                
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                <h4 className={classes.h5}>
-                    {"Search New Tasks"}
-                </h4>
+                {isMyTask === false && (
+                    <Button
+                        variant="outlined"
+                        color="default"
+                        style={{ marginLeft: 2 }}
+                        component={Link}
+                        to={"/myTask"}
+                    >
+                        View My Tasks
+                    </Button>
+                )}
 
-                <MuiThemeProvider theme={theme}>
-                    <MUIDataTable
-                        title={
-                            "New Unassigned Task List"
-                        }
-                        // data={pendingTasks}
-                        data={unassignedTasks}
-                        columns={unassignedTaskCols}
-                        options={options}
-                    />
-                </MuiThemeProvider>
-            
-                </Grid>
-            </Grid>
-            
                 <TaskDialog
                     open={showDialog}
                     handleClose={handleClose}

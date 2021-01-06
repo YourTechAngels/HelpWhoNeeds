@@ -2,6 +2,7 @@ import React,{useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
+import { ButtonGroup } from '@material-ui/core';
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 } , 
@@ -32,12 +33,13 @@ const useStyles = {
 
     return (
      
-   <React.Fragment>
-     
+   <React.Fragment>     
            
       <Grid container spacing={3} >
-        <Grid item xs={12} sm={12}>
-          <TextField
+        <Grid item xs={12} sm={6}> 
+        {/* <Grid container  spacing={0} direction='row'>          */}
+        <ButtonGroup>     
+         <TextField
             required
             id="postcode"
             name="postcode"
@@ -46,11 +48,13 @@ const useStyles = {
             onChange = { handleChange }
             value= {postcode || ''}
             style = {useStyles.textFld}
-            autoComplete=" postal-code"
-            InputProps={{endAdornment: <Button variant = "contained" 
-            onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>}}
-            />
-        </Grid>
+            autoComplete=" postal-code"/>
+            {/* // InputProps={{endAdornment:*/}
+        
+          <Grid item xs={12} sm={6}>            
+            <Button variant="outlined" type='submit' onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
+        </Grid></ButtonGroup>  </Grid> 
+   
         <Grid item xs={12}>
           <TextField
             required

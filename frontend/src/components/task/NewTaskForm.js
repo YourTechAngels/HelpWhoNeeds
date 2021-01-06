@@ -1,238 +1,233 @@
-import { isBefore, getHours, getMinutes, setHours, setMinutes } from "date-fns";
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from "@material-ui/core/Grid";
-import {
-    MuiPickersUtilsProvider,
-    KeyboardTimePicker,
-    KeyboardDatePicker
-} from "@material-ui/pickers";
-import DateFnsUtils from '@date-io/date-fns';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { useForm, Controller } from 'react-hook-form';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+// import Checkbox from '@material-ui/core/Checkbox'
+import Typography from '@material-ui/core/Typography'
+import Grid from "@material-ui/core/Grid"
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { useForm } from 'react-hook-form'
+import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles =
-    makeStyles({
-        root: {
-            padding: "8px 0px 8px 0px"
-        }
-    })
+const useStyles = makeStyles({
+    p: { margin: "10px 2px 10px 2px" },
+})
 
 function FormDialog({ open, handleClose, taskType, addTask }) {
 
     const dialogHeader = {
-        "shop": "I need help with shoping",
-        "pharm": "I need help to collect medicine",
-        "dog": "I need help with walking with my dog",
-        "hospital": "I need help to visit hospital appointment?",
-        "phone": "I'd like to chat",
+        "shop": "Shopping",
+        "pharm": "Collect medicine",
+        "dog": "Dog Walking",
+        "hospital": "Visit Hospital Appointment",
+        "phone": "Friendly Chat",
         "any": "I need help with ...",
+    }
+
+    const getFormDate = date => {
+        let year = date.getFullYear();
+        let month = (1 + date.getMonth()).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return year + '-' + month + '-' + day
+    }
+
+    const defaultValues = {
+        taskDetails: "",
+        startDate: null,
+        startTime: "08:00",
+        endDate: null,
+        endTime: "20:00"
+    };
+
+
+    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors, control } =
+        useForm({ defaultValues: defaultValues, mode: "all" })
+
+    const resetAndClose = () => {
+        reset()
+        handleClose()
+    }
+
+    const onSubmit = (data) => {
+        const start = new Date(data.startDate + "T" + data.startTime)
+        const end = new Date(data.endDate + "T" + data.endTime)
+
+        addTask({
+            taskType: taskType, taskDetails: data.taskDetails,
+            start: start, end: end
+        })
+        resetAndClose()
+    };
+
+    const watchAll = watch()
+
+    // TODO Call through DB
+    // Minimum time needed to perform a task *in minutes*
+    const minDuration = 30
+
+    const validateTimes = () => {
+        const start = new Date(watchAll.startDate + "T" + watchAll.startTime)
+        const end = new Date(watchAll.endDate + "T" + watchAll.endTime)
+
+        if (!watchAll.startDate || !watchAll.startTime ||
+            !watchAll.endDate || !watchAll.endTime) {
+            clearErrors("endTime")
+            return
+        }
+
+        const minEnd = start.setMinutes(start.getMinutes() + minDuration)
+        if (minEnd > end)
+            return "Not enough time to complete your task. " +
+                "Consider at least " + minDuration + " minutes." 
+    }
+
+    const handleStartDate = e => {
+        if (!e.target.value) return
+        if ((!watchAll.endDate) ||
+            (watchAll.endDate && (watchAll.endDate < e.target.value))) {
+            setValue("endDate", e.target.value)
+        }
+    }
+
+    const handleEndDate = e => {
+        if (!e.target.value) return
+        if (watchAll.startDate && (watchAll.startDate > e.target.value)) {
+            setValue("startDate", e.target.value)
+        }
     }
 
     const classes = useStyles();
 
-    const defaultTimeSlotValues = {
-        startDate: null,
-        startTime: new Date(2021, 11, 17, 8, 0, 0),
-        endDate: null,
-        endTime: new Date(2021, 11, 17, 20, 0, 0)
-    };
-
-    const { errors, getValues, handleSubmit, register, setValue, control } = useForm({
-        defaultTimeSlotValues
-    });
-
-    const handleStartDate = date => {
-        console.log("startDate CHANGED: ", date);
-        setValue("startDate", date);
-        console.log("(!values.endDate) :", (!values.endDate))
-        console.log("isBefore(values.endDate, values.startDate):", isBefore(values.endDate, values.startDate))
-        if ((!values.endDate) || isBefore(values.endDate, values.startDate))
-            setValue("endDate", date);
-        return values
-    };
-
-    const handleStartTime = time => {
-        setValue("startTime", time);
-    };
-
-    const handleEndDate = date => {
-        console.log("endDate CHANGED: ", date);
-        setValue("endDate", date);
-    };
-
-    const handleEndTime = time => {
-        setValue("endTime", time);
-    };
-
-    // const [submittedData, setSubmittedData] = React.useState({});
-
-    const onSubmit = (data) => {
-        console.log("SUBMITTED: ", data)
-        // setSubmittedData(data)
-        const startHours = getHours(data.startTime)
-        const startMins = getMinutes(data.startTime)
-        const endHours = getHours(data.endTime)
-        const endMins = getMinutes(data.endTime)
-        data.startDate = setMinutes(setHours(data.startDate, startHours), startMins)
-        data.endDate = setMinutes(setHours(data.endDate, endHours), endMins)
-        addTask({tasType: taskType, taskDetails: data.taskDetails,
-                startTime: data.startDate, endTime: data.endTime, dbsReq: false})
-        handleClose()
-    };
-
-    const values = getValues();
+    const reqFieldMsg = "Required field"
 
     return (
         <div>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={resetAndClose} fullWidth maxWidth="sm">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <DialogTitle id="dialog-add-task">
                         {dialogHeader[taskType]}
                     </DialogTitle>
                     <DialogContent>
-                        <Controller
-                            as={<TextField />}
-                            control={control}
+                        < TextField
+                            id="taskDetails"
                             name="taskDetails"
-                            inputRef={register}
+                            inputRef={register({ required: ["shop", "any"].includes(taskType) })}
                             autoFocus
                             label="Details"
                             multiline
-                            rows={3}
-                            defaultValue=""
+                            rows={5}
                             variant="outlined"
                             fullWidth
-                            // rules={{ required: true }}
-                            // errors={errors.taskDetails}
-                            // helperText={errors.taskDetails ? "Details are required" : ""}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            error={errors.taskDetails}
+                            helperText={errors.taskDetails && "Details are required for this task type"}
                         />
-                        <DialogContentText >
-                            <p> When do you need it? <br />
-                                Note, providing wider time window will increase your chances to find a volunteer. </p>
-                        </DialogContentText>
 
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <Grid id="start-time" container spacing={3}>
-                                <Grid item xs={12} sm={6} >
-                                    <Controller
-                                        as={<KeyboardDatePicker />}
-                                        control={control}
-                                        rules={{ required: true }}
-                                        defaultValue={defaultTimeSlotValues.startDate}
-                                        id="startDate"
-                                        name="startDate"
-                                        label="Starting from"
-                                        format="dd.MM.yyyy"
-                                        disablePast
-                                        margin="normal"
-                                        disableToolbar
-                                        fullWidth
-                                        value={values.startDate}
-                                        onChange={handleStartDate}
-                                        KeyboardButtonProps={{
-                                            "aria-label": "change date"
-                                        }}
-                                        error={errors.hasOwnProperty("startDate")}
-                                        helperText={errors.startDate && errors.startDate.message}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Controller
-                                        as={<KeyboardTimePicker />}
-                                        control={control}
-                                        rules={{ required: true }}
-                                        defaultValue={defaultTimeSlotValues.startTime}
-                                        id="startTime"
-                                        name="startTime"
-                                        label="Time"
-                                        margin="normal"
-                                        ampm={true}
-                                        fullWidth
-                                        value={values.startTime}
-                                        onChange={handleStartTime}
-                                        KeyboardButtonProps={{
-                                            "aria-label": "change start time"
-                                        }}
-                                        error={errors.hasOwnProperty("startTime")}
-                                        helperText={errors.startTime && errors.startTime.message}
-                                    />
-                                </Grid>
-                            </Grid>
-                            <Grid id="finish-time" container spacing={3}>
-                                <Grid item xs={12} sm={6}>
-                                    <Controller
-                                        as={<KeyboardDatePicker />}
-                                        control={control}
-                                        rules={{ required: true }}
-                                        defaultValue={defaultTimeSlotValues.endDate}
-                                        id="endDate"
-                                        name="endDate"
-                                        label="Ending at"
-                                        format="dd.MM.yyyy"
-                                        clearable
-                                        disablePast
-                                        margin="normal"
-                                        disableToolbar
-                                        fullWidth
-                                        value={values.endDate}
-                                        onChange={handleEndDate}
-                                        KeyboardButtonProps={{
-                                            "aria-label": "change date"
-                                        }}
-                                        error={errors.hasOwnProperty("needDate")}
-                                        message='Hi!'
-                                        helperText={errors.endDate && errors.endDate.message}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <Controller
-                                        as={<KeyboardTimePicker />}
-                                        defaultValue={defaultTimeSlotValues.endTime}
-                                        control={control}
-                                        rules={{ required: true }}
-                                        id="endTime"
-                                        name="endTime"
-                                        label="Time"
-                                        margin="normal"
-                                        ampm={true}
-                                        fullWidth
-                                        value={values.endTime}
-                                        onChange={handleEndTime}
-                                        KeyboardButtonProps={{
-                                            "aria-label": "change end time"
-                                        }}
-                                        error={errors.hasOwnProperty("endTime")}
-                                        helperText={errors.endTime && errors.endTime.message}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </MuiPickersUtilsProvider>
+                        <p className={classes.p}>
+                            <br />
+                            Set dates when you need it: < br />
+                            <Typography variant="caption">
+                                Providing wider time window will increase your chances to find a volunteer.
+                            </ Typography >
+                        </p>
 
-                        <FormControlLabel disabled
+                        <Grid id="start-time" container spacing={3}>
+                            <Grid item xs={12} sm={6} >
+                                <TextField
+                                    inputRef={register({ required: reqFieldMsg })}
+                                    id="startDate"
+                                    name="startDate"
+                                    label="Starting from"
+                                    type="date"
+                                    margin="dense"
+                                    fullWidth
+                                    inputProps={{ min: getFormDate(new Date()) }}
+                                    onChange={handleStartDate}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    error={errors.hasOwnProperty("startDate")}
+                                    helperText={errors.startDate && errors.startDate.message}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    inputRef={register({ required: reqFieldMsg })}
+                                    type="time"
+                                    id="startTime"
+                                    name="startTime"
+                                    label="Time"
+                                    margin="dense"
+                                    fullWidth
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    error={errors.hasOwnProperty("startTime")}
+                                    helperText={errors.startTime && errors.startTime.message}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid id="finish-time" container spacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    inputRef={register({ required: reqFieldMsg })}
+                                    type="date"
+                                    margin="dense"
+                                    inputProps={{ min: getFormDate(new Date()) }}
+                                    id="endDate"
+                                    name="endDate"
+                                    label="Ending at"
+                                    fullWidth
+                                    onChange={handleEndDate}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    error={errors.hasOwnProperty("endDate")}
+                                    helperText={errors.endDate && errors.endDate.message}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    inputRef={register({
+                                        required: reqFieldMsg,
+                                        validate: validateTimes
+                                    })}
+                                    type="time"
+                                    id="endTime"
+                                    name="endTime"
+                                    label="Time"
+                                    margin="dense"
+                                    fullWidth
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    error={errors.hasOwnProperty("endTime")}
+                                    helperText={errors.endTime && errors.endTime.message}
+                                />
+                            </Grid>
+                        </Grid>
+
+                        {/* TODO */}
+                        {/* <FormControlLabel disabled
                             control={
                                 <Checkbox
                                     name="dbsRequired"
                                     checked={false}
                                 />}
                             label="Only volunteers with DBS certificate"
-                        />
+                        /> */}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary">
+                        <Button onClick={resetAndClose} color="primary">
                             Cancel
-                    </Button>
+                        </Button>
                         <Button type="Submit" color="primary">
                             Add
-                    </Button>
+                        </Button>
                     </DialogActions>
                 </form>
             </Dialog>

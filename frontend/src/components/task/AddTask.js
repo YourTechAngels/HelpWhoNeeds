@@ -1,13 +1,16 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PetsIcon from '@material-ui/icons/Pets';
-import PhoneIcon from '@material-ui/icons/Phone';
-import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
-import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
-import LiveHelpIcon from '@material-ui/icons/LiveHelp';
+import { makeStyles } from '@material-ui/core/styles'
+import { useState } from "react"
+import Button from '@material-ui/core/Button'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
+import PetsIcon from '@material-ui/icons/Pets'
+import PhoneIcon from '@material-ui/icons/Phone'
+import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy'
+import LocalHospitalIcon from '@material-ui/icons/LocalHospital'
+import LiveHelpIcon from '@material-ui/icons/LiveHelp'
 import NewTaskForm from './NewTaskForm'
+import TasksTable from './TaskTable'
+import initialTasks from "./tasksDataOnly"
 
 const useStyles =
     makeStyles(
@@ -36,13 +39,20 @@ const useStyles =
             }
         })
 
-let taskList = []
 
 function AddTask() {
 
+    const [taskList, setTaskList] = useState(initialTasks())
+    let nextId = 11
+
     const addTask = newTask => {
-        taskList = [...taskList, newTask]
+        newTask.id = nextId
+        nextId++
+        newTask.status = "open"
+        const updatedTaskList = [...taskList, newTask]
+        setTaskList(updatedTaskList)
         console.log("New task added: ", newTask)
+        console.log("Tasks list :", updatedTaskList)
         console.log("Tasks list :", taskList)
     }
 
@@ -60,10 +70,10 @@ function AddTask() {
     }
 
     const classes = useStyles();
-    // return <ThemeProvider theme={theme}>
-    return <div className="App">
 
-        <h1 className={classes.h1}>I need help with...</h1>
+    return <div>
+
+        <h1 className="text">I need help with...</h1>
 
         <Button classes={{ root: classes.largeButton, label: classes.label }}
             onClick={(e) => handleClickOpen(e, "shop")}>
@@ -97,6 +107,7 @@ function AddTask() {
         </Button>
 
         <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType} addTask={addTask} />
+        <TasksTable taskList={taskList} />
     </div>
 }
 
