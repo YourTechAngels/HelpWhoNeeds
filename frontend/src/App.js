@@ -63,7 +63,7 @@ function App() {
                 <Route path="/termconditions">
                     <TermConditions />
                 </Route>    
-                </Route>   
+                 
                 <Route path="/requestee/tasks">
                     <AddTask />
                 </Route>   

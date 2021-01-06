@@ -3,7 +3,6 @@ import Button from "@material-ui/core/Button";
 import moment from "moment";
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
 import ConfirmDialog from "./CofirmDialog";
@@ -22,27 +21,8 @@ const useStyles = makeStyles((theme) => ({
 
 const intialTasks = initialTasks();
 export default function VolunteerSearchTask() {
+    
     const classes = useStyles();
-
-    const theme = createMuiTheme({
-        overrides: {
-            MuiDataTable: {
-                root: {
-                    width: "min-content",
-                },
-                responsiveScroll: {
-                    maxHeight: "none", //not working
-                },
-            },
-            MUIDataTableBodyCell: {
-                root: {
-                    backgroundColor: "#FFF",
-                    width: "90px",
-                },
-            },
-        },
-    });
-
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
         (task) => task.volId !== null && task.volId === 1
@@ -553,19 +533,16 @@ export default function VolunteerSearchTask() {
                             {"My Assigned Tasks"}
                         </h4>
 
-                        <MuiThemeProvider theme={theme}>
-                            <TaskListTable taskListData={myTasks} columnFields={myTaskCols} />
-                        </MuiThemeProvider>
+                        <TaskListTable taskListData={myTasks} columnFields={myTaskCols} />
+
 
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <h4 className={classes.h5}>
                             {"Search New Tasks"}
                         </h4>
+                        <TaskListTable taskListData={unassignedTasks} columnFields={unassignedTaskCols} />
 
-                        <MuiThemeProvider theme={theme}>
-                            <TaskListTable taskListData={unassignedTasks} columnFields={unassignedTaskCols} />
-                        </MuiThemeProvider>
 
                     </Grid>
                 </Grid>
