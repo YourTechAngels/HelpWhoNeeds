@@ -26,7 +26,7 @@ function App() {
                 <AppNavBar />
                 <div className="AppContent">
                 <Switch>
-                <Route exact path="/">
+                <Route exact path="/HelpWhoNeeds/">
                     <Landing />
                 </Route>
                 <Route path="/about">

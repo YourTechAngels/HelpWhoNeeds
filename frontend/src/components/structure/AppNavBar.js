@@ -70,7 +70,7 @@ const AppNavBar = () => {
         try {
             await signout();
             setAuth(false);
-            history.push("/");
+            history.push("/HelpWhoNeeds");
         } catch (error) {
             setAuth(currentUser === null ? false : true);
             console.log(error);
@@ -97,10 +97,10 @@ const AppNavBar = () => {
             </FormGroup>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
-                    <HomeIcon
+                   <HomeIcon
                         color="action"
                         fontSize="large"
-                        onClick={(event) => (window.location.href = "/")}
+                        onClick={(event) => (window.location.href = "/HelpWhoNeeds/")}
                     />
                     <Typography variant="h6" className={classes.title}>
                         Help Who Needs

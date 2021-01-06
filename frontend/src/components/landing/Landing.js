@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { makeStyles, Button } from "@material-ui/core"
 import { useAuth } from "../../contexts/AuthContext";
 

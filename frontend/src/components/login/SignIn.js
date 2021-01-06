@@ -70,7 +70,8 @@ export default function SignIn() {
         await login(emailRef.current.value, passwordRef.current.value)
 
         if (`${user}` === 'Volunteer')
-        { history.push("/myTask") }
+        { history.push("/myTask");
+          console.log(process.env.PUBLIC_URL) }
         else {
             history.push("/addTask") }
         }
