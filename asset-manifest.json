@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/css/main.e31c4f46.chunk.css",
+    "main.js": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/main.780e9ecb.chunk.js",
+    "main.js.map": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/main.780e9ecb.chunk.js.map",
+    "runtime-main.js": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/runtime-main.c840eca0.js",
+    "runtime-main.js.map": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/runtime-main.c840eca0.js.map",
+    "static/js/2.1c96a3d3.chunk.js": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/2.1c96a3d3.chunk.js",
+    "static/js/2.1c96a3d3.chunk.js.map": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/2.1c96a3d3.chunk.js.map",
+    "static/js/3.287b0de3.chunk.js": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/3.287b0de3.chunk.js",
+    "static/js/3.287b0de3.chunk.js.map": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/3.287b0de3.chunk.js.map",
+    "index.html": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/index.html",
+    "static/css/main.e31c4f46.chunk.css.map": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/css/main.e31c4f46.chunk.css.map",
+    "static/js/2.1c96a3d3.chunk.js.LICENSE.txt": "/YourTechAngels.github.io/yta-helpwhoneeds-frontend/static/js/2.1c96a3d3.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c840eca0.js",
+    "static/js/2.1c96a3d3.chunk.js",
+    "static/css/main.e31c4f46.chunk.css",
+    "static/js/main.780e9ecb.chunk.js"
+  ]
+}
