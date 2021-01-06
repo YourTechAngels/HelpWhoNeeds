@@ -15,7 +15,6 @@ const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 } , 
   button: {
     border: '4px',
-    color: "default",
     fontWeight: 'bold',
     marginLeft: 10,
     marginTop: '10px',
@@ -36,12 +35,73 @@ const useStyles = {
       setFormData({...formData,[e.target.name]: e.target.value});
     }
 
+
     const handleSubmit = (evt) => {
         evt.preventDefault();
         setMessage("Data has been saved successfully")
          
       console.log(formData)
       }
+
+    const getAddress=(e) => {
+      e.preventDefault();
+      //Get Postcode
+      var number = $('#HouseNumber').val();
+      var postcode = $('#PostCode').val().toUpperCase();;
+      var address_1 = '';
+      var address_2 = '';
+      var town = '';
+      var county = '';
+      var pcode = '';
+      var region = '';
+      var country = '';
+      //Get Address
+      $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + postcode + '&sensor=false&key=[YOUR API KEY IN HERE]', function (data) {
+      
+          // Format/Find Address Fields
+          var address = data.results[0].address_components;
+          // Loop through each of the address components to set the correct address field
+          $.each(address, function () {
+              var address_type = this.types[0];
+              switch (address_type) {
+                  case 'route':
+                      address_1 = number + ' ' + this.long_name;
+                      break;
+                  case 'locality':
+                      address_2 = this.long_name;
+                      break;
+                  case 'postal_town':
+                      town = this.long_name;
+                      break;
+                  case 'administrative_area_level_2':
+                      county = this.long_name;
+                      break;
+                  case 'administrative_area_level_1':
+                      region = this.long_name;
+                      break;
+                  case 'country':
+                      country = this.long_name;
+                      break;
+              }
+          });
+          // Sometimes the county is set to the postal town so set to empty if that is the case
+          if (county === town) {
+              county = '';
+          }
+          // Display the results
+          $('#address_1').text(address_1);
+          $('#address_2').text(address_2);
+          $('#town').text(town);
+          $('#county').text(county);
+          $('#postcode').text(postcode);
+          $('#region').text(region);
+          $('#country').text(country);
+      });
+    }
+    
+    
+
+
 
       const param = useParams();
       const user  = param.user;
@@ -54,7 +114,7 @@ const useStyles = {
       { message && <Alert severity="success">
             <AlertTitle>{message}</AlertTitle>
             </Alert>}
-      <Grid container justify="left"  alignItems="left">
+      <Grid container flex-start="left" >
       <p style={{paddingLeft:8}}>Please enter your details here</p> </Grid>
      
       <form onSubmit={handleSubmit} >      
@@ -117,7 +177,7 @@ const useStyles = {
             autoComplete=" postal-code"/>
         
           <Grid item xs={12} sm={6}>            
-            <Button variant="outlined" className = "btn btn-secondary w-100"  onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
+            <Button variant="outlined" className = "btn btn-secondary w-100" onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
    
         <Grid item xs={12}>
