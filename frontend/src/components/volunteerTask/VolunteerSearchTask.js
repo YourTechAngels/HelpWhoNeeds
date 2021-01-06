@@ -337,6 +337,7 @@ export default function VolunteerSearchTask() {
                             size="small"
                             disabled={tableMeta.rowData[1] === null ? false : true}
                             style={{
+                            
                                 marginLeft: 2,
                                 backgroundColor:
                                     tableMeta.rowData[1] === null ? "green" : "lightgrey",
@@ -455,7 +456,8 @@ export default function VolunteerSearchTask() {
                             variant="contained"
                             color="primary"
                             size="small"
-                            style={{ marginLeft: 16 }}
+                            style={{ marginLeft: 2,
+                                    minWidth: "70px" }}
                             value={value}
                             onClick={(e) => {
                                 const selectedTask = pendingTasks.find(
@@ -590,7 +592,7 @@ export default function VolunteerSearchTask() {
                                         });
 
                                        // const assignTask = unassignedTasks.map((task) =>
-                                       const assignTask = intialTasks.map((task) =>
+                                    const assignTask = intialTasks.map((task) =>
                                             task.id === value ? { ...task, volId: 1 } : task
                                         );
                                         setPendingTasks(assignTask);
@@ -682,7 +684,8 @@ export default function VolunteerSearchTask() {
                             variant="contained"
                             color="primary"
                             size="small"
-                            style={{ marginLeft: 16 }}
+                            style={{ marginLeft: 2,
+                                minWidth: "70px" }}
                             value={value}
                             onClick={(e) => {
                                 const selectedTask = pendingTasks.find(
