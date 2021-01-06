@@ -2,6 +2,10 @@ import React from "react";
 import "./App.css";
 import AppNavBar from "./components/structure/AppNavBar"
 import Landing from "./components/landing/Landing"
+import Legal from "./components/landing/Legal"
+import Cookie from "./components/landing/Cookie"
+import Support from "./components/landing/Support"
+import TermConditions from "./components/landing/TermConditions"
 import About from "./components/landing/About"
 import Contact from "./components/landing/Contact"
 import Footer from "./components/structure/Footer"
@@ -43,7 +47,22 @@ function App() {
                 </Route>   
                 <Route path="/forgotPassword/:user">
                     <ForgotPassword />
-                </Route>     
+                </Route>    
+                <Route path="/legal">
+                    <Legal />
+                </Route>    
+                <Route path="/support">
+                    <Support />
+                </Route>    
+                <Route path="/cookie">
+                    <Cookie />
+                </Route>
+                <Route path="/contact">
+                    <Contact />
+                </Route>    
+                <Route path="/termConditions">
+                    <TermConditions />
+                </Route>    
                 <PrivateRoute path="/registrationPage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchTask" component= {VolunteerSearchTask} />
                 <PrivateRoute path="/myTask" component= {VolunteerWelcome} />
