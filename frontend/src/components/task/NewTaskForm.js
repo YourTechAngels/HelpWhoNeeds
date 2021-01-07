@@ -86,12 +86,12 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
 
     const createItem = (data, start, end) => {
         const backendTaskTypes = {
-            "shop": "GRO",
-            "pharm": "PHA",
-            "dog": "DOG",
-            "hospital": "HOS",
-            "phone": "CHAT",
-            "any": "ANY", }
+            "Shopping": "GRO",
+            "Pharmacy": "PHA",
+            "Dog Walking": "DOG",
+            "Hospital": "HOS",
+            "Chat": "CHAT",
+            "Other": "ANY", }
         let item = {}
         item["task_type"] = backendTaskTypes[taskType]
         item["description"] = data.taskDetails || null
