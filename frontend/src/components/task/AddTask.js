@@ -21,10 +21,10 @@ const useStyles =
             largeButton: {
                 border: 5,
                 color: "#FF8E53",
-                padding: "15px 15px",
-                margin: "5px 15px 10px 15px",
+                padding: "15px",
+                margin: "15px",
                 height: 100,
-                width: 100,
+                width: 110,
             },
             largeIcon:
                 { fontSize: 60 },
@@ -43,21 +43,40 @@ const useStyles =
 function AddTask() {
 
     const [taskList, setTaskList] = useState(initialTasks())
-    let nextId = 11
+    const [nextId, setNextId] = useState(11)
 
     const addTask = newTask => {
         newTask.id = nextId
-        nextId++
-        newTask.status = "open"
+        setNextId(nextId + 1)
+        newTask.status = "Open"
         const updatedTaskList = [...taskList, newTask]
         setTaskList(updatedTaskList)
-        console.log("New task added: ", newTask)
-        console.log("Tasks list :", updatedTaskList)
-        console.log("Tasks list :", taskList)
+    }
+
+    const updateTask = (updTask, id) => {
+        if (id < 0) { // should not happen but in case
+            console.log("ERROR: task to be updated does not exists")
+            return }
+        if (updTask.end > new Date())  // expected to be so but just in case
+            updTask.status = "Open"
+        updTask.id = id
+        let updatedTaskList = taskList.filter(task => task.id !== id)
+        updatedTaskList = [...updatedTaskList, updTask]
+        setTaskList(updatedTaskList)
+    }
+
+    const taskDefaults = {
+        taskDetails: "",
+        startDate: null,
+        startTime: "08:00",
+        endDate: null,
+        endTime: "20:00"
     }
 
     const [showAddDialog, setShowAddDialog] = React.useState(false);
     const [taskType, setTaskType] = React.useState(null);
+    const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
+    const [updTaskId, setUpdTaskId] = React.useState(-1)
 
     const handleClickOpen = (e, taskType) => {
         setTaskType(taskType)
@@ -67,47 +86,80 @@ function AddTask() {
     const handleClose = () => {
         setTaskType(null)
         setShowAddDialog(false)
+        setNewTaskDefaults(taskDefaults)
+        setUpdTaskId(-1)
+    }
+
+    const handleCopy = id => {
+        const taskToCopy = taskList.find(task => task.id === id)
+        setTaskType(taskToCopy.taskType)
+        setNewTaskDefaults({
+            ...newTaskDefaults,
+            taskDetails: taskToCopy.taskDetails,
+        })
+        setShowAddDialog(true)
+    }
+
+    const handleEdit = id => {
+        const taskToEdit = taskList.find(task => task.id === id)
+        setTaskType(taskToEdit.taskType)
+        setNewTaskDefaults({
+            ...newTaskDefaults,
+            taskDetails: taskToEdit.taskDetails,
+        })
+        setUpdTaskId(id)
+        setShowAddDialog(true)
+    }
+
+    const handleRemove = id => {
+        const copyTaskList = [...taskList]
+        let taskToCancel = copyTaskList.find(task => task.id === id)
+        taskToCancel.status = "Cancelled"
+        setTaskList(copyTaskList)
     }
 
     const classes = useStyles();
 
-    return <div>
+    return <div className="centered">
 
-        <h1 className="text">I need help with...</h1>
+        <h1>I need help with...</h1>
 
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "shop")}>
+            onClick={(e) => handleClickOpen(e, "Shopping")}>
             <ShoppingCartIcon className={classes.largeIcon} />
             Shopping
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "pharm")}>
+            onClick={(e) => handleClickOpen(e, "Pharmacy")}>
             <LocalPharmacyIcon className={classes.largeIcon} />
             Pharmacy
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "dog")}>
+            onClick={(e) => handleClickOpen(e, "Dog Walking")}>
             <PetsIcon className={classes.largeIcon} />
             Dog Walk
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "hospital")}>
+            onClick={(e) => handleClickOpen(e, "Hospital")}>
             <LocalHospitalIcon className={classes.largeIcon} />
             Hospital
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "phone")}>
+            onClick={(e) => handleClickOpen(e, "Chat")}>
             <PhoneIcon className={classes.largeIcon} />
-            Phone Call
+            Chat
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "any")}>
+            onClick={(e) => handleClickOpen(e, "Other")}>
             <LiveHelpIcon className={classes.largeIcon} />
             Other
         </Button>
 
-        <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType} addTask={addTask} />
-        <TasksTable taskList={taskList} />
+        <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
+            addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask} updTaskId={updTaskId} />
+
+        <TasksTable taskList={taskList} handleCopy={handleCopy}
+            handleEdit={handleEdit} handleRemove={handleRemove} />
     </div>
 }
 
