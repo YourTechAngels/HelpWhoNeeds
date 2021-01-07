@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 // import Checkbox from '@material-ui/core/Checkbox'
@@ -15,15 +15,22 @@ const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
 })
 
-function FormDialog({ open, handleClose, taskType, addTask }) {
+function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updateTask, updTaskId }) {
+
+    console.log("Task update dialog with id: ", updTaskId)
+
+    useEffect(() => {
+        reset(defaultValues);
+    }, [defaultValues])
+
 
     const dialogHeader = {
-        "shop": "Shopping",
-        "pharm": "Collect medicine",
-        "dog": "Dog Walking",
-        "hospital": "Visit Hospital Appointment",
-        "phone": "Friendly Chat",
-        "any": "I need help with ...",
+        "Shopping": "Shopping",
+        "Pharmacy": "Collect medicine",
+        "Dog Walking": "Dog Walking",
+        "Hospital": "Visit Hospital Appointment",
+        "Chat": "Friendly Chat",
+        "Other": "I need help with ...",
     }
 
     const getFormDate = date => {
@@ -33,17 +40,9 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
         return year + '-' + month + '-' + day
     }
 
-    const defaultValues = {
-        taskDetails: "",
-        startDate: null,
-        startTime: "08:00",
-        endDate: null,
-        endTime: "20:00"
-    };
-
-
-    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors, control } =
+    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors } =
         useForm({ defaultValues: defaultValues, mode: "all" })
+
 
     const resetAndClose = () => {
         reset()
@@ -53,11 +52,17 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
     const onSubmit = (data) => {
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
-
-        addTask({
-            taskType: taskType, taskDetails: data.taskDetails,
-            start: start, end: end
-        })
+        console.log("onSubmit: updTaskId: ", updTaskId)
+        if (updTaskId < 0) 
+            addTask({
+                taskType: taskType, taskDetails: data.taskDetails,
+                start: start, end: end
+            })
+        else
+            updateTask({
+                taskType: taskType, taskDetails: data.taskDetails,
+                start: start, end: end
+            }, updTaskId)
         resetAndClose()
     };
 
@@ -80,7 +85,7 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
         const minEnd = start.setMinutes(start.getMinutes() + minDuration)
         if (minEnd > end)
             return "Not enough time to complete your task. " +
-                "Consider at least " + minDuration + " minutes." 
+                "Consider at least " + minDuration + " minutes."
     }
 
     const handleStartDate = e => {
@@ -113,8 +118,8 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                         < TextField
                             id="taskDetails"
                             name="taskDetails"
-                            inputRef={register({ required: ["shop", "any"].includes(taskType) })}
-                            autoFocus
+                            inputRef={register({ required: ["Shopping", "Other"].includes(taskType) })}
+                            // autoFocus
                             label="Details"
                             multiline
                             rows={5}
