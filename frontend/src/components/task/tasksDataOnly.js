@@ -57,14 +57,14 @@ export default function intialTasks() {
         end: new Date().addHours(40),
         status: "Open",
     },
-    {
-        id: 7,
-        taskType: "Shopping",
-        taskDetails: "I need help with Shopping from Tesco",
-        start: new Date().addHours(70),
-        end: new Date().addHours(74),
-        status: "Assigned",
-    },
+    // {
+    //     id: 7,
+    //     taskType: "Shopping",
+    //     taskDetails: "I need help with Shopping from Tesco",
+    //     start: new Date().addHours(70),
+    //     end: new Date().addHours(74),
+    //     status: "Assigned",
+    // },
     {
         id: 8,
         taskType: "Other",

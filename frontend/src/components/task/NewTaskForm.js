@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 
 function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updateTask, updTaskId }) {
 
-    console.log("Defaults got: ", defaultValues)
+    console.log("Task update dialog with id: ", updTaskId)
 
     useEffect(() => {
         reset(defaultValues);
@@ -52,8 +52,8 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
     const onSubmit = (data) => {
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
-
-        if (updTaskId < 0)
+        console.log("onSubmit: updTaskId: ", updTaskId)
+        if (updTaskId < 0) 
             addTask({
                 taskType: taskType, taskDetails: data.taskDetails,
                 start: start, end: end

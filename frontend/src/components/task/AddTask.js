@@ -43,11 +43,11 @@ const useStyles =
 function AddTask() {
 
     const [taskList, setTaskList] = useState(initialTasks())
-    let nextId = 11
+    const [nextId, setNextId] = useState(11)
 
     const addTask = newTask => {
         newTask.id = nextId
-        nextId++
+        setNextId(nextId + 1)
         newTask.status = "Open"
         const updatedTaskList = [...taskList, newTask]
         setTaskList(updatedTaskList)
@@ -58,8 +58,8 @@ function AddTask() {
             console.log("ERROR: task to be updated does not exists")
             return }
         if (updTask.end > new Date())  // expected to be so but just in case
-            { updTask.status = "Open"
-                console.log("Hello")}
+            updTask.status = "Open"
+        updTask.id = id
         let updatedTaskList = taskList.filter(task => task.id !== id)
         updatedTaskList = [...updatedTaskList, updTask]
         setTaskList(updatedTaskList)
@@ -92,27 +92,21 @@ function AddTask() {
 
     const handleCopy = id => {
         const taskToCopy = taskList.find(task => task.id === id)
-        console.log("Found task: ", taskToCopy)
         setTaskType(taskToCopy.taskType)
-        console.log("New task Type: ", taskType)
         setNewTaskDefaults({
             ...newTaskDefaults,
             taskDetails: taskToCopy.taskDetails,
         })
-        console.log("New task Defaults: ", taskToCopy.taskDetails)
         setShowAddDialog(true)
     }
 
     const handleEdit = id => {
         const taskToEdit = taskList.find(task => task.id === id)
-        console.log("Found task: ", taskToEdit)
         setTaskType(taskToEdit.taskType)
-        console.log("The task Type: ", taskToEdit.taskType)
         setNewTaskDefaults({
             ...newTaskDefaults,
             taskDetails: taskToEdit.taskDetails,
         })
-        console.log("Edited task Defaults: ", newTaskDefaults)
         setUpdTaskId(id)
         setShowAddDialog(true)
     }
@@ -120,9 +114,7 @@ function AddTask() {
     const handleRemove = id => {
         const copyTaskList = [...taskList]
         let taskToCancel = copyTaskList.find(task => task.id === id)
-        console.log("Found task to remove: ", taskToCancel)
         taskToCancel.status = "Cancelled"
-        console.log("Status should be changed: ", taskToCancel)
         setTaskList(copyTaskList)
     }
 
@@ -164,7 +156,7 @@ function AddTask() {
         </Button>
 
         <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
-            addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask} id={updTaskId} />
+            addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask} updTaskId={updTaskId} />
 
         <TasksTable taskList={taskList} handleCopy={handleCopy}
             handleEdit={handleEdit} handleRemove={handleRemove} />

@@ -56,17 +56,17 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                     //   maxWidth: 0
                 }
             },
-            MUIDataTablePagination: {
-                root: {
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center"
-                },
-                caption: {
-                    fontSize: 16
-                }
-            }
+            // MUIDataTablePagination: {
+            //     root: {
+            //         display: "flex",
+            //         justifyContent: "center",
+            //         alignItems: "center",
+            //         textAlign: "center"
+            //     },
+            //     caption: {
+            //         fontSize: 16
+            //     }
+            // }
         },
     });
 
@@ -108,7 +108,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             },
         },
         {
-            name: "taskDetails",
+            name: "taskDetails",    
             label: " Task Detail",
 
             options: {
