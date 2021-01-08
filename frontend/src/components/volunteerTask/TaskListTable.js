@@ -56,10 +56,11 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
         {
             name: "status",
             label: "State",
+            viewColumns: false,
             options: {
                 display: false,
-                filter: true,
-                sort: true,
+                filter: false,
+                sort: false,
                 width: "10%",
         },   
         },   
@@ -256,7 +257,7 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
     return (
         <MuiThemeProvider theme={theme}>
             <MUIDataTable
-                title=  {isMyTask === false ? "Search New Tasks" : "My Assigned Tasks"}
+                title=  {isMyTask === false ? "Search New Tasks" : "My Pending Tasks"}
                 data={taskListData}
                 columns={taskCols}
                 options={options}

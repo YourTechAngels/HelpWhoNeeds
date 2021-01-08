@@ -21,7 +21,7 @@ export default function VolunteerSearchTask() {
     const classes = useStyles();
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
-        (task) => task.volId !== null && task.volId === 1
+        (task) => task.volId !== null && task.status !== "Completed" && task.volId === 1
     );
     const unassignedTasks = pendingTasks.filter((task) => task.volId === null);
 
@@ -123,7 +123,7 @@ export default function VolunteerSearchTask() {
             isOpen: true,
             title: "Have you completed this task?",
             subTitle:
-                "Once completed it will be marked as done and cannot return the task.",
+                "Once completed it will be marked as done will be removed from your list.",
             onConfirm: () => {
                 setConfirmDialog({
                     ...confirmDialog,
