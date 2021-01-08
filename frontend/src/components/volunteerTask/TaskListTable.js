@@ -11,6 +11,8 @@ const options = {
     selectableRowsOnClick: true,
     rowsPerPage: "5",
     rowsPerPageOptions: [5,10, 15, 20],
+    print: false,
+    download: false,
 };
 
 const theme = createMuiTheme({
@@ -32,7 +34,7 @@ const theme = createMuiTheme({
     },
 });
 
-export default function TaskListTable({ taskListData, isMyTask, handleAccept, handleView,handleReject }) {
+export default function TaskListTable({ taskListData, isMyTask, handleAccept, handleView,handleReject,handleComplete }) {
 
     const taskCols = [
         {
@@ -51,6 +53,16 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
             viewColumns: false,
             options: { display: false, sort: false, filter: false },
         },
+        {
+            name: "status",
+            label: "State",
+            options: {
+                display: false,
+                filter: true,
+                sort: true,
+                width: "10%",
+        },   
+        },   
         {
             name: "firstName",
             label: "First name",
@@ -81,7 +93,7 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                     //console.log(tableMeta.rowData, '......');
                     return (
                         <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
+                            {tableMeta.rowData[3]} {tableMeta.rowData[4]}
                         </div>
                     );
                 },
@@ -124,13 +136,15 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                 viewColumns: false,
                 display: isMyTask === true ? true : false,
                 customBodyRender: (value, tableMeta) => {
+                    const volId =tableMeta.rowData[1];
+                    const status =tableMeta.rowData[2];
                     return (
                         <Button
                             variant="contained"
                             color="secondary"
                             size="small"
-                            disabled={tableMeta.rowData[1] === null ? true : false}
-                            style={{ marginLeft: 2 }}
+                            disabled={(volId === null ||status === "Completed") ? true : false}                                 
+                            style={{ marginLeft: 2 ,minWidth: "70px",}}
                             className="button"
                             value={value}
                             onClick={() => {
@@ -138,6 +152,36 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                         }}
                         >
                             Reject
+                        </Button>
+                    );
+                },
+            },
+        },
+        {
+            name: "id",
+            label: "Confirm",
+
+            options: {
+                sort: false,
+                filter: false,
+                viewColumns: false,
+                display: isMyTask === true ? true : false,
+                customBodyRender: (value, tableMeta) => {
+                    const status = tableMeta.rowData[2];
+                    return (
+                        <Button
+                            variant="contained"
+                            color="default"
+                            size="small"                           
+                            disabled={ status !== "Completed" ? false : true}                            
+                            style={{ marginLeft: 2 ,  minWidth: "90px",}}
+                            className="button"
+                            value={value}
+                            onClick={() => {
+                            handleComplete(value);
+                        }}
+                        >
+                        { status !== "Completed" ? "COMPLETE":"DONE"}
                         </Button>
                     );
                 },
@@ -153,16 +197,17 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                 viewColumns: false,
                 display: isMyTask ? false : true,
                 customBodyRender: (value, tableMeta) => {
+                    const volId = tableMeta.rowData[1];
                     return (
                         <Button
                             variant="contained"
                             color="primary"
                             size="small"
-                            disabled={tableMeta.rowData[1] === null ? false : true}
+                            disabled={volId === null ? false : true}
                             style={{
                                 marginLeft: 2,
                                 backgroundColor:
-                                    tableMeta.rowData[1] === null ? "green" : "lightgrey",
+                                volId === null ? "green" : "lightgrey",
                             }}
                             className="button"
                             value={value}

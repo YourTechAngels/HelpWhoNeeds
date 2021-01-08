@@ -70,7 +70,7 @@ export default function VolunteerSearchTask() {
                                             isOpen: false,
                                         });
                                         const returnTask = pendingTasks.map((task) =>
-                                            task.id === taskId ? { ...task, volId: null } : task
+                                            task.id === taskId ? { ...task, volId: null, status:"Open" } : task
                                         );
                                         setPendingTasks(returnTask);
                                         console.log("myTask");
@@ -101,7 +101,7 @@ export default function VolunteerSearchTask() {
                 });
                 
                 const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: 1 } : task
+                    task.id === taskId ? { ...task, volId: 1 ,status:"Assigned" }: task
                 );
                 setPendingTasks(assignTask);
                 console.log("assignTasks");
@@ -118,6 +118,35 @@ export default function VolunteerSearchTask() {
         });
     }
 
+    const handleComplete=(taskId) =>{
+        setConfirmDialog({
+            isOpen: true,
+            title: "Have you completed this task?",
+            subTitle:
+                "Once completed it will be marked as done and cannot return the task.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                
+                const assignTask = pendingTasks.map((task) =>
+                    task.id === taskId ? { ...task, status:"Completed" } : task
+                );
+                setPendingTasks(assignTask);
+                console.log("assignTasks");
+                console.log(unassignedTasks);
+                console.log("myTask");
+                console.log(myTasks);
+                console.log(pendingTasks);
+                setNotifyMsg({
+                    isOpen: true,
+                    message: "Task is successfully matked as done",
+                    type: "success",
+                });
+            },
+        });
+    }
     return (
         <React.Fragment>
             <div style={{ height: "100%" }}>
@@ -125,12 +154,12 @@ export default function VolunteerSearchTask() {
                     <Grid item xs={12} sm={6}>
                         <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>                      
                         <TaskListTable taskListData={myTasks} isMyTask={true} 
-                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} />
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <h4 className={classes.h5}>{"Search New Tasks"}</h4>                       
                         <TaskListTable taskListData={unassignedTasks} isMyTask={false} 
-                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} />
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
                     </Grid>
                 </Grid>
 

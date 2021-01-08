@@ -9,6 +9,7 @@ export default function initialTasks() {
             date: "2020-12-28",
             distance: 1,
             volId: 1,
+            status: "Assigned",
         },
         {
             id: 2,
@@ -19,6 +20,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 1,
             volId: 1,
+            status: "Assigned",
         },
         {
             id: 3,
@@ -28,7 +30,8 @@ export default function initialTasks() {
             taskSummary: "I need help with Shopping from Asda",
             date: "2021-01-28",
             distance: 2.3,
-            volId: null,
+            volId: 1,
+            status: "Completed",
         },
         {
             id: 4,
@@ -39,6 +42,7 @@ export default function initialTasks() {
             date: "2021-03-20",
             distance: 0.8,
             volId: null,
+            status: "Open",
         },
         {
             id: 5,
@@ -49,6 +53,7 @@ export default function initialTasks() {
             date: "2021-01-10",
             distance: 2,
             volId: null,
+            status: "Open",
         },
         {
             id: 6,
@@ -59,6 +64,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 5,
             volId: null,
+            status: "Open",
         },
         {
             id: 7,
@@ -69,6 +75,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 4,
             volId: null,
+            status: "Open",
         },
         {
             id: 8,
@@ -79,6 +86,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 2,
             volId: null,
+            status: "Open",
         },
         {
             id: 9,
@@ -89,6 +97,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
         {
             id: 10,
@@ -99,6 +108,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
         {
             id: 11,
@@ -109,6 +119,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
         {
             id: 12,
@@ -119,6 +130,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
         {
             id: 13,
@@ -129,6 +141,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
         {
             id: 14,
@@ -139,6 +152,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 4,
             volId: null,
+            status: "Open",
         },
         {
             id: 15,
@@ -149,6 +163,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 2,
             volId: null,
+            status: "Open",
         },
         {
             id: 16,
@@ -159,6 +174,7 @@ export default function initialTasks() {
             date: "2021-01-20",
             distance: 3,
             volId: null,
+            status: "Open",
         },
     ];
     return initialTasks;
