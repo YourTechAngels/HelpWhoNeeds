@@ -51,6 +51,75 @@ export default function VolunteerSearchTask() {
         setDialogData(null);
     };
 
+    const handleView =(e, taskId) =>{
+        const selectedTask = pendingTasks.find(
+            (task) => task.id === taskId
+        );
+        console.log(selectedTask);
+        if (selectedTask != null) {
+            handleClickOpen(e, selectedTask);
+        }
+    };
+
+    const handleReject = (taskId) => {
+        setConfirmDialog({
+                                    isOpen: true,
+                                    title: "Are you sure to return your assigned Task?",
+                                    subTitle:
+                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+                                    onConfirm: () => {
+                                        setConfirmDialog({
+                                            ...confirmDialog,
+                                            isOpen: false,
+                                        });
+                                        const returnTask = pendingTasks.map((task) =>
+                                            task.id === taskId ? { ...task, volId: null } : task
+                                        );
+                                        setPendingTasks(returnTask);
+                                        console.log("myTask");
+                                        console.log(myTasks);
+                                        console.log("assignTasks");
+                                        console.log(unassignedTasks);
+                                        console.log(pendingTasks);
+
+                                        setNotifyMsg({
+                                            isOpen: true,
+                                            message: "Task is unssigned from you",
+                                            type: "warning",
+                                        });
+                                    },
+                                });
+    }
+
+  const  handleAccept=(taskId) =>{
+        setConfirmDialog({
+            isOpen: true,
+            title: "Do you agree to accept this task?",
+            subTitle:
+                "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                
+                const assignTask = pendingTasks.map((task) =>
+                    task.id === taskId ? { ...task, volId: 1 } : task
+                );
+                setPendingTasks(assignTask);
+                console.log("assignTasks");
+                console.log(unassignedTasks);
+                console.log("myTask");
+                console.log(myTasks);
+                console.log(pendingTasks);
+                setNotifyMsg({
+                    isOpen: true,
+                    message: "Task is successfully assigned to you.",
+                    type: "success",
+                });
+            },
+        });
+    }
     const myTaskCols = [
         {
             name: "id",
@@ -151,36 +220,8 @@ export default function VolunteerSearchTask() {
                             className="button"
                             value={value}
                             onClick={() => {
-                                setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Are you sure to return your assigned Task?",
-                                    subTitle:
-                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDialog,
-                                            isOpen: false,
-                                        });
-                                        console.log(tableMeta.rowData[1]);
-
-                                        const returnTask = pendingTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: null } : task
-                                        );
-                                        setPendingTasks(returnTask);
-                                        console.log("myTask");
-                                        console.log(myTasks);
-                                        console.log("assignTasks");
-                                        console.log(unassignedTasks);
-                                        console.log(pendingTasks);
-
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is unssigned from you",
-                                            type: "warning",
-                                        });
-                                    },
-                                });
-                            }}
+                                handleReject(value);
+                        }}
                         >
                             Reject
                         </Button>
@@ -208,13 +249,7 @@ export default function VolunteerSearchTask() {
                             }}
                             value={value}
                             onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
+                            handleView(e, value);
                             }}
                         >
                             View
@@ -327,33 +362,8 @@ export default function VolunteerSearchTask() {
                             value={value}
                             onClick={() => {
                                 //console.log(tableMeta.rowData[1]);
-                                setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Do you agree to accept this task?",
-                                    subTitle:
-                                        "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDialog,
-                                            isOpen: false,
-                                        });
-                                        
-                                        const assignTask = pendingTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: 1 } : task
-                                        );
-                                        setPendingTasks(assignTask);
-                                        console.log("assignTasks");
-                                        console.log(unassignedTasks);
-                                        console.log("myTask");
-                                        console.log(myTasks);
-                                        console.log(pendingTasks);
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is successfully assigned to you.",
-                                            type: "success",
-                                        });
-                                    },
-                                });
+                                handleAccept(value);
+                             
                             }}
                         >
                             Accept
@@ -382,13 +392,7 @@ export default function VolunteerSearchTask() {
                             }}
                             value={value}
                             onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
+                            handleView(e, value);
                             }}
                         >
                             View
