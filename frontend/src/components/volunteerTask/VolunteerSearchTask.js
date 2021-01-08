@@ -1,6 +1,4 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import moment from "moment";
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
@@ -10,7 +8,6 @@ import Grid from "@material-ui/core/Grid";
 import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 
-const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -91,7 +88,7 @@ export default function VolunteerSearchTask() {
                                 });
     }
 
-  const  handleAccept=(taskId) =>{
+    const handleAccept=(taskId) =>{
         setConfirmDialog({
             isOpen: true,
             title: "Do you agree to accept this task?",
@@ -120,304 +117,20 @@ export default function VolunteerSearchTask() {
             },
         });
     }
-    const myTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            viewColumns: false,
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
-            },
-        },
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display: true,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? true : false}
-                            style={{ marginLeft: 2 }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                handleReject(value);
-                        }}
-                        >
-                            Reject
-                        </Button>
-                    );
-                },
-            },
-        },
-        {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                            handleView(e, value);
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
-            },
-        },
-    ];
-
-    const unassignedTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
-            },
-        },
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display: true,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? false : true}
-                            style={{
-                                marginLeft: 2,
-                                backgroundColor:
-                                    tableMeta.rowData[1] === null ? "green" : "lightgrey",
-                            }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                //console.log(tableMeta.rowData[1]);
-                                handleAccept(value);
-                             
-                            }}
-                        >
-                            Accept
-                        </Button>
-                    );
-                },
-            },
-        },
-        {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                            handleView(e, value);
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
-            },
-        },
-    ];
 
     return (
         <React.Fragment>
             <div style={{ height: "100%" }}>
                 <Grid id="start-time" container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
-
-                        <TaskListTable taskListData={myTasks} columnFields={myTaskCols} />
+                        <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>                      
+                        <TaskListTable taskListData={myTasks} isMyTask={true} 
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"Search New Tasks"}</h4>
-                        <TaskListTable
-                            taskListData={unassignedTasks}
-                            columnFields={unassignedTaskCols}
-                        />
+                        <h4 className={classes.h5}>{"Search New Tasks"}</h4>                       
+                        <TaskListTable taskListData={unassignedTasks} isMyTask={false} 
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} />
                     </Grid>
                 </Grid>
 
