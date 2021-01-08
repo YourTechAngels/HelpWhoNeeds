@@ -1,6 +1,4 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import moment from "moment";
 import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
@@ -10,7 +8,6 @@ import Grid from "@material-ui/core/Grid";
 import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 
-const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -24,7 +21,7 @@ export default function VolunteerSearchTask() {
     const classes = useStyles();
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
-        (task) => task.volId !== null && task.volId === 1
+        (task) => task.volId !== null && task.status !== "Completed" && task.volId === 1
     );
     const unassignedTasks = pendingTasks.filter((task) => task.volId === null);
 
@@ -51,107 +48,18 @@ export default function VolunteerSearchTask() {
         setDialogData(null);
     };
 
-    const myTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            viewColumns: false,
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
+    const handleView =(e, taskId) =>{
+        const selectedTask = pendingTasks.find(
+            (task) => task.id === taskId
+        );
+        console.log(selectedTask);
+        if (selectedTask != null) {
+            handleClickOpen(e, selectedTask);
+        }
+    };
 
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
-            },
-        },
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display: true,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? true : false}
-                            style={{ marginLeft: 2 }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                setConfirmDialog({
+    const handleReject = (taskId) => {
+        setConfirmDialog({
                                     isOpen: true,
                                     title: "Are you sure to return your assigned Task?",
                                     subTitle:
@@ -161,10 +69,8 @@ export default function VolunteerSearchTask() {
                                             ...confirmDialog,
                                             isOpen: false,
                                         });
-                                        console.log(tableMeta.rowData[1]);
-
                                         const returnTask = pendingTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: null } : task
+                                            task.id === taskId ? { ...task, volId: null, status:"Open" } : task
                                         );
                                         setPendingTasks(returnTask);
                                         console.log("myTask");
@@ -180,240 +86,80 @@ export default function VolunteerSearchTask() {
                                         });
                                     },
                                 });
-                            }}
-                        >
-                            Reject
-                        </Button>
-                    );
-                },
-            },
-        },
-        {
-            name: "id",
-            label: " Task Detail",
+    }
 
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
+    const handleAccept=(taskId) =>{
+        setConfirmDialog({
+            isOpen: true,
+            title: "Do you agree to accept this task?",
+            subTitle:
+                "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                
+                const assignTask = pendingTasks.map((task) =>
+                    task.id === taskId ? { ...task, volId: 1 ,status:"Assigned" }: task
+                );
+                setPendingTasks(assignTask);
+                console.log("assignTasks");
+                console.log(unassignedTasks);
+                console.log("myTask");
+                console.log(myTasks);
+                console.log(pendingTasks);
+                setNotifyMsg({
+                    isOpen: true,
+                    message: "Task is successfully assigned to you.",
+                    type: "success",
+                });
             },
-        },
-    ];
+        });
+    }
 
-    const unassignedTaskCols = [
-        {
-            name: "id",
-            label: "ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
+    const handleComplete=(taskId) =>{
+        setConfirmDialog({
+            isOpen: true,
+            title: "Have you completed this task?",
+            subTitle:
+                "Once completed it will be marked as done will be removed from your list.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                
+                const assignTask = pendingTasks.map((task) =>
+                    task.id === taskId ? { ...task, status:"Completed" } : task
+                );
+                setPendingTasks(assignTask);
+                console.log("assignTasks");
+                console.log(unassignedTasks);
+                console.log("myTask");
+                console.log(myTasks);
+                console.log(pendingTasks);
+                setNotifyMsg({
+                    isOpen: true,
+                    message: "Task is successfully matked as done",
+                    type: "success",
+                });
             },
-        },
-        {
-            name: "volId",
-            label: "volunteer ID",
-            options: { display: false, sort: false, filter: false },
-        },
-        {
-            name: "firstName",
-            label: "First name",
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
-            },
-        },
-        {
-            name: "taskType",
-            label: "Task",
-
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "date",
-            label: "Start Date",
-            options: {
-                filter: true,
-                sort: true,
-                customBodyRender: (value) =>
-                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
-            },
-        },
-        {
-            name: "distance",
-            label: "Distance",
-            options: {
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "id",
-            label: "Action",
-
-            options: {
-                sort: false,
-                filter: false,
-                viewColumns: false,
-                display: true,
-                customBodyRender: (value, tableMeta) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            disabled={tableMeta.rowData[1] === null ? false : true}
-                            style={{
-                                marginLeft: 2,
-                                backgroundColor:
-                                    tableMeta.rowData[1] === null ? "green" : "lightgrey",
-                            }}
-                            className="button"
-                            value={value}
-                            onClick={() => {
-                                //console.log(tableMeta.rowData[1]);
-                                setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Do you agree to accept this task?",
-                                    subTitle:
-                                        "Once accepted it will be assigned to you.To return the task you need to go to your task list and reject it.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDialog,
-                                            isOpen: false,
-                                        });
-                                        
-                                        const assignTask = pendingTasks.map((task) =>
-                                            task.id === value ? { ...task, volId: 1 } : task
-                                        );
-                                        setPendingTasks(assignTask);
-                                        console.log("assignTasks");
-                                        console.log(unassignedTasks);
-                                        console.log("myTask");
-                                        console.log(myTasks);
-                                        console.log(pendingTasks);
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is successfully assigned to you.",
-                                            type: "success",
-                                        });
-                                    },
-                                });
-                            }}
-                        >
-                            Accept
-                        </Button>
-                    );
-                },
-            },
-        },
-        {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                                const selectedTask = pendingTasks.find(
-                                    (task) => task.id === value
-                                );
-                                console.log(selectedTask);
-                                if (selectedTask != null) {
-                                    handleClickOpen(e, selectedTask);
-                                }
-                            }}
-                        >
-                            View
-                        </Button>
-                    );
-                },
-            },
-        },
-    ];
-
+        });
+    }
     return (
         <React.Fragment>
             <div style={{ height: "100%" }}>
                 <Grid id="start-time" container spacing={2}>
                     <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
-
-                        <TaskListTable taskListData={myTasks} columnFields={myTaskCols} />
+                        <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>                      
+                        <TaskListTable taskListData={myTasks} isMyTask={true} 
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"Search New Tasks"}</h4>
-                        <TaskListTable
-                            taskListData={unassignedTasks}
-                            columnFields={unassignedTaskCols}
-                        />
+                        <h4 className={classes.h5}>{"Search New Tasks"}</h4>                       
+                        <TaskListTable taskListData={unassignedTasks} isMyTask={false} 
+                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
                     </Grid>
                 </Grid>
 
