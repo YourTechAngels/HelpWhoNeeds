@@ -141,7 +141,7 @@ export default function VolunteerSearchTask() {
                 console.log(pendingTasks);
                 setNotifyMsg({
                     isOpen: true,
-                    message: "Task is successfully matked as done",
+                    message: "Task is successfully marked as completed",
                     type: "success",
                 });
             },
