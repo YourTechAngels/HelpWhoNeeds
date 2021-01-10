@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 // import Checkbox from '@material-ui/core/Checkbox'
@@ -8,22 +8,33 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
+import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
+    root: {
+        padding: "8px 0px 8px 0px"
+    }
 })
 
-function FormDialog({ open, handleClose, taskType, addTask }) {
+function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updateTask, updTaskId }) {
+
+    console.log("Task update dialog with id: ", updTaskId)
+
+    useEffect(() => {
+        reset(defaultValues);
+    }, [defaultValues])
+
 
     const dialogHeader = {
-        "shop": "Shopping",
-        "pharm": "Collect medicine",
-        "dog": "Dog Walking",
-        "hospital": "Visit Hospital Appointment",
-        "phone": "Friendly Chat",
-        "any": "I need help with ...",
+        "Shopping": "Shopping",
+        "Pharmacy": "Collect medicine",
+        "Dog Walking": "Dog Walking",
+        "Hospital": "Visit Hospital Appointment",
+        "Chat": "Friendly Chat",
+        "Other": "I need help with ...",
     }
 
     const getFormDate = date => {
@@ -33,17 +44,9 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
         return year + '-' + month + '-' + day
     }
 
-    const defaultValues = {
-        taskDetails: "",
-        startDate: null,
-        startTime: "08:00",
-        endDate: null,
-        endTime: "20:00"
-    };
-
-
-    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors, control } =
+    const { register, handleSubmit, reset, errors, watch, setValue, clearErrors } =
         useForm({ defaultValues: defaultValues, mode: "all" })
+
 
     const resetAndClose = () => {
         reset()
@@ -53,11 +56,25 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
     const onSubmit = (data) => {
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
+        const item = createItem(data, start, end)
+        axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
+            console.log(error.request); console.log(error.config)})
 
         addTask({
             taskType: taskType, taskDetails: data.taskDetails,
             start: start, end: end
         })
+        console.log("onSubmit: updTaskId: ", updTaskId)
+        if (updTaskId < 0) 
+            addTask({
+                taskType: taskType, taskDetails: data.taskDetails,
+                start: start, end: end
+            })
+        else
+            updateTask({
+                taskType: taskType, taskDetails: data.taskDetails,
+                start: start, end: end
+            }, updTaskId)
         resetAndClose()
     };
 
@@ -66,6 +83,42 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
     // TODO Call through DB
     // Minimum time needed to perform a task *in minutes*
     const minDuration = 30
+
+    const createItem = (data, start, end) => {
+        const backendTaskTypes = {
+            "Shopping": "GRO",
+            "Pharmacy": "PHA",
+            "Dog Walking": "DOG",
+            "Hospital": "HOS",
+            "Chat": "CHAT",
+            "Other": "ANY", }
+        let item = {}
+        item["task_type"] = backendTaskTypes[taskType]
+        item["description"] = data.taskDetails || null
+        item["dbs_needed"] = data.dbsReq
+        item["start_time"] = start
+        item["end_time"] = end
+        console.log("item created: ", item)
+        return item
+    }
+
+    // const onSubmit = (data) => {
+    //     console.log("SUBMITTED: ", data)
+    //     // setSubmittedData(data)
+    //     const startHours = getHours(data.startTime)
+    //     const startMins = getMinutes(data.startTime)
+    //     const endHours = getHours(data.endTime)
+    //     const endMins = getMinutes(data.endTime)
+    //     data.startDate = setMinutes(setHours(data.startDate, startHours), startMins)
+    //     data.endDate = setMinutes(setHours(data.endDate, endHours), endMins)
+
+    //     const item = createItem(data)
+    //     axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
+    //         console.log(error.request); console.log(error.config)})
+    //     addTask({tasType: taskType, taskDetails: data.taskDetails,
+    //             startTime: data.startDate, endTime: data.endTime, dbsReq: false})
+    //     handleClose()
+    // };
 
     const validateTimes = () => {
         const start = new Date(watchAll.startDate + "T" + watchAll.startTime)
@@ -80,7 +133,7 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
         const minEnd = start.setMinutes(start.getMinutes() + minDuration)
         if (minEnd > end)
             return "Not enough time to complete your task. " +
-                "Consider at least " + minDuration + " minutes." 
+                "Consider at least " + minDuration + " minutes."
     }
 
     const handleStartDate = e => {
@@ -113,8 +166,8 @@ function FormDialog({ open, handleClose, taskType, addTask }) {
                         < TextField
                             id="taskDetails"
                             name="taskDetails"
-                            inputRef={register({ required: ["shop", "any"].includes(taskType) })}
-                            autoFocus
+                            inputRef={register({ required: ["Shopping", "Other"].includes(taskType) })}
+                            // autoFocus
                             label="Details"
                             multiline
                             rows={5}

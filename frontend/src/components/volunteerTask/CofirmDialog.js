@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ConfirmDailog = (props) => {
+const ConfirmDialog = (props) => {
     const classes = useStyles();
     const { confirmDialog, setConfirmDialog } = props;
 
@@ -39,7 +39,6 @@ const ConfirmDailog = (props) => {
             </DialogContent>
             <DialogActions className={classes.dailogAction}>
                 <Button variant="contained"
-                    // color="secondary"
                     size="small"
                     style={{ minWidth: '90px' }}
                     onClick={confirmDialog.onConfirm}
@@ -47,10 +46,9 @@ const ConfirmDailog = (props) => {
                     OK
         </Button>
                 <Button variant="contained"
-                    // color="primary"
                     size="small"
                     style={{ minWidth: '90px' }}
-                    onClick={() => setConfirmDialog({ ...ConfirmDailog, isOpen: false })}
+                    onClick={() => setConfirmDialog({ ...ConfirmDialog, isOpen: false })}
                 >
                     Cancel
         </Button>
@@ -60,4 +58,4 @@ const ConfirmDailog = (props) => {
 }
 
 
-export default ConfirmDailog;
+export default ConfirmDialog;
