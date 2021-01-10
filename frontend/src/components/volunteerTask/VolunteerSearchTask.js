@@ -7,7 +7,8 @@ import ConfirmDialog from "./CofirmDialog";
 import Grid from "@material-ui/core/Grid";
 import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
-
+import Button from "@material-ui/core/Button";
+import Hidden from "@material-ui/core/Hidden";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -21,10 +22,13 @@ export default function VolunteerSearchTask() {
     const classes = useStyles();
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
-        (task) => task.volId !== null && task.status !== "Completed" && task.volId === 1
+        (task) =>
+            task.volId !== null && task.status !== "Completed" && task.volId === 1
     );
     const unassignedTasks = pendingTasks.filter((task) => task.volId === null);
 
+    const [hideMyTask, setHideMyTask] = useState(false);
+    const [hideNewTask, setHideNewTask] = useState(false);
     const [showDialog, setShowDialog] = React.useState(false);
     const [dialogData, setDialogData] = React.useState(null);
     const [notifyMsg, setNotifyMsg] = useState({
@@ -48,10 +52,8 @@ export default function VolunteerSearchTask() {
         setDialogData(null);
     };
 
-    const handleView =(e, taskId) =>{
-        const selectedTask = pendingTasks.find(
-            (task) => task.id === taskId
-        );
+    const handleView = (e, taskId) => {
+        const selectedTask = pendingTasks.find((task) => task.id === taskId);
         console.log(selectedTask);
         if (selectedTask != null) {
             handleClickOpen(e, selectedTask);
@@ -60,35 +62,35 @@ export default function VolunteerSearchTask() {
 
     const handleReject = (taskId) => {
         setConfirmDialog({
-                                    isOpen: true,
-                                    title: "Are you sure to return your assigned Task?",
-                                    subTitle:
-                                        "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
-                                    onConfirm: () => {
-                                        setConfirmDialog({
-                                            ...confirmDialog,
-                                            isOpen: false,
-                                        });
-                                        const returnTask = pendingTasks.map((task) =>
-                                            task.id === taskId ? { ...task, volId: null, status:"Open" } : task
-                                        );
-                                        setPendingTasks(returnTask);
-                                        console.log("myTask");
-                                        console.log(myTasks);
-                                        console.log("assignTasks");
-                                        console.log(unassignedTasks);
-                                        console.log(pendingTasks);
+            isOpen: true,
+            title: "Are you sure to return your assigned Task?",
+            subTitle:
+                "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                const returnTask = pendingTasks.map((task) =>
+                    task.id === taskId ? { ...task, volId: null, status: "Open" } : task
+                );
+                setPendingTasks(returnTask);
+                console.log("myTask");
+                console.log(myTasks);
+                console.log("assignTasks");
+                console.log(unassignedTasks);
+                console.log(pendingTasks);
 
-                                        setNotifyMsg({
-                                            isOpen: true,
-                                            message: "Task is unssigned from you",
-                                            type: "warning",
-                                        });
-                                    },
-                                });
-    }
+                setNotifyMsg({
+                    isOpen: true,
+                    message: "Task is unssigned from you",
+                    type: "warning",
+                });
+            },
+        });
+    };
 
-    const handleAccept=(taskId) =>{
+    const handleAccept = (taskId) => {
         setConfirmDialog({
             isOpen: true,
             title: "Do you agree to accept this task?",
@@ -99,9 +101,9 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
-                
+
                 const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: 1 ,status:"Assigned" }: task
+                    task.id === taskId ? { ...task, volId: 1, status: "Assigned" } : task
                 );
                 setPendingTasks(assignTask);
                 console.log("assignTasks");
@@ -116,9 +118,9 @@ export default function VolunteerSearchTask() {
                 });
             },
         });
-    }
+    };
 
-    const handleComplete=(taskId) =>{
+    const handleComplete = (taskId) => {
         setConfirmDialog({
             isOpen: true,
             title: "Have you completed this task?",
@@ -129,9 +131,9 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
-                
+
                 const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, status:"Completed" } : task
+                    task.id === taskId ? { ...task, status: "Completed" } : task
                 );
                 setPendingTasks(assignTask);
                 console.log("assignTasks");
@@ -146,21 +148,67 @@ export default function VolunteerSearchTask() {
                 });
             },
         });
-    }
+    };
+
     return (
         <React.Fragment>
             <div style={{ height: "100%" }}>
-                <Grid id="start-time" container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>                      
-                        <TaskListTable taskListData={myTasks} isMyTask={true} 
-                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <h4 className={classes.h5}>{"Search New Tasks"}</h4>                       
-                        <TaskListTable taskListData={unassignedTasks} isMyTask={false} 
-                        handleAccept={handleAccept} handleReject={handleReject} handleView={handleView} handleComplete= {handleComplete}  />
-                    </Grid>
+                <Grid id="tasks" container spacing={2} direction="row" justify="center">
+                    {!hideMyTask && (
+                        <Grid className="my-tasks" item xs={12} sm={6} align="right">
+                            <Hidden smUp>
+                                <Button
+                                    variant="contained"
+                                    color="default"
+                                    size="small"
+                                    onClick={() => {
+                                        setHideMyTask(true);
+                                        setHideNewTask(false);
+                                    }}
+                                >
+                                    Search New Tasks
+                </Button>{" "}
+                            </Hidden>
+
+                            <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
+                            <TaskListTable
+                                taskListData={myTasks}
+                                isMyTask={true}
+                                handleAccept={handleAccept}
+                                handleReject={handleReject}
+                                handleView={handleView}
+                                handleComplete={handleComplete}
+                            />
+                        </Grid>
+                    )}
+
+                    {!hideNewTask && (
+                        <Grid className="new-tasks" item xs={12} sm={6} align="right">
+                            <Hidden smUp>
+                                {" "}
+                                <Button
+                                    variant="contained"
+                                    color="default"
+                                    size="small"
+                                    onClick={() => {
+                                        setHideNewTask(true);
+                                        setHideMyTask(false);
+                                    }}
+                                >
+                                    View My Tasks
+                </Button>
+                            </Hidden>
+                            <h4 className={classes.h5}>{"Search New Tasks"}</h4>
+                            <TaskListTable
+                                taskListData={unassignedTasks}
+                                isMyTask={false}
+                                handleAccept={handleAccept}
+                                handleReject={handleReject}
+                                handleView={handleView}
+                                handleComplete={handleComplete}
+                            />
+                        </Grid>
+                    )}
                 </Grid>
 
                 <TaskDialog
