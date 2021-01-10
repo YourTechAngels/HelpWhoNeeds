@@ -44,7 +44,7 @@ const Landing = () => {
                     with a sense of moral and social obligation. 
         </p>
 
-        <p className={classes.pInfo}> If you would like help or need any assistant using our system, please call <strong>0800 123 4567</strong>.</p>
+        <p className={classes.pInfo}> If you would like help or need any assistance using our system, please call <strong>0800 123 4567</strong>.</p>
                 <Button
                     className= {classes.button}
                     variant="outlined"
