@@ -11,6 +11,7 @@ import Contact from "./components/landing/Contact"
 import Footer from "./components/structure/Footer"
 import SignIn from "./components/login/SignIn"
 import SignUp from "./components/login/SignUp"
+import Profile from "./components/login/Profile"
 import ForgotPassword from "./components/login/ForgotPassword"
 import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
@@ -66,7 +67,8 @@ function App() {
                  
                 <Route path="/requestee/tasks">
                     <AddTask />
-                </Route>   
+                </Route>  
+                <PrivateRoute path="/profile" component= {Profile} /> 
                 <PrivateRoute path="/registrationPage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchTask" component= {VolunteerSearchTask} />
                 <PrivateRoute path="/myTask" component= {VolunteerWelcome} />

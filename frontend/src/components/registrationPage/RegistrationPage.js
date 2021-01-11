@@ -43,66 +43,6 @@ const useStyles = {
       console.log(formData)
       }
 
-    const getAddress=(e) => {
-      e.preventDefault();
-      //Get Postcode
-      var number = $('#HouseNumber').val();
-      var postcode = $('#PostCode').val().toUpperCase();;
-      var address_1 = '';
-      var address_2 = '';
-      var town = '';
-      var county = '';
-      var pcode = '';
-      var region = '';
-      var country = '';
-      //Get Address
-      $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + postcode + '&sensor=false&key=[YOUR API KEY IN HERE]', function (data) {
-      
-          // Format/Find Address Fields
-          var address = data.results[0].address_components;
-          // Loop through each of the address components to set the correct address field
-          $.each(address, function () {
-              var address_type = this.types[0];
-              switch (address_type) {
-                  case 'route':
-                      address_1 = number + ' ' + this.long_name;
-                      break;
-                  case 'locality':
-                      address_2 = this.long_name;
-                      break;
-                  case 'postal_town':
-                      town = this.long_name;
-                      break;
-                  case 'administrative_area_level_2':
-                      county = this.long_name;
-                      break;
-                  case 'administrative_area_level_1':
-                      region = this.long_name;
-                      break;
-                  case 'country':
-                      country = this.long_name;
-                      break;
-              }
-          });
-          // Sometimes the county is set to the postal town so set to empty if that is the case
-          if (county === town) {
-              county = '';
-          }
-          // Display the results
-          $('#address_1').text(address_1);
-          $('#address_2').text(address_2);
-          $('#town').text(town);
-          $('#county').text(county);
-          $('#postcode').text(postcode);
-          $('#region').text(region);
-          $('#country').text(country);
-      });
-    }
-    
-    
-
-
-
       const param = useParams();
       const user  = param.user;
                 
