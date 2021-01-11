@@ -2,6 +2,7 @@ from django.db import models
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from accounts.models import Requestee, Volunteer
 
 
 TASK_TYPE_CHOICES = (
@@ -21,7 +22,17 @@ STATUS_CHOICES = (
         ("DN", "Completed"),
 )
 
+
+class TaskType(models.Model):
+    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
+    min_duration = models.IntegerField()
+    DBS_required = models.BooleanField()
+
+
 class Task(models.Model):
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Requestee, on_delete=models.CASCADE)
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, blank=True)
     task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
     description = models.TextField(default='', blank=True)
     dbs_needed = models.BooleanField(default=False)
@@ -42,3 +53,8 @@ class Task(models.Model):
 
     def _str_(self):
         return f"{self.get_type_display()}: {self.description}"
+
+    class Meta:
+        ordering = ['start_time']
+
+
