@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useRef} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from "@material-ui/core/Button";
@@ -15,21 +15,27 @@ const useStyles = {
   },
 };
 
+export default function AddressForm(props) {
 
-  export default function AddressForm(props) {
+    const postcodeRef = useRef()
+    const address1Ref = useRef()
+    const address2Ref = useRef()
+    const cityRef = useRef()
+    const countyRef = useRef()
+    const [county, setCounty] = useState("");
+    const [city, setCity] = useState(""); 
 
-    const initialInputState = { postcode:"", address1:"", address2:"", city:"" , county:""} 
-    
-    const [addressData, setAddressData] = useState({initialInputState})
-
-    const { postcode, address1, address2, city, county } = addressData
-    
-
-    const handleChange= (e) => {
+    const handleClick= (e) => {
       e.preventDefault();
-      setAddressData({...addressData,[e.target.name]: e.target.value});
-      console.log(addressData)
-    }
+      const PostcodesJS = require("postcodes.js");
+      const Postcodes = new PostcodesJS.Callbacks();
+      console.log(postcodeRef.current.value)   
+      Postcodes.lookup(postcodeRef.current.value, function(error, result) {
+      console.log(result);
+      setCounty(result.admin_county)
+      setCity(result.parliamentary_constituency)
+      console.log(county)
+    });}
 
     return (
      
@@ -45,14 +51,11 @@ const useStyles = {
             name="postcode"
             label="Post code"
             variant="outlined"
-            onChange = { handleChange }
-            value= {postcode || ''}
+            inputRef = {postcodeRef}
             style = {useStyles.textFld}
-            autoComplete=" postal-code"/>
-            {/* // InputProps={{endAdornment:*/}
-        
+            autoComplete=" postal-code"/>       
           <Grid item xs={12} sm={6}>            
-            <Button variant="outlined" type='submit' onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
+            <Button variant="outlined" type='submit' onClick={handleClick}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
    
         <Grid item xs={12}>
@@ -60,8 +63,7 @@ const useStyles = {
             required
             id="address1"
             name="address1"
-            onChange = { handleChange }
-            value= {address1 || ''}
+            inputRef = {address1Ref}
             label="Address line 1"
             variant="outlined"
             style = {useStyles.textFld}
@@ -73,9 +75,8 @@ const useStyles = {
             id="address2"
             name="address2"
             label="Address line 2"
+            inputRef = {address2Ref}
             variant="outlined"
-            onChange = { handleChange }
-            value= {address2 || ''}
             style = {useStyles.textFld}
             autoComplete="address-line2"
           />
@@ -86,7 +87,7 @@ const useStyles = {
             id="city"
             name="city"
             label="City"
-            onChange = { handleChange }
+            inputRef = {cityRef}
             value= {city || ''}
             variant="outlined"
             style = {useStyles.textFld}
@@ -97,8 +98,8 @@ const useStyles = {
           <TextField
            id="county" 
            name="county"  
+           inputRef = {countyRef}
            variant="outlined" 
-           onChange = { handleChange }
            value= {county || ''}
            style = {useStyles.textFld}
            label="County" />

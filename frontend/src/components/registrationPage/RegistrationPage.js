@@ -7,8 +7,9 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
-// import AddressForm from './AddressForm';
+import AddressForm from './AddressForm';
 import { ButtonGroup } from '@material-ui/core';
+
 
 
 const useStyles = {
@@ -44,7 +45,12 @@ const useStyles = {
       const param = useParams();
       const user  = param.user;
       
+<<<<<<< HEAD
       return (
+=======
+                
+   return (
+>>>>>>> 8d85dca4910c5ad34f73de58274f6c083b4f9104
      
    <React.Fragment>
      
@@ -102,6 +108,7 @@ const useStyles = {
         </Grid>
         
         <Grid item xs={12} sm={12}> 
+<<<<<<< HEAD
         <ButtonGroup>     
          <TextField
             required
@@ -168,6 +175,10 @@ const useStyles = {
            style = {useStyles.textFld}
            label="County" />
         </Grid>
+=======
+          <AddressForm />
+        </Grid> 
+>>>>>>> 8d85dca4910c5ad34f73de58274f6c083b4f9104
                
         <Grid item xs={12}>
          
@@ -178,9 +189,10 @@ const useStyles = {
           /> }  
 
         </Grid>
+        </Grid>
+        <Grid container justify="center" spacing={3} direction="row">
         <Grid item xs={12} align="center">
-
-        <Button variant = "contained"  className = "btn btn-primary w-100" type="submit">Submit</Button>
+        <Button variant = "contained" className = "btn btn-primary w-100" type="submit">Submit</Button>
         </Grid>
         </Grid>
         </form>
