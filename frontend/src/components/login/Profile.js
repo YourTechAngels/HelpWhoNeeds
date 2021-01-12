@@ -257,7 +257,7 @@ export default function Profile(props) {
                             <Button disabled = {loading} variant="contained" style={useStyles.button} className="btn btn-primary w-100" type="submit">Update</Button>
                         </Grid>
                         <Grid item xs={12} >
-                            <Button variant="contained" style={useStyles.button} className="btn btn-primary w-100" component={Link} to="/" >Cancel</Button>
+                            <Button variant="contained" style={useStyles.button} className="btn btn-primary w-100" component={Link} to="/HelpWhoNeeds/" >Cancel</Button>
                         </Grid>
                     </ButtonGroup>
                 </Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
     AppBar,
@@ -49,8 +49,10 @@ const AppNavBar = () => {
     useEffect(() => {
         setAuth(currentUser === null ? false : true);
     }, [currentUser]);
-  
-     console.log(currentUser );
+
+    if(currentUser) {
+     console.log(currentUser.email);
+     console.log(currentUser.uid); }
      console.log("auth" + auth);
     const open = Boolean(anchorEl);
     const history = useHistory();

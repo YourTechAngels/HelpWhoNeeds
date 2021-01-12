@@ -7,8 +7,9 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
-// import AddressForm from './AddressForm';
+import AddressForm from './AddressForm';
 import { ButtonGroup } from '@material-ui/core';
+
 
 
 const useStyles = {
@@ -45,6 +46,7 @@ const useStyles = {
 
       const param = useParams();
       const user  = param.user;
+      
                 
    return (
      
@@ -104,70 +106,8 @@ const useStyles = {
         </Grid>
         
         <Grid item xs={12} sm={12}> 
-        <ButtonGroup>     
-         <TextField
-            required
-            id="postcode"
-            name="postcode"
-            label="Post code"
-            variant="outlined"
-            onChange = { handleChange }
-            value= {postcode || ''}
-            style = {useStyles.textFld}
-            autoComplete=" postal-code"/>
-        
-          <Grid item xs={12} sm={6}>       
-          <Button variant="outlined" className = "btn btn-secondary w-100" onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
-        </Grid></ButtonGroup>  </Grid> 
-   
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="address1"
-            name="address1"
-            onChange = { handleChange }
-            value= {address1 || ''}
-            label="Address line 1"
-            variant="outlined"
-            style = {useStyles.textFld}
-            autoComplete="address-line1"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            variant="outlined"
-            onChange = { handleChange }
-            value= {address2 || ''}
-            style = {useStyles.textFld}
-            autoComplete="address-line2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            onChange = { handleChange }
-            value= {city || ''}
-            variant="outlined"
-            style = {useStyles.textFld}
-            autoComplete="address-level2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-           id="county" 
-           name="county"  
-           variant="outlined" 
-           onChange = { handleChange }
-           value= {county || ''}
-           style = {useStyles.textFld}
-           label="County" />
-        </Grid>
+          <AddressForm />
+        </Grid> 
                
         <Grid item xs={12}>
          
@@ -178,9 +118,10 @@ const useStyles = {
           /> }  
 
         </Grid>
+        </Grid>
+        <Grid container justify="center" spacing={3} direction="row">
         <Grid item xs={12} align="center">
-
-        <Button variant = "contained"  className = "btn btn-primary w-100" type="submit">Submit</Button>
+        <Button variant = "contained" className = "btn btn-primary w-100" type="submit">Submit</Button>
         </Grid>
         </Grid>
         </form>

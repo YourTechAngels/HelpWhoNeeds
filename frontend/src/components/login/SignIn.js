@@ -55,11 +55,14 @@ export default function SignIn() {
     const user = param.userType;
     const emailRef = useRef()
     const passwordRef = useRef()
-    const { login } = useAuth()
+    const { login, currentUser } = useAuth()
     const [error, setError] = useState("")
+    const [email,setEmail] = useState("")
+    const [uID, setUID] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
     const nameLabel = (`${user}`==='AssistanceRequester'? 'Requestee': `${user}`)
+    
   
     async function handleSubmit(e) {
       e.preventDefault()
@@ -79,6 +82,12 @@ export default function SignIn() {
       }
   
       setLoading(false)
+      if(currentUser) {
+        setEmail(currentUser.email);
+        setUID(currentUser.ui)
+        console.log(email);
+        console.log(uID); }
+
     }
 
     return (
