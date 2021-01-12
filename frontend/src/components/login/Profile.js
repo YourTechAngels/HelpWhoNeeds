@@ -223,7 +223,6 @@ export default function Profile(props) {
                             type = "password"
                             label="Password"
                             inputRef={passwordRef}
-                            // onChange={handleChange}
                             variant="outlined"
                             style={useStyles.textFld}
                      />
@@ -235,7 +234,6 @@ export default function Profile(props) {
                             type = "password"
                             label="Confirm Password"
                             inputRef={passwordConfirmRef}
-                            // onChange={handleChange}
                             variant="outlined"
                             style={useStyles.textFld}
                      />
