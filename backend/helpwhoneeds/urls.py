@@ -20,6 +20,8 @@ from tasks import views
 
 router = routers.DefaultRouter()
 router.register(r'tasks', views.TaskView, 'task')
+router.register(r'newtasks', views.NewTaskView, 'newtask')
+router.register(r'newVoltasks', views.NewVolTaskView, 'voltask')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
