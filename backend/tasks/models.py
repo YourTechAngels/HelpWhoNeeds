@@ -32,7 +32,7 @@ class TaskType(models.Model):
 class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     owner = models.ForeignKey(Requestee, on_delete=models.CASCADE)
-    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, blank=True)
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, blank=True, null=True)
     task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
     description = models.TextField(default='', blank=True)
     dbs_needed = models.BooleanField(default=False)
