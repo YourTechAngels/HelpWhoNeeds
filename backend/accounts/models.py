@@ -1,19 +1,25 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
-    is_requester = models.BooleanField(default=False)
-    is_volunteer = models.BooleanField(default=True)
-    # email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    USER_TYPE_CHOICES = (
+        (1, 'requestee'),
+        (2, 'volunteer'),
+        (3, 'admin'), )
 
+    # TODO change default
+    user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES, default=3)
 
-# class Requester(User):
-#     class Meta:
-#         proxy = True
-#         verbose_name = 'Requester'
-#
-#
-# class Volunteer(User):
-#     class Meta:
-#         proxy = True
-#         verbose_name = 'Volunteer'
+def _str_(self):
+        return f"{self.first_name}"
+
+class Volunteer(User):
+    dbs = models.BooleanField(default=False)
+
+class Requestee(User):
+    # TODO delete class if not needed
+    pass
+

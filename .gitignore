@@ -28,5 +28,5 @@ frontend/debug.log
 # django
 backend/venv/
 **/.idea
-**/__pycache__
+**/__pycache__/
 **/db.sqlite3
