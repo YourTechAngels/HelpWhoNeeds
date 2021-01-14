@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
     AppBar,
@@ -43,14 +43,16 @@ function HomeIcon(props) {
 const AppNavBar = () => {
     const classes = useStyles();
     const { currentUser, signout } = useAuth();
-    const [auth, setAuth] = React.useState(false); // React.useState(currentUser === null ? false : true); //change to true
+    const [auth, setAuth] = React.useState(false); 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     useEffect(() => {
         setAuth(currentUser === null ? false : true);
     }, [currentUser]);
-  
-     console.log(currentUser );
+
+    if(currentUser) {
+     console.log(currentUser.email);
+     console.log(currentUser.uid); }
      console.log("auth" + auth);
     const open = Boolean(anchorEl);
     const history = useHistory();
@@ -78,6 +80,11 @@ const AppNavBar = () => {
         }
 
         console.log("auth" + auth);
+        handleClose();
+    }
+     
+    const handleClick=() => {
+        history.push("/profile")
         handleClose();
     }
 
@@ -138,8 +145,7 @@ const AppNavBar = () => {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClick}>Profile</MenuItem>
                                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                             </Menu>
                         </div>

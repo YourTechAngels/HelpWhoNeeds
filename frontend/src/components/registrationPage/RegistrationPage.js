@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useRef} from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useParams } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
@@ -7,7 +7,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
-// import AddressForm from './AddressForm';
+import axios from "axios"
 import { ButtonGroup } from '@material-ui/core';
 
 
@@ -19,32 +19,49 @@ const useStyles = {
     marginLeft: 10,
     marginTop: '10px',
   },
-  
   };
 
   export default function RegistrationPage(props) {
 
-    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"", 
-                                postcode:"", address1:"", address2:"", city:"" , county:"" }     
+    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"",postcode:"", address1:"", address2:"", county:""}     
     const [formData, setFormData] = useState({initialInputState})
-    const { firstName , lastName, DateOfBirth, postcode, address1, address2, city, county } = formData
+    const { firstName , lastName, DateOfBirth, postcode, address1, address2} = formData
     const [message, setMessage] = useState("")
+    const postcodeRef = useRef()
+    const [county, setCounty] = useState("");
+    const [city, setCity] = useState("");  
+    const param = useParams();
+    const user  = param.user;
+       
     
-
     const handleChange= (e) => {
       setFormData({...formData,[e.target.name]: e.target.value});
+      console.log(e.target)
     }
 
-    const handleSubmit = (evt) => {
-        evt.preventDefault();
-        setMessage("Data has been saved successfully")
-         
+    const handleSubmit =(evt) => {
+      evt.preventDefault();
+      setMessage("Data has been saved successfully")
       console.log(formData)
-      }
-      const param = useParams();
-      const user  = param.user;
+      axios.post("http://localhost:8000/api/users/", formData,county,city).catch(function (error) {
+      console.log(error.request); console.log(error.config)})
+
+    }
+
+    const handleClick= (e) => {
+      e.preventDefault();
+      const PostcodesJS = require("postcodes.js");
+      const Postcodes = new PostcodesJS.Callbacks();
+      Postcodes.lookup(postcodeRef.current.value, function(error, result) {
+      console.log(result);
+      setCounty (result.admin_county)
+      setCity(result.parliamentary_constituency)
+      console.log(county)
+      console.log(city)
       
-      return (
+    });}
+                
+   return (
      
    <React.Fragment>
      
@@ -101,7 +118,8 @@ const useStyles = {
           />
         </Grid>
         
-        <Grid item xs={12} sm={12}> 
+        <Grid item xs={12} sm={6}> 
+        
         <ButtonGroup>     
          <TextField
             required
@@ -110,14 +128,12 @@ const useStyles = {
             label="Post code"
             variant="outlined"
             onChange = { handleChange }
-            value= {postcode || ''}
+            inputRef = {postcodeRef}
+            value= {postcode ||''}
             style = {useStyles.textFld}
-            autoComplete=" postal-code"/>
-        
+            autoComplete=" postal-code"/>       
           <Grid item xs={12} sm={6}>            
-
-            <Button variant="outlined" className = "btn btn-primary w-100"  onClick={() => { console.log('Find Address button clicked') }}>Find Address</Button>
-
+            <Button variant="outlined" type='submit' onClick={handleClick}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
    
         <Grid item xs={12}>
@@ -125,9 +141,9 @@ const useStyles = {
             required
             id="address1"
             name="address1"
-            onChange = { handleChange }
-            value= {address1 || ''}
             label="Address line 1"
+            onChange = { handleChange }
+            value = {address1 || ''}
             variant="outlined"
             style = {useStyles.textFld}
             autoComplete="address-line1"
@@ -138,9 +154,9 @@ const useStyles = {
             id="address2"
             name="address2"
             label="Address line 2"
-            variant="outlined"
             onChange = { handleChange }
-            value= {address2 || ''}
+            variant="outlined"
+            value = {address2 || ''}
             style = {useStyles.textFld}
             autoComplete="address-line2"
           />
@@ -162,12 +178,13 @@ const useStyles = {
           <TextField
            id="county" 
            name="county"  
-           variant="outlined" 
            onChange = { handleChange }
+           variant="outlined" 
            value= {county || ''}
            style = {useStyles.textFld}
            label="County" />
         </Grid>
+        </Grid> 
                
         <Grid item xs={12}>
          
@@ -178,9 +195,9 @@ const useStyles = {
           /> }  
 
         </Grid>
+        <Grid container justify="center" spacing={3} direction="row">
         <Grid item xs={12} align="center">
-
-        <Button variant = "contained"  className = "btn btn-primary w-100" type="submit">Submit</Button>
+        <Button variant = "contained" className = "btn btn-primary w-100" type="submit">Submit</Button>
         </Grid>
         </Grid>
         </form>
