@@ -36,12 +36,11 @@ const useStyles = {
     const { currentUser } = useAuth()
     const uID = currentUser.uid
     const email = currentUser.email
-    const [DBSchecked, setDBSChecked] = useState(""); 
+    const [DBSchecked, setDBSChecked] = useState("False"); 
        
     
     const handleChange= (e) => {
       setFormData({...formData,[e.target.name]: e.target.value});
-      console.log(e.target)
     }
 
       
@@ -49,24 +48,15 @@ const useStyles = {
       // to find out if it's checked or not; returns true or false
       setDBSChecked(e.target.checked) 
       console.log(DBSchecked)
-      console.log(e.target)
-      // console.log(e.target.checked)
-      
-      // // to get the checked value
-      // const checkedValue = e.target.value;
-      
-      // // to get the checked name
-      // const checkedName = e.target.name;
     }
-    async function  handleSubmit(evt) {
+    async function handleSubmit(evt) {
       evt.preventDefault();
-      setMessage("Data has been saved successfully")
       console.log(formData.firstName)
-      console.log(city+' '+county+' '+uID+' '+DBSchecked);
+      console.log(city+' '+county+' '+uID+' '+DBSchecked, +email);
       axios.post("http://localhost:8000/api/accounts/", {
         first_name: `${formData.firstName}`,
         last_name: `${formData.lastName}`,
-        auth_key: `${uID}`,        
+        uid: `${uID}`,        
         email: `${email}`,
         date_of_birth: `${formData.dateOfBirth}`,
         phone_number: `${formData.phoneNumber}`,
@@ -77,10 +67,11 @@ const useStyles = {
         county: `${county}`,
         DBS_required: `${DBSchecked}`,
         user_type: `${user}`,
-        username: 'Sai'
+        
         })
         .then(function (response) {
           console.log(response);
+          setMessage("Data has been saved successfully")
         })
         .catch(function (error) {
           console.log(error);
@@ -88,8 +79,7 @@ const useStyles = {
  
     }
    
-
-    const handleClick= (e) => {
+      const handleClick= (e) => {
       e.preventDefault();
       const PostcodesJS = require("postcodes.js");
       const Postcodes = new PostcodesJS.Callbacks();

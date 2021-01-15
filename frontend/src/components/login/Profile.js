@@ -241,7 +241,7 @@ export default function Profile(props) {
                   
                     <Grid item xs={12}>
 
-                        {(`${user}` === 'Volunteer') &&
+                        {(`${user}` === 'volunteer') &&
                             <FormControlLabel
                                 control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" value="yes" />}
                                 label="I have a valid DBS certificate"
@@ -255,7 +255,7 @@ export default function Profile(props) {
                             <Button disabled = {loading} variant="contained" style={useStyles.button} className="btn btn-primary w-100" type="submit">Update</Button>
                         </Grid>
                         <Grid item xs={12} >
-                            <Button variant="contained" style={useStyles.button} className="btn btn-primary w-100" component={Link} to="/HelpWhoNeeds/" >Cancel</Button>
+                            <Button variant="contained" style={useStyles.button} className="btn btn-primary w-100" component={Link} to="/helpwhoneeds/" >Cancel</Button>
                         </Grid>
                     </ButtonGroup>
                 </Grid>

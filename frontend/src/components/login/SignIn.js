@@ -72,11 +72,11 @@ export default function SignIn() {
         setLoading(true)
         await login(emailRef.current.value, passwordRef.current.value)
 
-        if (`${user}` === 'Volunteer')
-        { history.push("/myTask");
+        if (`${user}` === 'volunteer')
+        { history.push("/mytask");
           console.log(process.env.PUBLIC_URL) }
         else {
-            history.push("/addTask") }
+            history.push("/addtask") }
         }
      catch {
         setError("Failed to log in")
@@ -148,7 +148,7 @@ export default function SignIn() {
                     <Grid container>
                         <Grid item xs>
                             <div  className="w-100 text-center mt-2">
-                            New User ?<Link to={`/signUp/${user}`} variant="body2">
+                            New User ?<Link to={`/signup/${user}`} variant="body2">
                                 Sign Up </Link> 
                             </div>
                         </Grid>
