@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import { ButtonGroup } from '@material-ui/core';
+import { useAuth } from "../../contexts/AuthContext"
 
 
 const useStyles = {
@@ -23,15 +24,19 @@ const useStyles = {
 
   export default function RegistrationPage(props) {
 
-    const initialInputState = { firstName : "" , lastName:"" , DateOfBirth:"",postcode:"", address1:"", address2:"", county:""}     
+    const initialInputState = { firstName : "" , lastName:"" , dateOfBirth:"",phoneNumber:"", postcode:"", address1:"", address2:"", dbs_required:""}     
     const [formData, setFormData] = useState({initialInputState})
-    const { firstName , lastName, DateOfBirth, postcode, address1, address2} = formData
+    const { firstName , lastName, dateOfBirth, phoneNumber, postcode, address1, address2} = formData
     const [message, setMessage] = useState("")
     const postcodeRef = useRef()
     const [county, setCounty] = useState("");
     const [city, setCity] = useState("");  
     const param = useParams();
     const user  = param.user;
+    const { currentUser } = useAuth()
+    const uID = currentUser.uid
+    const email = currentUser.email
+    const [DBSchecked, setDBSChecked] = useState(""); 
        
     
     const handleChange= (e) => {
@@ -39,14 +44,50 @@ const useStyles = {
       console.log(e.target)
     }
 
-    const handleSubmit =(evt) => {
+      
+    const handleChecked = (e) => {
+      // to find out if it's checked or not; returns true or false
+      setDBSChecked(e.target.checked) 
+      console.log(DBSchecked)
+      console.log(e.target)
+      // console.log(e.target.checked)
+      
+      // // to get the checked value
+      // const checkedValue = e.target.value;
+      
+      // // to get the checked name
+      // const checkedName = e.target.name;
+    }
+    async function  handleSubmit(evt) {
       evt.preventDefault();
       setMessage("Data has been saved successfully")
-      console.log(formData)
-      axios.post("http://localhost:8000/api/users/", formData,county,city).catch(function (error) {
-      console.log(error.request); console.log(error.config)})
-
+      console.log(formData.firstName)
+      console.log(city+' '+county+' '+uID+' '+DBSchecked);
+      axios.post("http://localhost:8000/api/accounts/", {
+        first_name: `${formData.firstName}`,
+        last_name: `${formData.lastName}`,
+        auth_key: `${uID}`,        
+        email: `${email}`,
+        date_of_birth: `${formData.dateOfBirth}`,
+        phone_number: `${formData.phoneNumber}`,
+        post_code: `${formData.postcode}`,
+        address_line_1: `${formData.address1}`,
+        address_line_2: `${formData.address2}`,
+        city: `${city}`,        
+        county: `${county}`,
+        DBS_required: `${DBSchecked}`,
+        user_type: `${user}`,
+        username: 'Sai'
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+ 
     }
+   
 
     const handleClick= (e) => {
       e.preventDefault();
@@ -56,7 +97,7 @@ const useStyles = {
       console.log(result);
       setCounty (result.admin_county)
       setCity(result.parliamentary_constituency)
-      console.log(county)
+      console.log(result.admin_county)
       console.log(city)
       
     });}
@@ -104,15 +145,28 @@ const useStyles = {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="DateOfBirth"
-            name="DateOfBirth"
+            id="dateOfBirth"
+            name="dateOfBirth"
             type= "date"
             InputLabelProps={{
               shrink: true,
             }}
             label="Date Of Birth"
             onChange = { handleChange }
-            value= {DateOfBirth || ''}
+            value= {dateOfBirth || ''}
+            variant="outlined"
+            style = {useStyles.textFld}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id="phoneNumber"
+            name="phoneNumber"
+            type= "number"
+            label="Phone Number"
+            onChange = { handleChange }
+            value= {phoneNumber || ''}
             variant="outlined"
             style = {useStyles.textFld}
           />
@@ -167,7 +221,7 @@ const useStyles = {
             id="city"
             name="city"
             label="City"
-            onChange = { handleChange }
+            // onChange = { handleChange }
             value= {city || ''}
             variant="outlined"
             style = {useStyles.textFld}
@@ -178,22 +232,21 @@ const useStyles = {
           <TextField
            id="county" 
            name="county"  
-           onChange = { handleChange }
+          //  onChange = { handleChange }
            variant="outlined" 
            value= {county || ''}
            style = {useStyles.textFld}
            label="County" />
         </Grid>
-        </Grid> 
-               
+                       
         <Grid item xs={12}>
          
          { (`${user}` === 'Volunteer') && 
           <FormControlLabel
-            control={<Checkbox color="secondary" style = {{ marginLeft: '5px' }} name="dbsCheck" value="yes" />}
+            control={<Checkbox color="secondary" style = {{ marginLeft: '5px' }} name="DBSchecked" value={DBSchecked} onChange = {handleChecked}/>}
             label="I have a valid DBS certificate"
           /> }  
-
+        </Grid> 
         </Grid>
         <Grid container justify="center" spacing={3} direction="row">
         <Grid item xs={12} align="center">
