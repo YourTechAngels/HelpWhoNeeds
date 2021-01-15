@@ -9,7 +9,6 @@ const SPACED_DATE_FORMAT = "DD MMM YYYY";
 const options = {
     filterType: "multiselect",
     selectableRows: "none", //can also be single/mulitple
-    //selectableRowsOnClick: true,
     rowsPerPage: 5,
     rowsPerPageOptions: [5,10, 15, 20],
     print: false,

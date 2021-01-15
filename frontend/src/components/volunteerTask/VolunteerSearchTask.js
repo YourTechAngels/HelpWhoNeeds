@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
@@ -18,60 +18,52 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-let allTasks = null;
-const getAllTasks = axios
-   // .get("http://localhost:8000/api/tasks")
-    .get("http://localhost:8000/api/newVoltasks/",{
-        params:{
-            volId: 4
-        }
-    })
-    .then(
-        /*(response) => {
-            allTasks = response.data
-            console.log(allTasks)
-        }*/
-        (response) => {
-            const data = response.data;
-            console.log(data);
-            allTasks = data.map(task =>
-                {
-                    return ({
-                        id: `${task.id}`,
-                        lastName: `${task.owner.last_name}`,
-                        firstName: `${task.owner.first_name}`,
-                        taskType: `${task.task_type}`,
-                        taskDetails: `${task.description}`,
-                        start: `${task.start_time}`,
-                        end: (`${task.end_time}`),
-                        distance: `${task.id}`,
-                       // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
-                        volId: (`${task.volunteer?.id}`), //need to find a way to assign null
-                        status: `${task.status}`
-                        
-                    });
-                })
-            //console.log("tasks");
-            //console.log(allTasks);
-        }
-    )
-    .catch(function (error) {
-        console.log("error")
-        console.log(error.request);
-        console.log(error.config);
-        console.log(error.message);
-
-    });
+export default function VolunteerSearchTask() {
+    const [pendingTasks, setPendingTasks] = useState([]) 
+    useEffect(() => {
+            axios
+                .get("http://localhost:8000/api/tasks")
+                .then(
+                    (response) => {
+                        const data = response.data;
+                        console.log(data);
+                        const allTask= data.map(task => {
+                            return ({
+                                id: `${task.id}`,
+                                lastName: `${task.owner.last_name}`,
+                                firstName: `${task.owner.first_name}`,
+                                taskType: `${task.task_type}`,
+                                taskDetails: `${task.description}`,
+                                start: `${task.start_time}`,
+                                end: (`${task.end_time}`),
+                                distance: `${task.id}`,
+                                // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
+                                volId: (`${task.volunteer?.id}`), //need to find a way to assign null
+                                status: `${task.status}`
+    
+                            });
+                        })
+                        setPendingTasks(allTask)
+                        console.log("tasks");
+                        console.log(allTask);
+                    }
+                )
+                .catch(function (error) {
+                    console.log("error")
+                    console.log(error.request);
+                    console.log(error.config);
+                    console.log(error.message);
+    
+                });
+            }, []);
+            
+        
     
 
-//const intialTasks = allTasks;
-export default function VolunteerSearchTask() {
-    console.log("database json")
-    console.log(allTasks);
+    console.log("database json out ")
+    console.log(pendingTasks);
     const classes = useStyles();
-    const [pendingTasks, setPendingTasks] = useState(allTasks)//useState(intialTasks); 
-    console.log("pendingTask")
-    console.log(pendingTasks)   
+   
     const myTasks = pendingTasks ? pendingTasks.filter(
         (task) =>
             //task.volId !== undefined && task.status === "AS" && task.volId === 3
