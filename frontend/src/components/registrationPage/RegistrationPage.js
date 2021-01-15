@@ -232,7 +232,7 @@ const useStyles = {
                        
         <Grid item xs={12}>
          
-         { (`${user}` === 'Volunteer') && 
+         { (`${user}` === 'volunteer') && 
           <FormControlLabel
             control={<Checkbox color="secondary" style = {{ marginLeft: '5px' }} name="DBSchecked" value={DBSchecked} onChange = {handleChecked}/>}
             label="I have a valid DBS certificate"
