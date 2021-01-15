@@ -11,6 +11,7 @@ import Contact from "./components/landing/Contact"
 import Footer from "./components/structure/Footer"
 import SignIn from "./components/login/SignIn"
 import SignUp from "./components/login/SignUp"
+import Profile from "./components/login/Profile"
 import ForgotPassword from "./components/login/ForgotPassword"
 import RegistrationPage  from "./components/registrationPage/RegistrationPage"
 import VolunteerSearchTask from "./components/volunteerTask/VolunteerSearchTask"
@@ -30,7 +31,7 @@ function App() {
                 <AppNavBar />
                 <div className="AppContent">
                 <Switch>
-                <Route exact path="/">
+                <Route exact path="/helpwhoneeds/">
                     <Landing />
                 </Route>
                 <Route path="/about">
@@ -42,10 +43,10 @@ function App() {
                 <Route path="/login/:userType">
                     <SignIn />
                 </Route>  
-                <Route path="/signUp/:user">
+                <Route path="/signup/:user">
                     <SignUp />
                 </Route>  
-                <Route path="/forgotPassword/:user">
+                <Route path="/forgotpassword/:user">
                     <ForgotPassword />
                 </Route>    
                 <Route path="/legal">
@@ -66,11 +67,12 @@ function App() {
                  
                 <Route path="/requestee/tasks">
                     <AddTask />
-                </Route>   
-                <PrivateRoute path="/registrationPage/:user" component= {RegistrationPage} />
-                <PrivateRoute path="/searchTask" component= {VolunteerSearchTask} />
-                <PrivateRoute path="/myTask" component= {VolunteerWelcome} />
-                <PrivateRoute path="/addTask" component= {AddTask} />
+                </Route>  
+                <PrivateRoute path="/profile" component= {Profile} /> 
+                <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
+                <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
+                <PrivateRoute path="/mytask" component= {VolunteerWelcome} />
+                <PrivateRoute path="/addtask" component= {AddTask} />
                 </Switch>
                 </div>
                 <Footer />
