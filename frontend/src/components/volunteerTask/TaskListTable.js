@@ -1,3 +1,4 @@
+import React from "react"
 import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -8,34 +9,47 @@ const SPACED_DATE_FORMAT = "DD MMM YYYY";
 const options = {
     filterType: "multiselect",
     selectableRows: "none", //can also be single/mulitple
-    selectableRowsOnClick: true,
-    rowsPerPage: "5",
+    //selectableRowsOnClick: true,
+    rowsPerPage: 5,
     rowsPerPageOptions: [5,10, 15, 20],
     print: false,
     download: false,
+    sortOrder: {
+        name: "start",
+        direction: "desc",
+    },
 };
 
-const theme = createMuiTheme({
-    overrides: {
-        MuiDataTable: {
-            root: {
-                width: "min-content",
-            },
-            responsiveScroll: {
-                maxHeight: "none", //not working
-            },
-        },
-        MUIDataTableBodyCell: {
-            root: {
-                backgroundColor: "#FFF",
-                width: "90px",
-            },
-        },
-    },
-});
+
 
 export default function TaskListTable({ taskListData, isMyTask, handleAccept, handleView,handleReject,handleComplete }) {
 
+    const theme = ()=> createMuiTheme({
+       overrides: {
+            MuiDataTable: {
+                root: {
+                    width: "min-content",
+                },
+                responsiveScroll: {
+                    maxHeight: "none", //not working
+                },
+            },
+            MUIDataTableToolbar: {
+                root: {
+                    background: '#AAF',
+                }
+            },
+            MUIDataTableBodyCell: {
+                root: {
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    position: "relative",
+                    backgroundColor: "#FFF",
+                                },
+            },
+        },       
+    });
     const taskCols = [
         {
             name: "id",
@@ -110,23 +124,62 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
             },
         },
         {
-            name: "date",
+            name: "start",
+            label: "Start Time",
+            options: {
+                filter: false,
+                sort: true,
+                width: "10%",
+
+                customBodyRender: (value) =>
+                    moment(value).format('lll'),
+            },
+        },
+        {
+            name: "end",
+            label: "End Time",
+            options: {
+                filter: false,
+                sort: true,
+                width: "10%",
+                customBodyRender: (value) =>
+                    moment(value).format('lll'),
+            },
+        },
+        {
+            name: "start",
             label: "Start Date",
+            viewColumns: false,
             options: {
                 filter: true,
                 sort: true,
+                display: false,
+                customBodyRender: (value) =>
+                    moment(new Date(value)).format(SPACED_DATE_FORMAT),
+            },
+        },
+        {
+            name: "end",
+            label: "End Date",
+            viewColumns: false,
+            options: {
+                filter: true,
+                sort: true,
+                display: false,
                 customBodyRender: (value) =>
                     moment(new Date(value)).format(SPACED_DATE_FORMAT),
             },
         },
         {
             name: "distance",
-            label: "Distance",
+            label: "Dist",
             options: {
                 filter: true,
                 sort: true,
+                width: "5%",
             },
         },
+        
         {
             name: "id",
             label: "Action",
@@ -255,9 +308,9 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
     ];
 
     return (
-        <MuiThemeProvider theme={theme}>
+        <MuiThemeProvider theme={theme()}>
             <MUIDataTable
-                title=  {isMyTask === false ? "Search New Tasks" : "My Pending Tasks"}
+                title=  {isMyTask === false ? "New Tasks" : "My Pending Tasks"}
                 data={taskListData}
                 columns={taskCols}
                 options={options}

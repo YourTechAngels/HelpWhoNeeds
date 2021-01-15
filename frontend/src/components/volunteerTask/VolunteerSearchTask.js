@@ -9,6 +9,7 @@ import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
+//import axios from "axios"
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -17,8 +18,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+/*const intialTasks1 = axios
+.get('http://localhost:8000/api/tasks').catch(function (error) {
+             console.log(error.request); console.log(error.config)})*/
+
 const intialTasks = initialTasks();
 export default function VolunteerSearchTask() {
+   // console.log(intialTasks1);
     const classes = useStyles();
     const [pendingTasks, setPendingTasks] = useState(intialTasks);
     const myTasks = pendingTasks.filter(
