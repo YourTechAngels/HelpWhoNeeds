@@ -2,7 +2,7 @@ from django.db import models
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from accounts.models import Requestee, Volunteer
+from accounts.models import User
 
 
 TASK_TYPE_CHOICES = (
@@ -30,17 +30,16 @@ class TaskType(models.Model):
 
 
 class Task(models.Model):
-    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Requestee, on_delete=models.CASCADE)
-    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, blank=True, null=True)
-    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
+    task_type_id = models.ForeignKey(TaskType, on_delete=models.CASCADE)
+    owner_id = models.ForeignKey(User, on_delete=models.CASCADE,related_name='owner_id')
+    volunteer_id = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True,related_name='volunteer_id')
     description = models.TextField(default='', blank=True)
     dbs_needed = models.BooleanField(default=False)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     min_duration = models.DurationField(default=timedelta(minutes=30))
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="OP")
-
+  
     def clean(self):
         if self.task_type in ["ANY", "GRO"] and not self.description:
             raise ValidationError(f"Description is mandatory when '{self.task_type}' task type selected")
