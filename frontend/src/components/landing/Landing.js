@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { makeStyles, Button } from "@material-ui/core"
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -23,10 +23,10 @@ const Landing = () => {
     const { currentUser } = useAuth();
     const history = useHistory();
     const handleClick =() => { 
-        (currentUser ? history.push("/myTask") : history.push("/login/Volunteer") )           
+        (currentUser ? history.push("/myTask") : history.push("/login/volunteer") )           
     } 
     const handleUserClick =() => {
-         (currentUser ? history.push("/addTask") : history.push("/login/AssistanceRequester") )
+         (currentUser ? history.push("/addTask") : history.push("/login/requestee") )
     }     
       
    

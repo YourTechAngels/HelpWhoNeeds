@@ -122,7 +122,7 @@ export default function ForgotPassword() {
               <Grid container>          
                         <Grid item xs>
                             <div  className="w-100 text-center mt-3">
-                            New User ?<Link to={`/signUp/${user}`} variant="body2">
+                            New User ?<Link to={`/signup/${user}`} variant="body2">
                                 Sign Up </Link> 
                             </div>
                         </Grid>

@@ -64,7 +64,7 @@ const About = () =>  {
                </Link> </Grid>
 
                <Grid container item xs={2} spacing={3}>
-               <Link to={`/termCondition`} variant="body2">
+               <Link to={`/termcondition`} variant="body2">
                   Terms Conditions
                </Link> </Grid>
 

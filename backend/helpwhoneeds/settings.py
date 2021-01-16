@@ -38,7 +38,6 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'corsheaders',
 	'rest_framework',
-	# 'cuser',
 	'tasks',
 	'accounts',
 ]
@@ -62,6 +61,7 @@ TEMPLATES = [
 		'DIRS': [os.path.join(BASE_DIR, 'templates')]
 		,
 		'APP_DIRS': True,
+
 		'OPTIONS': {
 			'context_processors': [
 				'django.template.context_processors.debug',
