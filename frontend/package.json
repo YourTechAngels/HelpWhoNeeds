@@ -1,5 +1,5 @@
 {
-  "homepage": "https://yourtechangels.github.io/HelpWhoNeeds/",
+  "homepage": "https://yourtechangels.github.io/helpwhoneeds/",
   "name": "yta-helpwhoneeds-frontend",
   "version": "0.1.0",
   "private": true,
@@ -17,6 +17,7 @@
     "date-fns": "^2.0.0-beta.5",
     "dotenv": "^8.2.0",
     "firebase": "^8.2.1",
+    "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "mui-datatables": "^3.7.3",
     "postcodes.js": "^1.0.2",

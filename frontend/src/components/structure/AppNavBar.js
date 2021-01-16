@@ -107,7 +107,7 @@ const AppNavBar = () => {
                    <HomeIcon
                         color="action"
                         fontSize="large"
-                        onClick={(event) => (window.location.href = "/HelpWhoNeeds/")}
+                        onClick={(event) => (window.location.href = "/helpwhoneeds/")}
                     />
                     <Typography variant="h6" className={classes.title}>
                         Help Who Needs

@@ -31,7 +31,7 @@ function App() {
                 <AppNavBar />
                 <div className="AppContent">
                 <Switch>
-                <Route exact path="/HelpWhoNeeds/">
+                <Route exact path="/helpwhoneeds/">
                     <Landing />
                 </Route>
                 <Route path="/about">
@@ -43,10 +43,10 @@ function App() {
                 <Route path="/login/:userType">
                     <SignIn />
                 </Route>  
-                <Route path="/signUp/:user">
+                <Route path="/signup/:user">
                     <SignUp />
                 </Route>  
-                <Route path="/forgotPassword/:user">
+                <Route path="/forgotpassword/:user">
                     <ForgotPassword />
                 </Route>    
                 <Route path="/legal">
@@ -69,10 +69,10 @@ function App() {
                     <AddTask />
                 </Route>  
                 <PrivateRoute path="/profile" component= {Profile} /> 
-                <PrivateRoute path="/registrationPage/:user" component= {RegistrationPage} />
-                <PrivateRoute path="/searchTask" component= {VolunteerSearchTask} />
-                <PrivateRoute path="/myTask" component= {VolunteerWelcome} />
-                <PrivateRoute path="/addTask" component= {AddTask} />
+                <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
+                <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
+                <PrivateRoute path="/mytask" component= {VolunteerWelcome} />
+                <PrivateRoute path="/addtask" component= {AddTask} />
                 </Switch>
                 </div>
                 <Footer />
