@@ -9,8 +9,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import { ButtonGroup } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
-
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 } , 
@@ -24,9 +26,9 @@ const useStyles = {
 
   export default function RegistrationPage(props) {
 
-    const initialInputState = { firstName : "" , lastName:"" , dateOfBirth:"",phoneNumber:"", postcode:"", address1:"", address2:"", dbs_required:""}     
+    const initialInputState = { firstName : "" , lastName:"" , dateOfBirth:"",phoneNumber:"", postcode:""}     
     const [formData, setFormData] = useState({initialInputState})
-    const { firstName , lastName, dateOfBirth, phoneNumber, postcode, address1, address2} = formData
+    const { firstName , lastName, dateOfBirth, phoneNumber, postcode} = formData
     const [message, setMessage] = useState("")
     const postcodeRef = useRef()
     const [county, setCounty] = useState("");
@@ -37,15 +39,17 @@ const useStyles = {
     const uID = currentUser.uid
     const email = currentUser.email
     const [DBSchecked, setDBSChecked] = useState("False"); 
-       
-    
+    const [address1, setAddress1] = useState("")
+    const [address2, setAddress2] = useState("")
+    const [addressList, setAddressList] = useState("");
+    const [errors, setErrors] = useState("");
+    const [postCodeSearched, setpostCodeSearched] = useState(false);
+        
     const handleChange= (e) => {
       setFormData({...formData,[e.target.name]: e.target.value});
     }
-
-      
+    
     const handleChecked = (e) => {
-      // to find out if it's checked or not; returns true or false
       setDBSChecked(e.target.checked) 
       console.log(DBSchecked)
     }
@@ -61,13 +65,12 @@ const useStyles = {
         date_of_birth: `${formData.dateOfBirth}`,
         phone_number: `${formData.phoneNumber}`,
         post_code: `${formData.postcode}`,
-        address_line_1: `${formData.address1}`,
-        address_line_2: `${formData.address2}`,
+        address_line_1: `${address1}`,
+        address_line_2: `${address2}`,
         city: `${city}`,        
         county: `${county}`,
         DBS_required: `${DBSchecked}`,
-        user_type: `${user}`,
-        
+        user_type: `${user}`,        
         })
         .then(function (response) {
           console.log(response);
@@ -75,26 +78,44 @@ const useStyles = {
         })
         .catch(function (error) {
           console.log(error);
-        });
- 
+        }); 
     }
-   
 
     const handleClick= (e) => {
       e.preventDefault();
-      const PostcodesJS = require("postcodes.js");
-      const Postcodes = new PostcodesJS.Callbacks();
-      Postcodes.lookup(postcodeRef.current.value, function(error, result) {
-      console.log(result);
-      setCounty (result.admin_county)
-      setCity(result.parliamentary_constituency)
-      console.log(result.admin_county)
-      console.log(city)
-      
-    });}
+      const API_KEY = process.env.REACT_APP_POSTCODE_API_KEY
+      axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?${API_KEY}`)
+        .then(function(response){ 
+              const responseData = response.data
+              setAddressList(responseData.addresses)
+              setpostCodeSearched(true)
+              console.log(addressList)
+        })
+        .catch(error => {
+          setErrors('No addresses found at the given post code')
+          console.log(error);
+        })        
+    }    
+    const updateAddress=(e) => {
+      const valueList = [...e.target.selectedOptions].map(opt => opt.value);  
+      if({valueList} !== '') {
+          let addressStore = valueList.toString().split(',')
+          console.log(addressStore)
+          setAddress1(addressStore[0])
+          setAddress2(addressStore[1])
+          setCity(addressStore[5])
+          setCounty(addressStore[6])
+            }
+        else {
+              console.log('null')
+              setAddress1('')
+              setAddress2('')
+              setCity('')
+              setCounty('')
+        }    
+      }
                 
-   return (
-     
+   return (     
    <React.Fragment>
      
       <h2 align="center"> Registration form</h2>
@@ -180,6 +201,27 @@ const useStyles = {
           <Grid item xs={12} sm={6}>            
             <Button variant="outlined" type='submit' onClick={handleClick}>Find Address</Button>
         </Grid></ButtonGroup>  </Grid> 
+
+        <Grid item xs={12} sm={6}>
+         { (postCodeSearched) && (addressList) !== '' &&  
+        <FormControl variant="outlined"  style = {{ width: '100%', height: 40, paddingLeft: 8 }}>
+        <InputLabel  htmlFor="outlined-age-native-simple">Select Addresses</InputLabel>
+        <Select
+          native
+          id="demo-simple-select-outlined"
+          labelId="demo-simple-select-outlined-label"
+          style = {useStyles.textFld}
+          variant ="outlined"
+          label="Select Addresses"
+           onChange={updateAddress}
+        > 
+          {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>) }
+        </Select>
+        </FormControl>}
+         { errors && <Alert severity="error">
+            <AlertTitle>Error: {errors}</AlertTitle>
+            </Alert>}
+        </Grid>
    
         <Grid item xs={12}>
           <TextField
@@ -212,7 +254,6 @@ const useStyles = {
             id="city"
             name="city"
             label="City"
-            // onChange = { handleChange }
             value= {city || ''}
             variant="outlined"
             style = {useStyles.textFld}
@@ -223,7 +264,6 @@ const useStyles = {
           <TextField
            id="county" 
            name="county"  
-          //  onChange = { handleChange }
            variant="outlined" 
            value= {county || ''}
            style = {useStyles.textFld}
