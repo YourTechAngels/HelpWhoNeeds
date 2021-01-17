@@ -9,6 +9,10 @@ class UserAdmin(admin.ModelAdmin):
                     "is_volunteer", "is_staff")
     search_fields = ("first_name", "last_name")
 
+    fields = ("username", "email", "password", "first_name", "last_name", "date_of_birth",
+              "phone_number", "post_code", "address_line_1", "address_line_2", "city", "county",
+              "is_volunteer", "dbs", "is_staff")
+
 
 # admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
