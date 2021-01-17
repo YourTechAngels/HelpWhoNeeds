@@ -13,8 +13,7 @@ class User(AbstractUser):
     address_line_2 = models.CharField(max_length=150, blank=True, null=True)
     city = models.CharField(max_length=150, blank=True, null=True)
     county = models.CharField(max_length=150, blank=True, null=True)   
-    is_volunteer = models.BooleanField(default=False)
-   
+    is_volunteer = models.BooleanField(default=False)   
     dbs = models.BooleanField(default=False)
 
 def _str_(self):

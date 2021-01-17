@@ -28,6 +28,8 @@ class TaskType(models.Model):
     min_duration = models.IntegerField()
     DBS_required = models.BooleanField()
 
+    def __str__(self):
+        return self.get_task_type_display()
 
 class Task(models.Model):
     task_type_id = models.ForeignKey(TaskType, on_delete=models.CASCADE)
@@ -39,10 +41,10 @@ class Task(models.Model):
     end_time = models.DateTimeField()
     min_duration = models.DurationField(default=timedelta(minutes=30))
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="OP")
-  
+    
     def clean(self):
-        if self.task_type in ["ANY", "GRO"] and not self.description:
-            raise ValidationError(f"Description is mandatory when '{self.task_type}' task type selected")
+        #if self.task_type in ["ANY", "GRO"] and not self.description:
+            #raise ValidationError(f"Description is mandatory when '{self.task_type}' task type selected")
         # if self.end_time <= timezone.now():
         #     raise ValidationError("End time cannot be in the past")
         if self.start_time >= self.end_time:

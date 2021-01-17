@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task
+from .models import Task, TaskType
 from accounts.models import User
 
 class TaskAdmin(admin.ModelAdmin):
@@ -9,3 +9,8 @@ class TaskAdmin(admin.ModelAdmin):
 
 admin.site.register(Task, TaskAdmin)
 
+class TaskTypeAdmin(admin.ModelAdmin):
+    list_display = ("task_type", "min_duration", "DBS_required")
+    #search_fields = ("task_type")
+
+admin.site.register(TaskType, TaskTypeAdmin)
