@@ -14,16 +14,7 @@ class User(AbstractUser):
     city = models.CharField(max_length=150, blank=True, null=True)
     county = models.CharField(max_length=150, blank=True, null=True)   
     is_volunteer = models.BooleanField(default=False)
-   
     dbs = models.BooleanField(default=False)
 
-def _str_(self):
-        return f"{self.first_name}"
-
-#class Volunteer(User):
-   # dbs = models.BooleanField(default=False)
-
-#class Requestee(User):
-    # TODO delete class if not needed
-    #pass
-
+    def __str__(self):
+        return (self.first_name + self.last_name).strip() or self.username or self.email
