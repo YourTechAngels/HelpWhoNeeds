@@ -1,15 +1,15 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
 import ConfirmDialog from "./CofirmDialog";
 import Grid from "@material-ui/core/Grid";
-import initialTasks from "./TaskListData";
+//import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
-//import axios from "axios"
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -18,20 +18,60 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-/*const intialTasks1 = axios
-.get('http://localhost:8000/api/tasks').catch(function (error) {
-             console.log(error.request); console.log(error.config)})*/
-
-const intialTasks = initialTasks();
 export default function VolunteerSearchTask() {
-   // console.log(intialTasks1);
+    const [pendingTasks, setPendingTasks] = useState([]) 
+    useEffect(() => {
+            axios
+                .get("http://localhost:8000/api/tasks")
+                .then(
+                    (response) => {
+                        const data = response.data;
+                        console.log(data);
+                        const allTask= data.map(task => {
+                            return ({
+                                id: `${task.id}`,
+                                lastName: `${task.owner.last_name}`,
+                                firstName: `${task.owner.first_name}`,
+                                taskType: `${task.task_type}`,
+                                taskDetails: `${task.description}`,
+                                start: `${task.start_time}`,
+                                end: (`${task.end_time}`),
+                                distance: `${task.id}`,
+                                // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
+                                volId: (`${task.volunteer?.id}`), //need to find a way to assign null
+                                status: `${task.status}`
+    
+                            });
+                        })
+                        setPendingTasks(allTask)
+                        console.log("tasks");
+                        console.log(allTask);
+                    }
+                )
+                .catch(function (error) {
+                    console.log("error")
+                    console.log(error.request);
+                    console.log(error.config);
+                    console.log(error.message);
+    
+                });
+            }, []);
+            
+        
+    
+
+    console.log("database json out ")
+    console.log(pendingTasks);
     const classes = useStyles();
-    const [pendingTasks, setPendingTasks] = useState(intialTasks);
-    const myTasks = pendingTasks.filter(
+   
+    const myTasks = pendingTasks ? pendingTasks.filter(
         (task) =>
-            task.volId !== null && task.status !== "Completed" && task.volId === 1
-    );
-    const unassignedTasks = pendingTasks.filter((task) => task.volId === null);
+            //task.volId !== undefined && task.status === "AS" && task.volId === 3
+            task.status === "AS" || task.status === "CL"//&& Number(task.volId) === 3
+    ): null;
+    const unassignedTasks = pendingTasks.filter((task) => 
+                                                       //task.volId === null
+                                                    task.status === "OP");
 
     const [hideMyTask, setHideMyTask] = useState(false);
     const [hideNewTask, setHideNewTask] = useState(false);
@@ -78,7 +118,7 @@ export default function VolunteerSearchTask() {
                     isOpen: false,
                 });
                 const returnTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: null, status: "Open" } : task
+                    task.id === taskId ? { ...task, volId: null, status: "OP" } : task
                 );
                 setPendingTasks(returnTask);
                 console.log("myTask");
@@ -109,7 +149,7 @@ export default function VolunteerSearchTask() {
                 });
 
                 const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: 1, status: "Assigned" } : task
+                    task.id === taskId ? { ...task, volId: 4, status: "AS" } : task
                 );
                 setPendingTasks(assignTask);
                 console.log("assignTasks");
@@ -139,7 +179,7 @@ export default function VolunteerSearchTask() {
                 });
 
                 const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, status: "Completed" } : task
+                    task.id === taskId ? { ...task, status: "DN" } : task
                 );
                 setPendingTasks(assignTask);
                 console.log("assignTasks");

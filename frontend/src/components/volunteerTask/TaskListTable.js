@@ -9,7 +9,6 @@ const SPACED_DATE_FORMAT = "DD MMM YYYY";
 const options = {
     filterType: "multiselect",
     selectableRows: "none", //can also be single/mulitple
-    //selectableRowsOnClick: true,
     rowsPerPage: 5,
     rowsPerPageOptions: [5,10, 15, 20],
     print: false,
@@ -197,7 +196,8 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                             variant="contained"
                             color="secondary"
                             size="small"
-                            disabled={(volId === null ||status === "Completed") ? true : false}                                 
+                            //disabled={(volId === null ||status === "Completed") ? true : false}
+                            disabled={(status !== "DN" && status !=="CL") ? false : true}                                 
                             style={{ marginLeft: 2 ,minWidth: "70px",}}
                             className="button"
                             value={value}
@@ -205,7 +205,7 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                                 handleReject(value);
                         }}
                         >
-                            Reject
+                            {status !== "CL" ? "Reject" : "Cancelled"}
                         </Button>
                     );
                 },
@@ -226,8 +226,9 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                         <Button
                             variant="contained"
                             color="default"
-                            size="small"                           
-                            disabled={ status !== "Completed" ? false : true}                            
+                            size="small"  
+                           // disabled={ status !== "Completed" ? false : true}                         
+                            disabled={ (status !== "DN" && status !== "CL")? false : true}                            
                             style={{ marginLeft: 2 ,  minWidth: "90px",}}
                             className="button"
                             value={value}
@@ -235,7 +236,7 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                             handleComplete(value);
                         }}
                         >
-                        { status !== "Completed" ? "COMPLETE":"DONE"}
+                        { status !== "DN" ? "COMPLETE":"DONE"}
                         </Button>
                     );
                 },
@@ -252,16 +253,18 @@ export default function TaskListTable({ taskListData, isMyTask, handleAccept, ha
                 display: isMyTask ? false : true,
                 customBodyRender: (value, tableMeta) => {
                     const volId = tableMeta.rowData[1];
+                    const status = tableMeta.rowData[2];
                     return (
                         <Button
                             variant="contained"
                             color="primary"
                             size="small"
-                            disabled={volId === null ? false : true}
+                            //disabled={volId === null ? false : true}
+                            disabled={status !== "OP"? true : false}
                             style={{
                                 marginLeft: 2,
                                 backgroundColor:
-                                volId === null ? "green" : "lightgrey",
+                                status !== "OP" ? "lightgrey" : "green",
                             }}
                             className="button"
                             value={value}
