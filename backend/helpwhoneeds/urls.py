@@ -17,13 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from accounts import views
-# from tasks import views
+from tasks import views as taskviews
 
 router = routers.DefaultRouter()
 router.register(r'accounts', views.AccountView, 'user')
-# router.register(r'tasks', views.TaskView, 'task')
-# router.register(r'newtasks', views.NewTaskView, 'newtask')
-# router.register(r'newVoltasks', views.NewVolTaskView, 'voltask')
+router.register(r'tasks', taskviews.TaskView, 'task')
+router.register(r'newtasks', taskviews.NewTaskView, 'newtask')
+router.register(r'newVoltasks', taskviews.NewVolTaskView, 'voltask')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
