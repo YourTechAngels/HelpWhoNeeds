@@ -1,9 +1,9 @@
 
 const Support = () => (
     <div>
-        <h1>This is the Support Page</h1>
+        <h2>Support</h2>
         <p>
-            Add the Support form
+            Please call us anytime for help and support. 
     </p>
     </div>
 );
