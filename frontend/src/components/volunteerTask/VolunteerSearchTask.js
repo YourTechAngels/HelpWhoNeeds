@@ -98,7 +98,7 @@ export default function VolunteerSearchTask() {
 
     const myTasks = pendingTasks
         ? pendingTasks.filter(
-            (task) => task.status === "AS" || task.status === "CL" //&& Number(task.volId) === 3
+            (task) => task.status === "AS" //|| task.status === "CL" //&& Number(task.volId) === 3
         )
         : null;
     const unassignedTasks = pendingTasks.filter(
