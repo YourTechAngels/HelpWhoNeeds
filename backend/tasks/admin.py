@@ -4,10 +4,10 @@ from accounts.models import User
 
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ("task_type", "description", "dbs_required", "start_time",
-                    "end_time", "min_duration", "status", "requestee", "volunteer")
-    search_fields = ("description", ) #"requestee", "volunteer")
+    list_display = ("task_type", "start_time", "end_time", "status", "requestee", "volunteer")
+    search_fields = ("description", )
     list_filter = ("status", "task_type")
+    list_per_page = 10
 
     def get_readonly_fields(self, request, obj=None):
         if not obj:  # editing an existing object

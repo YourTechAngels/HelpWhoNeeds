@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from accounts import views
-from tasks import views as taskviews
+from accounts.views import AccountView
+from tasks.views import views as taskviews
 
 router = routers.DefaultRouter()
-router.register(r'accounts', views.AccountView, 'user')
+router.register(r'accounts', AccountView, 'user')
 router.register(r'tasks', taskviews.TaskView, 'task')
 #router.register(r'newtasks', taskviews.NewTaskView, 'newtask')
 #router.register(r'newVoltasks', taskviews.NewVolTaskView, 'voltask')
