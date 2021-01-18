@@ -8,7 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
-import { ButtonGroup, Input } from '@material-ui/core';
+import { ButtonGroup } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -37,8 +37,6 @@ export default function RegistrationPage(props) {
   const address2Ref = useRef()
   const cityRef = useRef()
   const countyRef = useRef()
-  const [countyName, setCountyName] = useState("");
-  const [cityName, setCityName] = useState("");
   const param = useParams();
   const user = param.user;
   const { currentUser } = useAuth()
@@ -47,11 +45,13 @@ export default function RegistrationPage(props) {
   const [DBSchecked, setDBSChecked] = useState(false);
   const [addressLine1, setAddressLine1] = useState("")
   const [addressLine2, setAddressLine2] = useState("")
+  const [countyName, setCountyName] = useState("");
+  const [cityName, setCityName] = useState("");
   const [addressList, setAddressList] = useState("");
-  const [errors, setErrors] = useState("");
   const [postCodeSearched, setpostCodeSearched] = useState(false);
-  // const [isVolunteer, setIsVolunteer] = useState(false);
-
+  const [errors, setErrors] = useState("");
+  
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
@@ -124,7 +124,7 @@ export default function RegistrationPage(props) {
 
   return (
     <React.Fragment>
-
+      <div style={{ width: "80vw" }}>
       <h2 align="center"> Registration form</h2>
       { message && <Alert severity="success">
         <AlertTitle>{message}</AlertTitle>
@@ -352,6 +352,7 @@ export default function RegistrationPage(props) {
           </Grid>
         </Grid>
       </form>
+      </div>
     </React.Fragment>
 
   )

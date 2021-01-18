@@ -57,7 +57,7 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
         const item = createItem(data, start, end)
-        axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
+        axios.post("/api/tasks/", item).catch(function (error) {
             console.log(error.request); console.log(error.config)})
 
         addTask({
