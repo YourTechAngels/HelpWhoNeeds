@@ -26,7 +26,8 @@ const About = () =>  {
    
     return (
             <div className={classes.divContentWrapper} >
-               <h1>YourTechAngels - Project HelpWhoNeeds</h1>
+               <h2>YourTechAngels - Project HelpWhoNeeds</h2
+               >
         
         <p>
             Established in 2020, Your Tech Angels is a collaborative team of 4 engineers who are involved 
@@ -48,29 +49,24 @@ const About = () =>  {
               direction="row"
               alignItems="center" spacing={3} >
 
-                  <Grid container item xs={2} spacing={3}>
+                  <Grid container item xs={3} spacing={3}>
                <Link to={'/legal'} variant="body2">
                   Legal
                </Link> </Grid>
                
-               <Grid container item xs={2} spacing={3}>
+               <Grid container item xs={3} spacing={3}>
                <Link to={`/cookie`} variant="body2">
                   Cookie
                </Link> </Grid>
 
-               <Grid container item xs={2} spacing={3}>
+               <Grid container item xs={3} spacing={3}>
                <Link to={`/support`} variant="body2">
                   Support
                </Link> </Grid>
 
-               <Grid container item xs={2} spacing={3}>
+               <Grid container item xs={3} spacing={3}>
                <Link to={`/termcondition`} variant="body2">
-                  Terms Conditions
-               </Link> </Grid>
-
-               <Grid container item xs={2} spacing={3}>
-               <Link to={`/contact`} variant="body2">
-                  Contact
+                  Terms and Conditions
                </Link> </Grid>
 
                </Grid>
