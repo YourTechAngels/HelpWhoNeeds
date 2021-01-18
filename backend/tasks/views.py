@@ -7,7 +7,19 @@ import datetime
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.core.mail import EmailMessage
 
+def send_email(recipientEmail):
+    email = EmailMessage(
+        subject = 'Task Assigned',
+        body = 'you have recently accepted the task',
+        from_email = 'helpwhomeeds.info@gmail.com',
+        to =[recipientEmail],
+        bcc = ['kusumthapamagar@gmail.com']
+        #reply_to = ['whoever@itmaybe.com']
+    )
+   
+    email.send()
 
 class TaskView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
@@ -46,5 +58,7 @@ class TaskView(viewsets.ModelViewSet):
         task_object.save()
         serializer = TaskSerializer(task_object)
 
+        send_email(task_object.requestee.email)
+        
         return Response(serializer.data)
     
