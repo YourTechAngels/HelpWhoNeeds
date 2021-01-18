@@ -74,21 +74,25 @@ export default function Profile(props) {
                 (response) => {
                     const dataSet =response.data[0];
                     console.log(dataSet);
+                    console.log(dataSet.first_name);
                     console.log(dataSet.last_name);
-                    setFormData({ ...formData, firstname : (dataSet.first_name)});
+                    console.log(dataSet.date_of_birth);
+                    // console.log(dataSet.city);
+                    
                     setFormData({ ...formData, lastname : (dataSet.last_name)});
                     setFormData({ ...formData, dateOfBirth : (dataSet.date_of_birth)});
                     setFormData({ ...formData, address1 : (dataSet.address_line_1)});
                     setFormData({ ...formData, address2 : (dataSet.address_line_2)});
                     setFormData({ ...formData, city : (dataSet.city)});
                     setFormData({ ...formData, county : (dataSet.county)});
-                    setFormData({ ...formData, address1 : (dataSet.address_line_1)});
+                    setFormData({ ...formData, email : (dataSet.email)});
                     // console.log(formData.lastName)
                     console.log("database json out ");
                     
                     // const allTask= data.map(task => {
                         return ({
 
+                            setFormData({ ...formData, firstname : (dataSet.first_name)});
                             
                             // setFormData(lastName: data.last_name,
                             // firstname : data.first_name
