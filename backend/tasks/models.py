@@ -31,9 +31,6 @@ class TaskType(models.Model):
     def __str__(self):
         return self.get_task_type_display()
 
-    def __str__(self):
-        return self.get_task_type_display()
-
 class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     requestee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requestee')

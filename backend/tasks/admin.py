@@ -21,12 +21,5 @@ class TaskAdmin(admin.ModelAdmin):
             kwargs["queryset"] = User.objects.filter(is_volunteer=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskType)
-
-class TaskTypeAdmin(admin.ModelAdmin):
-    list_display = ("task_type", "min_duration", "DBS_required")
-    #search_fields = ("task_type")
-
-admin.site.register(TaskType, TaskTypeAdmin)
