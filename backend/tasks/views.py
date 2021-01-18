@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
 
+#send email function to notify requestee about task status
 def send_email(recipientEmail):
     email = EmailMessage(
         subject = 'Task Assigned',
@@ -18,13 +19,14 @@ def send_email(recipientEmail):
         bcc = ['kusumthapamagar@gmail.com']
         #reply_to = ['whoever@itmaybe.com']
     )
-   
+
     email.send()
 
 class TaskView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
-    
+
+    #Get the current volunteer's assigned and new tasks     
     @action(detail=False, methods=['GET'], name='Get Volunteer Task Lists')
     def get_vol_task(self, request, *args, **kwargs):
         vol_id = self.request.query_params.get('volId')
@@ -34,15 +36,7 @@ class TaskView(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['GET'], name='Get Task By Id')
-    def get_task_by_id(self, request, *args, **kwargs):
-        task_id = self.request.query_params.get('taskId')
-        queryset = Task.objects.filter(id=task_id)
-
-        serializer = self.get_serializer(queryset, many=True)
-        
-        return Response(serializer.data)
-
+    #Partial update to update task status and notify requestee
     def partial_update(self, request, *args, **kwargs):
         task_object = self.get_object()
         data = request.data
@@ -59,6 +53,6 @@ class TaskView(viewsets.ModelViewSet):
         serializer = TaskSerializer(task_object)
 
         send_email(task_object.requestee.email)
-        
+
         return Response(serializer.data)
     
