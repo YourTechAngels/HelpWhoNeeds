@@ -42,8 +42,11 @@ class TaskView(viewsets.ModelViewSet):
         data = request.data
 
         try:
-            volunteer = User.objects.get(id = data["volId"])
-            task_object.volunteer = volunteer
+            if data["volId"] is None:
+                task_object.volunteer = None
+            else:
+                volunteer = User.objects.get(id = data["volId"])
+                task_object.volunteer = volunteer
         except KeyError:
             pass
 
