@@ -224,6 +224,7 @@ export default function TaskListTable({
                                         distance: `${task.id}`,
                                         volId: `${task.volunteer?.id}`, //need to find a way to assign null
                                         status: `${task.status}`,
+                                        volEmail: `${task.volunteer?.email}`
                                     };
                                     console.log("slected tasks");
                                     console.log(selectedTask);
@@ -234,6 +235,8 @@ export default function TaskListTable({
                                                 {
                                                     status: "OP",
                                                     volId: null,
+                                                    prevTaskState: selectedTask.status,
+                                                    prevTaskVolEmail: selectedTask.volEmail
                                                 }
                                             )
                                             .then(function (response) {
@@ -302,6 +305,7 @@ export default function TaskListTable({
                                         distance: `${task.id}`,
                                         volId: `${task.volunteer?.id}`, //need to find a way to assign null
                                         status: `${task.status}`,
+                                        volEmail: `${task.volunteer?.email}`
                                     };
                                     console.log("slected tasks");
                                     console.log(selectedTask);
@@ -310,7 +314,9 @@ export default function TaskListTable({
                                             .patch(
                                                 "http://localhost:8000/api/tasks/" + value + "/",
                                                 {
-                                                    status: "DN"                                                    
+                                                    status: "DN",
+                                                    prevTaskState: selectedTask.status,
+                                                    prevTaskVolEmail: selectedTask.volEmail                                                  
                                                 }
                                             )
                                             .then(function (response) {
@@ -320,7 +326,7 @@ export default function TaskListTable({
                                                 console.log(error);
                                             });
 
-                                            handleReject(value);
+                                            handleComplete(value);
                                     } else {
                                         console.log("alert task already assigned");
                                     }
@@ -331,7 +337,7 @@ export default function TaskListTable({
                                     console.log(error.config);
                                     console.log(error.message);
                                 });
-                                handleComplete(value);
+                               // handleComplete(value);
                             }}
                         >
                             {status !== "DN" ? "COMPLETE" : "DONE"}
@@ -350,7 +356,7 @@ export default function TaskListTable({
                 viewColumns: false,
                 display: isMyTask ? false : true,
                 customBodyRender: (value, tableMeta) => {
-                    const volId = tableMeta.rowData[1];
+                    //const volId = tableMeta.rowData[1];
                     const status = tableMeta.rowData[2];
                     return (
                         <Button
@@ -386,6 +392,7 @@ export default function TaskListTable({
                                             distance: `${task.id}`,
                                             volId: `${task.volunteer?.id}`, //need to find a way to assign null
                                             status: `${task.status}`,
+                                            volEmail: `${task.volunteer?.email}`
                                         };
                                         console.log("slected tasks");
                                         console.log(selectedTask);
@@ -396,6 +403,8 @@ export default function TaskListTable({
                                                     {
                                                         status: "AS",
                                                         volId: volUserId,
+                                                        prevTaskState: selectedTask.status,
+                                                        prevTaskVolEmail: null
                                                     }
                                                 )
                                                 .then(function (response) {
