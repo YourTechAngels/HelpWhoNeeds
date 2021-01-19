@@ -71,7 +71,7 @@ export default function TaskListTable({
             name: "volId",
             label: "volunteer ID",
             viewColumns: false,
-            options: { display: true, sort: false, filter: false },
+            options: { display: false, sort: false, filter: false },
         },
         {
             name: "status",

@@ -11,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -25,6 +26,7 @@ export default function VolunteerSearchTask() {
     console.log(userUID);
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
+    const [dataFetched, setDataFetched] = useState(false)
 
     useEffect(()=>{
         axios
@@ -35,6 +37,8 @@ export default function VolunteerSearchTask() {
         })
         .then((response) => {
             const data = response.data;
+            console.log("userdata");
+            console.log(data);
             console.log(data[0]);
             const user = {
                 id: `${data[0].id}`,
@@ -56,7 +60,7 @@ export default function VolunteerSearchTask() {
     },[userUID, userId])
 
     useEffect(() => {
-       
+    
         axios
             .get("http://localhost:8000/api/tasks/get_vol_task", {
                 params: {
@@ -81,6 +85,7 @@ export default function VolunteerSearchTask() {
                     };
                 });
                 setPendingTasks(allTask);
+                setDataFetched(true)
                 console.log("tasks");
                 console.log(allTask);
             })
@@ -234,6 +239,10 @@ export default function VolunteerSearchTask() {
 
     return (
         <React.Fragment>
+        {!dataFetched ? <div>
+            <CircularProgress />
+            <CircularProgress color="secondary" />
+            </div> :
             <div style={{ height: "100%" }}>
                 <Grid id="tasks" container spacing={2} direction="row" justify="center">
                     {!hideMyTask && (
@@ -306,7 +315,7 @@ export default function VolunteerSearchTask() {
                     confirmDialog={confirmDialog}
                     setConfirmDialog={setConfirmDialog}
                 />
-            </div>
+            </div>}
         </React.Fragment>
     );
 }
