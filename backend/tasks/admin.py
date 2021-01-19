@@ -21,7 +21,5 @@ class TaskAdmin(admin.ModelAdmin):
             kwargs["queryset"] = User.objects.filter(is_volunteer=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskType)
-

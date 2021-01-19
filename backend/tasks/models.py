@@ -31,7 +31,6 @@ class TaskType(models.Model):
     def __str__(self):
         return self.get_task_type_display()
 
-
 class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     requestee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requestee')
@@ -42,7 +41,7 @@ class Task(models.Model):
     end_time = models.DateTimeField()
     min_duration = models.DurationField(default=timedelta(minutes=30))
     status = models.CharField(max_length=5, choices=STATUS_CHOICES, default="OP")
-  
+    
     def clean(self):
         if hasattr(self, "task_type") and self.task_type.task_type in ["ANY", "GRO"] and not self.description:
             raise ValidationError({"description" : f"Description is required when '{self.task_type}' task type selected"})
