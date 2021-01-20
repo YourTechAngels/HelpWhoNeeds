@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -26,41 +26,39 @@ export default function VolunteerSearchTask() {
     console.log(userUID);
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
-    const [dataFetched, setDataFetched] = useState(false)
-
-    useEffect(()=>{
-        axios
-        .get("http://localhost:8000/api/accounts/get_user_by_id/", {
-            params: {
-                uId: userUID,
-            },
-        })
-        .then((response) => {
-            const data = response.data;
-            console.log("userdata");
-            console.log(data);
-            console.log(data[0]);
-            const user = {
-                id: `${data[0].id}`,
-            };
-
-            console.log("userId");
-            console.log(user.id);
-            setUserId(user.id);
-        })
-        .catch(function (error) {
-            console.log("error");
-            console.log(error.request);
-            console.log(error.config);
-            console.log(error.message);
-        });
-    console.log("set UserId");
-    console.log(userId);
-
-    },[userUID, userId])
+    const [dataFetched, setDataFetched] = useState(false);
 
     useEffect(() => {
-    
+        axios
+            .get("http://localhost:8000/api/accounts/get_user_by_id/", {
+                params: {
+                    uId: userUID,
+                },
+            })
+            .then((response) => {
+                const data = response.data;
+                console.log("userdata");
+                console.log(data);
+                console.log(data[0]);
+                const user = {
+                    id: `${data[0].id}`,
+                };
+
+                console.log("userId");
+                console.log(user.id);
+                setUserId(user.id);
+            })
+            .catch(function (error) {
+                console.log("error");
+                console.log(error.request);
+                console.log(error.config);
+                console.log(error.message);
+            });
+        console.log("set UserId");
+        console.log(userId);
+    }, [userUID, userId]);
+
+    useEffect(() => {
         axios
             .get("http://localhost:8000/api/tasks/get_vol_task", {
                 params: {
@@ -85,7 +83,7 @@ export default function VolunteerSearchTask() {
                     };
                 });
                 setPendingTasks(allTask);
-                setDataFetched(true)
+                setDataFetched(true);
                 console.log("tasks");
                 console.log(allTask);
             })
@@ -95,7 +93,7 @@ export default function VolunteerSearchTask() {
                 console.log(error.config);
                 console.log(error.message);
             });
-    },[userId]);
+    }, [userId]);
 
     console.log("database json out ");
     console.log(pendingTasks);
@@ -156,6 +154,51 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                axios
+                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .then((response) => {
+                        const data = response.data;
+                        console.log(data);
+                        const task = response.data;
+                        const selectedTask = {
+                            id: `${task.id}`,
+                            lastName: `${task.requestee.last_name}`,
+                            firstName: `${task.requestee.first_name}`,
+                            taskType: `${task.task_type.task_type}`,
+                            taskDetails: `${task.description}`,
+                            start: `${task.start_time}`,
+                            end: `${task.end_time}`,
+                            distance: `${task.id}`,
+                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                            status: `${task.status}`,
+                            volEmail: `${task.volunteer?.email}`,
+                        };
+                        console.log("slected tasks");
+                        console.log(selectedTask);
+                        if (selectedTask.status === "AS") {
+                            axios
+                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                    status: "OP",
+                                    volId: null,
+                                    prevTaskState: selectedTask.status,
+                                    prevTaskVolEmail: selectedTask.volEmail,
+                                })
+                                .then(function (response) {
+                                    console.log(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        } else {
+                            console.log("alert task already assigned");
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log("error");
+                        console.log(error.request);
+                        console.log(error.config);
+                        console.log(error.message);
+                    });
                 const returnTask = pendingTasks.map((task) =>
                     task.id === taskId ? { ...task, volId: null, status: "OP" } : task
                 );
@@ -168,16 +211,17 @@ export default function VolunteerSearchTask() {
 
                 setNotifyMsg({
                     isOpen: true,
-                    message: "Task is unssigned from you",
+                    message: "Task is unssigned from you. Email notification will be sent shortly.",
                     type: "warning",
                 });
             },
         });
     };
 
-    const handleAccept = (taskId, userId) => {
-        console.log("Accepted userID")
-        console.log(userId)
+    // const handleAccept = (taskId, userId) => {
+    const handleAccept = (taskId) => {
+        console.log("Accepted userID");
+        console.log(userId);
         setConfirmDialog({
             isOpen: true,
             title: "Do you agree to accept this task?",
@@ -188,6 +232,51 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                axios
+                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .then((response) => {
+                        const data = response.data;
+                        console.log(data);
+                        const task = response.data;
+                        const selectedTask = {
+                            id: `${task.id}`,
+                            lastName: `${task.requestee.last_name}`,
+                            firstName: `${task.requestee.first_name}`,
+                            taskType: `${task.task_type.task_type}`,
+                            taskDetails: `${task.description}`,
+                            start: `${task.start_time}`,
+                            end: `${task.end_time}`,
+                            distance: `${task.id}`,
+                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                            status: `${task.status}`,
+                            volEmail: `${task.volunteer?.email}`,
+                        };
+                        console.log("slected tasks");
+                        console.log(selectedTask);
+                        if (selectedTask.status === "OP") {
+                            axios
+                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                    status: "AS",
+                                    volId: userId,
+                                    prevTaskState: selectedTask.status,
+                                    prevTaskVolEmail: null,
+                                })
+                                .then(function (response) {
+                                    console.log(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        } else {
+                            console.log("alert task already assigned");
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log("error");
+                        console.log(error.request);
+                        console.log(error.config);
+                        console.log(error.message);
+                    });
 
                 const assignTask = pendingTasks.map((task) =>
                     task.id === taskId ? { ...task, volId: userId, status: "AS" } : task
@@ -200,7 +289,7 @@ export default function VolunteerSearchTask() {
                 console.log(pendingTasks);
                 setNotifyMsg({
                     isOpen: true,
-                    message: "Task is successfully assigned to you.",
+                    message: "Task is successfully assigned to you.Email notification will be sent shortly.",
                     type: "success",
                 });
             },
@@ -218,7 +307,50 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
-
+                axios
+                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .then((response) => {
+                        const data = response.data;
+                        console.log(data);
+                        const task = response.data;
+                        const selectedTask = {
+                            id: `${task.id}`,
+                            lastName: `${task.requestee.last_name}`,
+                            firstName: `${task.requestee.first_name}`,
+                            taskType: `${task.task_type.task_type}`,
+                            taskDetails: `${task.description}`,
+                            start: `${task.start_time}`,
+                            end: `${task.end_time}`,
+                            distance: `${task.id}`,
+                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                            status: `${task.status}`,
+                            volEmail: `${task.volunteer?.email}`,
+                        };
+                        console.log("slected tasks");
+                        console.log(selectedTask);
+                        if (selectedTask.status === "AS") {
+                            axios
+                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                    status: "DN",
+                                    prevTaskState: selectedTask.status,
+                                    prevTaskVolEmail: selectedTask.volEmail,
+                                })
+                                .then(function (response) {
+                                    console.log(response);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        } else {
+                            console.log("alert task already assigned");
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log("error");
+                        console.log(error.request);
+                        console.log(error.config);
+                        console.log(error.message);
+                    });
                 const assignTask = pendingTasks.map((task) =>
                     task.id === taskId ? { ...task, status: "DN" } : task
                 );
@@ -230,7 +362,7 @@ export default function VolunteerSearchTask() {
                 console.log(pendingTasks);
                 setNotifyMsg({
                     isOpen: true,
-                    message: "Task is successfully marked as completed",
+                    message: "Task is successfully marked as completed.Email notification will be sent shortly.",
                     type: "success",
                 });
             },
@@ -239,83 +371,90 @@ export default function VolunteerSearchTask() {
 
     return (
         <React.Fragment>
-        {!dataFetched ? <div>
-            <CircularProgress />
-            <CircularProgress color="secondary" />
-            </div> :
-            <div style={{ height: "100%" }}>
-                <Grid id="tasks" container spacing={2} direction="row" justify="center">
-                    {!hideMyTask && (
-                        <Grid className="my-tasks" item xs={12} sm={6} align="right">
-                            <Hidden smUp>
-                                <Button
-                                    variant="contained"
-                                    color="default"
-                                    size="small"
-                                    onClick={() => {
-                                        setHideMyTask(true);
-                                        setHideNewTask(false);
-                                    }}
-                                >
-                                    Search New Tasks
-                </Button>{" "}
-                            </Hidden>
+            {!dataFetched ? (
+                <div>
+                    <CircularProgress />
+                    <CircularProgress color="secondary" />
+                </div>
+            ) : (
+                    <div style={{ height: "100%" }}>
+                        <Grid
+                            id="tasks"
+                            container
+                            spacing={2}
+                            direction="row"
+                            justify="center"
+                        >
+                            {!hideMyTask && (
+                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
+                                    <Hidden smUp>
+                                        <Button
+                                            variant="contained"
+                                            color="default"
+                                            size="small"
+                                            onClick={() => {
+                                                setHideMyTask(true);
+                                                setHideNewTask(false);
+                                            }}
+                                        >
+                                            Search New Tasks
+                                        </Button>{" "}
+                                    </Hidden>
 
-                            <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
-                            <TaskListTable
-                                taskListData={myTasks}
-                                isMyTask={true}
-                                handleAccept={handleAccept}
-                                handleReject={handleReject}
-                                handleView={handleView}
-                                handleComplete={handleComplete}
-                                volUserId={userId}
-                            />
+                                    <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
+                                    <TaskListTable
+                                        taskListData={myTasks}
+                                        isMyTask={true}
+                                        handleAccept={handleAccept}
+                                        handleReject={handleReject}
+                                        handleView={handleView}
+                                        handleComplete={handleComplete}
+                                    />
+                                </Grid>
+                            )}
+
+                            {!hideNewTask && (
+                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
+                                    <Hidden smUp>
+                                        {" "}
+                                        <Button
+                                            variant="contained"
+                                            color="default"
+                                            size="small"
+                                            onClick={() => {
+                                                setHideNewTask(true);
+                                                setHideMyTask(false);
+                                            }}
+                                        >
+                                            View My Tasks
+                                        </Button>
+                                    </Hidden>
+                                    <h4 className={classes.h5}>{"Search New Tasks"}</h4>
+                                    <TaskListTable
+                                        taskListData={unassignedTasks}
+                                        isMyTask={false}
+                                        handleAccept={handleAccept}
+                                        handleReject={handleReject}
+                                        handleView={handleView}
+                                        handleComplete={handleComplete}
+                                    />
+                                </Grid>
+                            )}
                         </Grid>
-                    )}
 
-                    {!hideNewTask && (
-                        <Grid className="new-tasks" item xs={12} sm={6} align="right">
-                            <Hidden smUp>
-                                {" "}
-                                <Button
-                                    variant="contained"
-                                    color="default"
-                                    size="small"
-                                    onClick={() => {
-                                        setHideNewTask(true);
-                                        setHideMyTask(false);
-                                    }}
-                                >
-                                    View My Tasks
-                </Button>
-                            </Hidden>
-                            <h4 className={classes.h5}>{"Search New Tasks"}</h4>
-                            <TaskListTable
-                                taskListData={unassignedTasks}
-                                isMyTask={false}
-                                handleAccept={handleAccept}
-                                handleReject={handleReject}
-                                handleView={handleView}
-                                handleComplete={handleComplete}
-                                volUserId={userId}
-                            />
-                        </Grid>
-                    )}
-                </Grid>
-
-                <TaskDialog
-                    open={showDialog}
-                    handleClose={handleClose}
-                    title="Task Summary"
-                    data={dialogData}
-                />
-                <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
-                <ConfirmDialog
-                    confirmDialog={confirmDialog}
-                    setConfirmDialog={setConfirmDialog}
-                />
-            </div>}
+                        <TaskDialog
+                            open={showDialog}
+                            handleClose={handleClose}
+                            title="Task Summary"
+                            data={dialogData}
+                        />
+                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                        <ConfirmDialog
+                            confirmDialog={confirmDialog}
+                            setConfirmDialog={setConfirmDialog}
+                        />
+                    </div>
+                )}
         </React.Fragment>
     );
 }

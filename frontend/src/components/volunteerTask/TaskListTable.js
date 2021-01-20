@@ -3,7 +3,6 @@ import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import moment from "moment";
-import axios from "axios";
 
 const SPACED_DATE_FORMAT = "DD MMM YYYY";
 
@@ -27,7 +26,6 @@ export default function TaskListTable({
     handleView,
     handleReject,
     handleComplete,
-    volUserId,
 }) {
     const theme = () =>
         createMuiTheme({
@@ -207,57 +205,7 @@ export default function TaskListTable({
                             className="button"
                             value={value}
                             onClick={() => {
-                                axios
-                                .get("http://localhost:8000/api/tasks/" + value + "/")
-                                .then((response) => {
-                                    const data = response.data;
-                                    console.log(data);
-                                    const task = response.data;
-                                    const selectedTask = {
-                                        id: `${task.id}`,
-                                        lastName: `${task.requestee.last_name}`,
-                                        firstName: `${task.requestee.first_name}`,
-                                        taskType: `${task.task_type.task_type}`,
-                                        taskDetails: `${task.description}`,
-                                        start: `${task.start_time}`,
-                                        end: `${task.end_time}`,
-                                        distance: `${task.id}`,
-                                        volId: `${task.volunteer?.id}`, //need to find a way to assign null
-                                        status: `${task.status}`,
-                                        volEmail: `${task.volunteer?.email}`
-                                    };
-                                    console.log("slected tasks");
-                                    console.log(selectedTask);
-                                    if (selectedTask.status === "AS") {
-                                        axios
-                                            .patch(
-                                                "http://localhost:8000/api/tasks/" + value + "/",
-                                                {
-                                                    status: "OP",
-                                                    volId: null,
-                                                    prevTaskState: selectedTask.status,
-                                                    prevTaskVolEmail: selectedTask.volEmail
-                                                }
-                                            )
-                                            .then(function (response) {
-                                                console.log(response);
-                                            })
-                                            .catch(function (error) {
-                                                console.log(error);
-                                            });
-
-                                            handleReject(value);
-                                    } else {
-                                        console.log("alert task already assigned");
-                                    }
-                                })
-                                .catch(function (error) {
-                                    console.log("error");
-                                    console.log(error.request);
-                                    console.log(error.config);
-                                    console.log(error.message);
-                                });
-                               // handleReject(value);
+                                handleReject(value);
                             }}
                         >
                             {status !== "CL" ? "Reject" : "Cancelled"}
@@ -288,56 +236,7 @@ export default function TaskListTable({
                             className="button"
                             value={value}
                             onClick={() => {
-                                axios
-                                .get("http://localhost:8000/api/tasks/" + value + "/")
-                                .then((response) => {
-                                    const data = response.data;
-                                    console.log(data);
-                                    const task = response.data;
-                                    const selectedTask = {
-                                        id: `${task.id}`,
-                                        lastName: `${task.requestee.last_name}`,
-                                        firstName: `${task.requestee.first_name}`,
-                                        taskType: `${task.task_type.task_type}`,
-                                        taskDetails: `${task.description}`,
-                                        start: `${task.start_time}`,
-                                        end: `${task.end_time}`,
-                                        distance: `${task.id}`,
-                                        volId: `${task.volunteer?.id}`, //need to find a way to assign null
-                                        status: `${task.status}`,
-                                        volEmail: `${task.volunteer?.email}`
-                                    };
-                                    console.log("slected tasks");
-                                    console.log(selectedTask);
-                                    if (selectedTask.status === "AS") {
-                                        axios
-                                            .patch(
-                                                "http://localhost:8000/api/tasks/" + value + "/",
-                                                {
-                                                    status: "DN",
-                                                    prevTaskState: selectedTask.status,
-                                                    prevTaskVolEmail: selectedTask.volEmail                                                  
-                                                }
-                                            )
-                                            .then(function (response) {
-                                                console.log(response);
-                                            })
-                                            .catch(function (error) {
-                                                console.log(error);
-                                            });
-
-                                            handleComplete(value);
-                                    } else {
-                                        console.log("alert task already assigned");
-                                    }
-                                })
-                                .catch(function (error) {
-                                    console.log("error");
-                                    console.log(error.request);
-                                    console.log(error.config);
-                                    console.log(error.message);
-                                });
-                               // handleComplete(value);
+                                handleComplete(value);
                             }}
                         >
                             {status !== "DN" ? "COMPLETE" : "DONE"}
@@ -375,56 +274,7 @@ export default function TaskListTable({
                                 //console.log(tableMeta.rowData[1]);
                                 console.log("value");
                                 console.log(value);
-                                axios
-                                    .get("http://localhost:8000/api/tasks/" + value + "/")
-                                    .then((response) => {
-                                        const data = response.data;
-                                        console.log(data);
-                                        const task = response.data;
-                                        const selectedTask = {
-                                            id: `${task.id}`,
-                                            lastName: `${task.requestee.last_name}`,
-                                            firstName: `${task.requestee.first_name}`,
-                                            taskType: `${task.task_type.task_type}`,
-                                            taskDetails: `${task.description}`,
-                                            start: `${task.start_time}`,
-                                            end: `${task.end_time}`,
-                                            distance: `${task.id}`,
-                                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
-                                            status: `${task.status}`,
-                                            volEmail: `${task.volunteer?.email}`
-                                        };
-                                        console.log("slected tasks");
-                                        console.log(selectedTask);
-                                        if (selectedTask.status === "OP") {
-                                            axios
-                                                .patch(
-                                                    "http://localhost:8000/api/tasks/" + value + "/",
-                                                    {
-                                                        status: "AS",
-                                                        volId: volUserId,
-                                                        prevTaskState: selectedTask.status,
-                                                        prevTaskVolEmail: null
-                                                    }
-                                                )
-                                                .then(function (response) {
-                                                    console.log(response);
-                                                })
-                                                .catch(function (error) {
-                                                    console.log(error);
-                                                });
-
-                                            handleAccept(value,volUserId);
-                                        } else {
-                                            console.log("alert task already assigned");
-                                        }
-                                    })
-                                    .catch(function (error) {
-                                        console.log("error");
-                                        console.log(error.request);
-                                        console.log(error.config);
-                                        console.log(error.message);
-                                    });
+                                handleAccept(value);
                             }}
                         >
                             Accept
