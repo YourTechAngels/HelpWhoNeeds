@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useParams, Link, useHistory } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
@@ -26,17 +26,17 @@ const useStyles = {
 
 };
 
-export default function Profile(props) {
-          
+export default function Profile(props) {          
 
     const initialInputState = {
-        firstName: "", lastName: "", dateOfBirth: "", phoneNumber: "", postcode: "", address1: "", address2: "",city: "", county: "", email:""
+        firstname: "", lastName: "", dateOfBirth: "", phoneNumber: "", postcode: "", address1: "", address2: "",city: "", county: "", email:""
       }
-    const [formData, setFormData] = useState({ initialInputState })
-    const { firstName, lastName, dateOfBirth, phoneNumber, postcode, address1, address2, city, county, email } = formData
+    const [formData, setFormData,] = useState({ initialInputState })
+    const { firstname, lastName, dateOfBirth, phoneNumber, postcode, address1, address2, city, county, email } = formData
     const [message, setMessage] = useState("")
     const emailRef = useRef()
     const postcodeRef = useRef()
+    // const firstnameRef = useRef()
     const passwordConfirmRef = useRef()
     const passwordRef = useRef()
     const address1Ref = useRef()
@@ -59,31 +59,55 @@ export default function Profile(props) {
     const history = useHistory()
     const param = useParams();
     const user = param.user;
-
     
     useEffect(() => {
+        getProfile() ;
+    }, []);
+    
+    const getProfile =(e) => {
+        // e.preventDefault()
         axios
-            .get("http://localhost:8000/api/tasks")
+            .get("http://localhost:8000/api/accounts/", {
+                params : { uid : `${uID}` }
+            })
             .then(
                 (response) => {
-                    const data = response.data;
-                    console.log(data);
-                    const allTask= data.map(task => {
+                    const dataSet =response.data[0];
+                    console.log(dataSet);
+                    console.log(dataSet.first_name);
+                    console.log(dataSet.last_name);
+                    console.log(dataSet.date_of_birth);
+                    // console.log(dataSet.city);
+                    
+                    setFormData({ ...formData, lastname : (dataSet.last_name)});
+                    setFormData({ ...formData, dateOfBirth : (dataSet.date_of_birth)});
+                    setFormData({ ...formData, address1 : (dataSet.address_line_1)});
+                    setFormData({ ...formData, address2 : (dataSet.address_line_2)});
+                    setFormData({ ...formData, city : (dataSet.city)});
+                    setFormData({ ...formData, county : (dataSet.county)});
+                    setFormData({ ...formData, email : (dataSet.email)});
+                    // console.log(formData.lastName)
+                    console.log("database json out ");
+                    
+                    // const allTask= data.map(task => {
                         return ({
-                            id: `${task.id}`,
-                            lastName: `${task.owner.last_name}`,
-                            firstName: `${task.owner.first_name}`,
-                            taskType: `${task.task_type}`,
-                            taskDetails: `${task.description}`,
-                            start: `${task.start_time}`,
-                            end: (`${task.end_time}`),
-                            distance: `${task.id}`,
-                            // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
-                            volId: (`${task.volunteer?.id}`), //need to find a way to assign null
-                            status: `${task.status}`
+
+                            setFormData({ ...formData, firstname : (dataSet.first_name)});
+                            
+                            // setFormData(lastName: data.last_name,
+                            // firstname : data.first_name
+                            // firstname: data.first_name,
+                            // taskType: `${task.task_type}`,
+                            // taskDetails: `${task.description}`,
+                            // start: `${task.start_time}`,
+                            // end: (`${task.end_time}`),
+                            // distance: `${task.id}`,
+                            // // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
+                            // volId: (`${task.volunteer?.id}`), //need to find a way to assign null
+                            // status: `${task.status}                          
 
                         });
-                    })}
+                }
             )
             .catch(function (error) {
                 console.log("error")
@@ -92,8 +116,9 @@ export default function Profile(props) {
                 console.log(error.message);
 
             });
-        }, []);
-
+        }
+        
+       
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
@@ -188,13 +213,14 @@ export default function Profile(props) {
                 <Grid container spacing={3} >
                     <Grid item xs={12} sm={6}>
                         <TextField                        
-                            id="firstName"
+                            id="firstname"
                             type="text"
-                            name="firstName"
+                            name="firstname"
                             label="First name"
                             variant="outlined"
+                            // inputRef ={firstnameRef}
                             onChange={handleChange}
-                            value={firstName || ''}
+                            value={firstname||''}
                             style={useStyles.textFld}
                             autoComplete="given-name"
                         />
@@ -206,7 +232,7 @@ export default function Profile(props) {
                             type="text"
                             label="Last name"
                             onChange={handleChange}
-                            value={lastName || ''}
+                            value={lastName}
                             variant="outlined"
                             style={useStyles.textFld}
                             autoComplete="family-name"
