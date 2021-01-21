@@ -13,8 +13,18 @@ from django.core.mail import EmailMessage
 def send_email(task, prev_state_task, prev_vol_email):
     if (task.status == "AS") and (prev_state_task =="OP"): #for accepted task
         volunteer_email = EmailMessage(            
-            subject='Task Assigned',
-            body=f'You have recently accepted the task  {prev_state_task}{prev_vol_email}{task.status}',
+            subject=f'Task Assigned',
+            body=f'You have accepted new task.Please see the details below: \n\n Requestee: {task.requestee.first_name}  {task.requestee.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+  
+                f'Address Line1: {task.requestee.address_line_1}\n'+
+                f'Address Line2: {task.requestee.address_line_2}\n'+
+                f'City: {task.requestee.city}\n'+
+                f'PostCode: {task.requestee.post_code}\n\n'+
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',           
             from_email='helpwhomeeds.info@gmail.com',
             to=[task.volunteer.email],
             #to=['kusumthapamagar@gmail.com']
@@ -23,7 +33,13 @@ def send_email(task, prev_state_task, prev_vol_email):
             )
         requestee_email = EmailMessage(       
             subject = 'Task Requested is Accepted',
-            body = 'The task you have requested has been accpeted',
+            body = f'The task you have requested has been accepted.Please see the details below: \n\n Volunteer: {task.volunteer.first_name}  {task.volunteer.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+                 
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',          
             from_email = 'helpwhomeeds.info@gmail.com',
             to =[task.requestee.email]
             )   
@@ -33,7 +49,17 @@ def send_email(task, prev_state_task, prev_vol_email):
     if (task.status == "OP") and (prev_state_task=="AS"): #for rejected Task
             volunteer_email = EmailMessage(            
                 subject='Task Returned',
-                body=f'You have recently returned the task  {prev_state_task}{task.status}',
+                body=f'You have recently returned the task. Please see the details below: \n\n Requestee: {task.requestee.first_name}  {task.requestee.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+  
+                f'Address Line1: {task.requestee.address_line_1}\n'+
+                f'Address Line2: {task.requestee.address_line_2}\n'+
+                f'City: {task.requestee.city}\n'+
+                f'PostCode: {task.requestee.post_code}\n\n'+
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',  
                 from_email='helpwhomeeds.info@gmail.com',
                 to=[prev_vol_email]
                 )
@@ -41,7 +67,13 @@ def send_email(task, prev_state_task, prev_vol_email):
 
             requestee_email = EmailMessage(       
                 subject = 'Task Requested is returned',
-                body = 'The task you have requested has been returned',
+                body = 'The task you have requested has been returned.Please see the details below: \n\n Volunteer: {task.volunteer.first_name}  {task.volunteer.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+                 
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',          
                 from_email = 'helpwhomeeds.info@gmail.com',
                 to =[task.requestee.email]
                 )  
@@ -51,14 +83,30 @@ def send_email(task, prev_state_task, prev_vol_email):
     if (task.status == "DN") and (prev_state_task=="AS"): #for completed task
             volunteer_email = EmailMessage(            
                 subject='Task Completed',
-                body=f'You have recently marked the task  as completed{prev_state_task}{task.status}',
+                body=f'You have recently marked the task  as completed. Please see the details below: \n\n Requestee: {task.requestee.first_name}  {task.requestee.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+  
+                f'Address Line1: {task.requestee.address_line_1}\n'+
+                f'Address Line2: {task.requestee.address_line_2}\n'+
+                f'City: {task.requestee.city}\n'+
+                f'PostCode: {task.requestee.post_code}\n\n'+
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',
                 from_email='helpwhomeeds.info@gmail.com',
                 to=[prev_vol_email]
                 )         
 
             requestee_email = EmailMessage(       
                 subject = 'Task Requested is Completed',
-                body = 'The task you have requested has been completed',
+                body = 'The task you have requested has been completed. Please see the details below: \n\n Volunteer: {task.volunteer.first_name}  {task.volunteer.last_name}\n'+
+                f'Task: {task.task_type} \n'+
+                f'Task Details: {task.description} \n\n'+                 
+                f'Phone no: {task.requestee.phone_number}\n'+
+                f'Email: {task.requestee.email}\n'+
+                f'Start Time: {task.start_time.ctime()}\n'+
+                f'End Time: {task.end_time.ctime()}\n',          
                 from_email = 'helpwhomeeds.info@gmail.com',
                 to =[task.requestee.email]
                 )  
