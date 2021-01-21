@@ -19,14 +19,14 @@ these terms include the following topic headings:</p>
     Content in services, which describes the intellectual property rights to the content that you find 
     in our services – whether that content belongs to you, us or others
     In case of problems or disagreements, which describes other legal rights that you have, and what to 
-    expect in case someone violates these terms.
+    expect in case someone violates these terms.</p>
 
-Understanding these terms is important because, to use our services, you must accept these terms.
+<p> Understanding these terms is important because, to use our services, you must accept these terms.
 
 Besides these terms, we also publish a Privacy Policy. Although it’s not part of these terms, we encourage 
-you to read it to better understand how you can update, manage, export and delete your information.
+you to read it to better understand how you can update, manage, export and delete your information.</p>
 
-Service provider
+<p>Service provider</p>
 
 YourTechAngels services are provided by, and you’re contracting with:
 
@@ -36,9 +36,9 @@ organised under the laws of the United Kingsdom and operating under the laws of 
 XX Street,
 London, UK
 
-Age requirements
+<p>Age requirements</p>
 
-If you’re under the age required to manage your own, you must have your parent or legal guardian’s 
+<p>If you’re under the age required to manage your own, you must have your parent or legal guardian’s 
 permission to use this account. Please ask your parent or legal guardian to read these terms with you.
 
 If you’re a parent or legal guardian, and you allow your child to use the services, then these terms apply to you and you’re responsible for your child’s activity on the services.
