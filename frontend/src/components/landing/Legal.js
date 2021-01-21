@@ -1,14 +1,23 @@
-
+import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
 const Legal = () => (
     <div>
-        <h1>This is the Legal Page</h1>
-        <p>
-        End-user privacy.
-        Intellectual property (IP) rights.
-        Advertising and promotions.
-        Users of this app must be 18 or over.
-
-    </p>
+       
+      <h2 align="center"> Legal</h2>
+      
+      <Grid container flex-start="left" >
+      
+     
+    <Typography  color="inherit" noWrap>
+       <p>Your data and GDPR </p>
+        <p>End-user privacy</p>
+        <p>Intellectual property (IP) rights.</p>
+        <p>Advertising and promotions</p>
+        <p>Users of this app must be 18 or over</p>
+    </Typography>
+      
+      </Grid>
+        
     </div>
 );
 
