@@ -77,7 +77,7 @@ export default function VolunteerSearchTask() {
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
-                        distance: `${task.id}`,
+                        distance: 1,//`${task.id}`,
                         volId: `${task.volunteer?.id}`, //need to find a way to assign null
                         status: `${task.status}`,
                     };
@@ -161,15 +161,6 @@ export default function VolunteerSearchTask() {
                         console.log(data);
                         const task = response.data;
                         const selectedTask = {
-                            id: `${task.id}`,
-                            lastName: `${task.requestee.last_name}`,
-                            firstName: `${task.requestee.first_name}`,
-                            taskType: `${task.task_type.task_type}`,
-                            taskDetails: `${task.description}`,
-                            start: `${task.start_time}`,
-                            end: `${task.end_time}`,
-                            distance: `${task.id}`,
-                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
                             status: `${task.status}`,
                             volEmail: `${task.volunteer?.email}`,
                         };
@@ -185,12 +176,29 @@ export default function VolunteerSearchTask() {
                                 })
                                 .then(function (response) {
                                     console.log(response);
+                                    //change status is frontend
+                                    const returnTask = pendingTasks.map((task) =>
+                                        task.id === taskId ? { ...task, volId: null, status: "OP" } : task
+                                    );
+                                    setPendingTasks(returnTask);
+                                    console.log("myTask");
+                                    console.log(myTasks);
+                                    console.log("assignTasks");
+                                    console.log(unassignedTasks);
+                                    console.log(pendingTasks);
+
+                                    setNotifyMsg({
+                                        isOpen: true,
+                                        message:
+                                            "Task is unssigned from you. Email notification will be sent shortly.",
+                                        type: "warning",
+                                    });
                                 })
                                 .catch(function (error) {
                                     console.log(error);
                                 });
                         } else {
-                            console.log("alert task already assigned");
+                            console.log("alert task already returned");
                         }
                     })
                     .catch(function (error) {
@@ -199,26 +207,11 @@ export default function VolunteerSearchTask() {
                         console.log(error.config);
                         console.log(error.message);
                     });
-                const returnTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: null, status: "OP" } : task
-                );
-                setPendingTasks(returnTask);
-                console.log("myTask");
-                console.log(myTasks);
-                console.log("assignTasks");
-                console.log(unassignedTasks);
-                console.log(pendingTasks);
-
-                setNotifyMsg({
-                    isOpen: true,
-                    message: "Task is unssigned from you. Email notification will be sent shortly.",
-                    type: "warning",
-                });
+                
             },
         });
     };
-
-    // const handleAccept = (taskId, userId) => {
+    
     const handleAccept = (taskId) => {
         console.log("Accepted userID");
         console.log(userId);
@@ -239,15 +232,6 @@ export default function VolunteerSearchTask() {
                         console.log(data);
                         const task = response.data;
                         const selectedTask = {
-                            id: `${task.id}`,
-                            lastName: `${task.requestee.last_name}`,
-                            firstName: `${task.requestee.first_name}`,
-                            taskType: `${task.task_type.task_type}`,
-                            taskDetails: `${task.description}`,
-                            start: `${task.start_time}`,
-                            end: `${task.end_time}`,
-                            distance: `${task.id}`,
-                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
                             status: `${task.status}`,
                             volEmail: `${task.volunteer?.email}`,
                         };
@@ -263,11 +247,35 @@ export default function VolunteerSearchTask() {
                                 })
                                 .then(function (response) {
                                     console.log(response);
+
+                                    const assignTask = pendingTasks.map((task) =>
+                                        task.id === taskId
+                                            ? { ...task, volId: userId, status: "AS" }
+                                            : task
+                                    );
+                                    setPendingTasks(assignTask);
+                                    console.log("assignTasks");
+                                    console.log(unassignedTasks);
+                                    console.log("myTask");
+                                    console.log(myTasks);
+                                    console.log(pendingTasks);
+                                    setNotifyMsg({
+                                        isOpen: true,
+                                        message:
+                                            "Task is successfully assigned to you.Email notification will be sent shortly.",
+                                        type: "success",
+                                    });
                                 })
                                 .catch(function (error) {
                                     console.log(error);
                                 });
                         } else {
+                            setNotifyMsg({
+                                isOpen: true,
+                                message:
+                                    "Task has been already accepted by another volunteer. Please refresh the page to get the latest new tasks",
+                                type: "error",
+                            });
                             console.log("alert task already assigned");
                         }
                     })
@@ -277,21 +285,6 @@ export default function VolunteerSearchTask() {
                         console.log(error.config);
                         console.log(error.message);
                     });
-
-                const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, volId: userId, status: "AS" } : task
-                );
-                setPendingTasks(assignTask);
-                console.log("assignTasks");
-                console.log(unassignedTasks);
-                console.log("myTask");
-                console.log(myTasks);
-                console.log(pendingTasks);
-                setNotifyMsg({
-                    isOpen: true,
-                    message: "Task is successfully assigned to you.Email notification will be sent shortly.",
-                    type: "success",
-                });
             },
         });
     };
@@ -314,15 +307,6 @@ export default function VolunteerSearchTask() {
                         console.log(data);
                         const task = response.data;
                         const selectedTask = {
-                            id: `${task.id}`,
-                            lastName: `${task.requestee.last_name}`,
-                            firstName: `${task.requestee.first_name}`,
-                            taskType: `${task.task_type.task_type}`,
-                            taskDetails: `${task.description}`,
-                            start: `${task.start_time}`,
-                            end: `${task.end_time}`,
-                            distance: `${task.id}`,
-                            volId: `${task.volunteer?.id}`, //need to find a way to assign null
                             status: `${task.status}`,
                             volEmail: `${task.volunteer?.email}`,
                         };
@@ -337,12 +321,27 @@ export default function VolunteerSearchTask() {
                                 })
                                 .then(function (response) {
                                     console.log(response);
+                                    const assignTask = pendingTasks.map((task) =>
+                                    task.id === taskId ? { ...task, status: "DN" } : task
+                                );
+                                setPendingTasks(assignTask);
+                                console.log("assignTasks");
+                                console.log(unassignedTasks);
+                                console.log("myTask");
+                                console.log(myTasks);
+                                console.log(pendingTasks);
+                                setNotifyMsg({
+                                    isOpen: true,
+                                    message:
+                                        "Task is successfully marked as completed.Email notification will be sent shortly.",
+                                    type: "success",
+                                });
                                 })
                                 .catch(function (error) {
                                     console.log(error);
                                 });
                         } else {
-                            console.log("alert task already assigned");
+                            console.log("alert task already marked completed");
                         }
                     })
                     .catch(function (error) {
@@ -350,21 +349,7 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });
-                const assignTask = pendingTasks.map((task) =>
-                    task.id === taskId ? { ...task, status: "DN" } : task
-                );
-                setPendingTasks(assignTask);
-                console.log("assignTasks");
-                console.log(unassignedTasks);
-                console.log("myTask");
-                console.log(myTasks);
-                console.log(pendingTasks);
-                setNotifyMsg({
-                    isOpen: true,
-                    message: "Task is successfully marked as completed.Email notification will be sent shortly.",
-                    type: "success",
-                });
+                    });               
             },
         });
     };
@@ -398,7 +383,7 @@ export default function VolunteerSearchTask() {
                                             }}
                                         >
                                             Search New Tasks
-                                        </Button>{" "}
+                                </Button>{" "}
                                     </Hidden>
 
                                     <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
