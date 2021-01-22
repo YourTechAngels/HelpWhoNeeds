@@ -5,6 +5,7 @@ import Landing from "./components/landing/Landing"
 import Legal from "./components/landing/Legal"
 import Cookie from "./components/landing/Cookie"
 import Support from "./components/landing/Support"
+import Privacy from "./components/landing/Privacy"
 import TermConditions from "./components/landing/TermConditions"
 import About from "./components/landing/About"
 import Contact from "./components/landing/Contact"
@@ -54,6 +55,9 @@ function App() {
                 </Route>    
                 <Route path="/support">
                     <Support />
+                </Route>    
+                <Route path="/privacy">
+                    <Privacy />
                 </Route>    
                 <Route path="/cookie">
                     <Cookie />
