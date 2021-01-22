@@ -371,7 +371,7 @@ export default function VolunteerSearchTask() {
                             justify="center"
                         >
                             {!hideMyTask && (
-                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
+                                <Grid className="my-tasks" item xs={12} sm={7} align="right">
                                     <Hidden smUp>
                                         <Button
                                             variant="contained"
@@ -399,7 +399,7 @@ export default function VolunteerSearchTask() {
                             )}
 
                             {!hideNewTask && (
-                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
+                                <Grid className="new-tasks" item xs={12} sm={5} align="right">
                                     <Hidden smUp>
                                         {" "}
                                         <Button

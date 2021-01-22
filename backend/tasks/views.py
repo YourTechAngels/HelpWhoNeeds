@@ -122,7 +122,11 @@ class TaskView(viewsets.ModelViewSet):
     def get_vol_task(self, request, *args, **kwargs):
         vol_id = self.request.query_params.get('volId')
 
-        queryset = Task.objects.filter(Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
+        queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
+                                        &Q(start_time__gte= datetime.datetime.now())           
+                                        &Q(end_time__gte= datetime.datetime.now())                                        
+                                        )
+                                
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
