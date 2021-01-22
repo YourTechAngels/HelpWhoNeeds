@@ -22,132 +22,159 @@ function AddTask() {
         "EXP": "Expired",
         "AS": "Assigned",
         "CL": "Canceled",
-        "DN": "Completed",}
-
-const { currentUser } = useAuth()
-const userUID = "WNVuNlpmfs" // currentUser.uid
-const [taskList, setTaskList] = useState([])
-
-useEffect(() => {
-    const options = {
-        method: 'GET',
-        url: "/api/requestee/tasks/",
-        timeout: 8000,
-        params: {
-            requid: userUID,
-        },
+        "DN": "Completed",
     }
-    axios(options)
-        .then((response) => {
-            console.log(response.data)
-            const taskData = response.data.map(task => {
-                return (
-                    {
-                        id: `${task.id}`,
-                        taskType: readableTaskTypes[`${task.task_type.task_type}`],
-                        taskDetails: `${task.description}`,
-                        start: `${task.start_time}`,
-                        end: (`${task.end_time}`),
-                        status: readableStatus[`${task.status}`]
-                    })
+
+    const { currentUser } = useAuth()
+    // const userUID =  "WKERfsSJNM"  // user with no tasks
+    const userUID = "WNVuNlpmfs" // currentUser.uid
+    const [reqId, setReqId] = useState(-1)
+    const [taskList, setTaskList] = useState([])
+
+    useEffect(() => {
+        const options = {
+            method: 'GET',
+            url: "/api/requestee/tasks/",
+            timeout: 8000,
+            params: {
+                requid: userUID,
+            },
+        }
+        axios(options)
+            .then((response) => {
+                console.log(response.data)
+                // else {
+                //     axios.get("http://localhost:8000/api/accounts/get_user_by_id/", {
+                //         params: { uId: userUID, },
+                //     })
+                //         .then((response) => {
+                //             const data = response.data;
+                //             console.log("userdata");
+                //             console.log(data);
+                //             console.log(data[0]);
+                //             setReqId(response.data[0])
+                //         })
+                //         .catch(function (error) {
+                //             console.log("error");
+                //             console.log(error.request);
+                //             console.log(error.config);
+                //             console.log(error.message);
+                //         });
+                // }
+                const taskData = response.data.map(task => {
+                    return (
+                        {
+                            id: `${task.id}`,
+                            taskType: readableTaskTypes[`${task.task_type}`],
+                            taskDetails: `${task.description}`,
+                            start: `${task.start_time}`,
+                            end: (`${task.end_time}`),
+                            status: readableStatus[`${task.status}`]
+                        })
+                })
+                
+                if (response.data.length > 0) {
+                    // console.log("Req id will be....", response.data[0].requestee)
+                    setReqId(response.data[0].requestee)
+                    console.log("Requestee ID: ", reqId, typeof reqId) }
+                setTaskList(taskData)
             })
-            setTaskList(taskData)
-        })
-        .catch(error => {
-            console.log("error")
-            console.log(error.request);
-            console.log(error.config);
-            console.log(error.message);
-        })
-}, [])
+            .catch(error => {
+                console.log("error")
+                console.log(error.request);
+                console.log(error.config);
+                console.log(error.message);
+            })
+    }, [])
 
-const [nextId, setNextId] = useState(11)
+    const [nextId, setNextId] = useState(11)
 
-const addTask = newTask => {
-    newTask.id = nextId
-    setNextId(nextId + 1)
-    newTask.status = "Open"
-    const updatedTaskList = [...taskList, newTask]
-    setTaskList(updatedTaskList)
-}
-
-const updateTask = (updTask, id) => {
-    if (id < 0) { // should not happen but in case
-        console.log("ERROR: task to be updated does not exists")
-        return
+    const addTask = newTask => {
+        newTask.id = nextId
+        setNextId(nextId + 1)
+        newTask.status = "Open"
+        const updatedTaskList = [...taskList, newTask]
+        setTaskList(updatedTaskList)
     }
-    if (updTask.end > new Date())  // expected to be so but just in case
-        updTask.status = "Open"
-    updTask.id = id
-    let updatedTaskList = taskList.filter(task => task.id !== id)
-    updatedTaskList = [...updatedTaskList, updTask]
-    setTaskList(updatedTaskList)
-}
 
-const taskDefaults = {
-    taskDetails: "",
-    startDate: null,
-    startTime: "08:00",
-    endDate: null,
-    endTime: "20:00"
-}
+    const updateTask = (updTask, id) => {
+        if (id < 0) { // should not happen but in case
+            console.log("ERROR: task to be updated does not exists")
+            return
+        }
+        if (updTask.end > new Date())  // expected to be so but just in case
+            updTask.status = "Open"
+        updTask.id = id
+        let updatedTaskList = taskList.filter(task => task.id !== id)
+        updatedTaskList = [...updatedTaskList, updTask]
+        setTaskList(updatedTaskList)
+    }
 
-const [showAddDialog, setShowAddDialog] = React.useState(false);
-const [taskType, setTaskType] = React.useState(null);
-const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
-const [updTaskId, setUpdTaskId] = React.useState(-1)
+    const taskDefaults = {
+        taskDetails: "",
+        startDate: null,
+        startTime: "08:00",
+        endDate: null,
+        endTime: "20:00"
+    }
 
-const handleClickOpen = (e, taskType) => {
-    setTaskType(taskType)
-    setShowAddDialog(true)
-}
+    const [showAddDialog, setShowAddDialog] = React.useState(false);
+    const [taskType, setTaskType] = React.useState(null);
+    const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
+    const [updTaskId, setUpdTaskId] = React.useState(-1)
 
-const handleClose = () => {
-    setTaskType(null)
-    setShowAddDialog(false)
-    setNewTaskDefaults(taskDefaults)
-    setUpdTaskId(-1)
-}
+    const handleClickOpen = (e, taskType) => {
+        setTaskType(taskType)
+        setShowAddDialog(true)
+    }
 
-const handleCopy = id => {
-    const taskToCopy = taskList.find(task => task.id === id)
-    setTaskType(taskToCopy.taskType)
-    setNewTaskDefaults({
-        ...newTaskDefaults,
-        taskDetails: taskToCopy.taskDetails,
-    })
-    setShowAddDialog(true)
-}
+    const handleClose = () => {
+        setTaskType(null)
+        setShowAddDialog(false)
+        setNewTaskDefaults(taskDefaults)
+        setUpdTaskId(-1)
+    }
 
-const handleEdit = id => {
-    const taskToEdit = taskList.find(task => task.id === id)
-    setTaskType(taskToEdit.taskType)
-    setNewTaskDefaults({
-        ...newTaskDefaults,
-        taskDetails: taskToEdit.taskDetails,
-    })
-    setUpdTaskId(id)
-    setShowAddDialog(true)
-}
+    const handleCopy = id => {
+        const taskToCopy = taskList.find(task => task.id === id)
+        setTaskType(taskToCopy.taskType)
+        setNewTaskDefaults({
+            ...newTaskDefaults,
+            taskDetails: taskToCopy.taskDetails,
+        })
+        setShowAddDialog(true)
+    }
 
-const handleRemove = id => {
-    const copyTaskList = [...taskList]
-    let taskToCancel = copyTaskList.find(task => task.id === id)
-    taskToCancel.status = "Cancelled"
-    setTaskList(copyTaskList)
-}
+    const handleEdit = id => {
+        const taskToEdit = taskList.find(task => task.id === id)
+        setTaskType(taskToEdit.taskType)
+        setNewTaskDefaults({
+            ...newTaskDefaults,
+            taskDetails: taskToEdit.taskDetails,
+        })
+        setUpdTaskId(id)
+        setShowAddDialog(true)
+    }
+
+    const handleRemove = id => {
+        const copyTaskList = [...taskList]
+        let taskToCancel = copyTaskList.find(task => task.id === id)
+        taskToCancel.status = "Cancelled"
+        setTaskList(copyTaskList)
+    }
 
 
-return <div className="centered">
+    return <div className="centered">
 
-    <NewTaskButtons handleClickOpen={handleClickOpen} />
+        <NewTaskButtons handleClickOpen={handleClickOpen} />
 
-    <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
-        addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask} updTaskId={updTaskId} />
+        <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
+            addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask}
+            updTaskId={updTaskId} reqId={reqId} />
 
-    <TasksTable taskList={taskList} handleCopy={handleCopy}
-        handleEdit={handleEdit} handleRemove={handleRemove} />
-</div>
+        <TasksTable taskList={taskList} handleCopy={handleCopy}
+            handleEdit={handleEdit} handleRemove={handleRemove} />
+    </div>
 }
 
 export default AddTask

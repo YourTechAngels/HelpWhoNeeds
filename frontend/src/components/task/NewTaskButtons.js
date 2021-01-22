@@ -45,32 +45,32 @@ export default function NewTaskButtons({handleClickOpen}) {
         <h1>I need help with...</h1>
 
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Shopping")}>
+            onClick={(e) => handleClickOpen(e, "GRO")}>
             <ShoppingCartIcon className={classes.largeIcon} />
             Shopping
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Pharmacy")}>
+            onClick={(e) => handleClickOpen(e, "PHA")}>
             <LocalPharmacyIcon className={classes.largeIcon} />
             Pharmacy
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Dog Walking")}>
+            onClick={(e) => handleClickOpen(e, "DOG")}>
             <PetsIcon className={classes.largeIcon} />
             Dog Walk
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Hospital")}>
+            onClick={(e) => handleClickOpen(e, "HOS")}>
             <LocalHospitalIcon className={classes.largeIcon} />
             Hospital
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Chat")}>
+            onClick={(e) => handleClickOpen(e, "CHAT")}>
             <PhoneIcon className={classes.largeIcon} />
             Chat
         </Button>
         <Button classes={{ root: classes.largeButton, label: classes.label }}
-            onClick={(e) => handleClickOpen(e, "Other")}>
+            onClick={(e) => handleClickOpen(e, "ANY")}>
             <LiveHelpIcon className={classes.largeIcon} />
             Other
         </Button>

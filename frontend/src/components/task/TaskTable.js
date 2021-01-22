@@ -101,7 +101,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             name: "id",
             label: "ID",
             width: "5%",
-            options: { display: false, sort: true, filter: false },
+            options: { display: true, sort: true, filter: false },
         },
         {
             name: "taskType",

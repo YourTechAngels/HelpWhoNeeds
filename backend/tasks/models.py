@@ -24,7 +24,7 @@ STATUS_CHOICES = (
 
 
 class TaskType(models.Model):
-    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
+    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES, primary_key=True)
     min_duration = models.IntegerField(default=30)
     dbs_required = models.BooleanField()
 
@@ -32,7 +32,7 @@ class TaskType(models.Model):
         return self.get_task_type_display()
 
 class Task(models.Model):
-    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
+    task_type = models.ForeignKey(TaskType, to_field='task_type', on_delete=models.CASCADE)
     requestee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requestee')
     volunteer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='volunteer')
     description = models.TextField(default='', blank=True)
