@@ -27,7 +27,7 @@ export default function VolunteerSearchTask() {
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
-
+    const[taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
             .get("http://localhost:8000/api/accounts/get_user_by_id/", {
@@ -154,6 +154,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -186,7 +187,7 @@ export default function VolunteerSearchTask() {
                                     console.log("assignTasks");
                                     console.log(unassignedTasks);
                                     console.log(pendingTasks);
-
+                                    setTaskStateUpdated(true);
                                     setNotifyMsg({
                                         isOpen: true,
                                         message:
@@ -206,8 +207,7 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });
-                
+                    });                 
             },
         });
     };
@@ -225,6 +225,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -259,6 +260,7 @@ export default function VolunteerSearchTask() {
                                     console.log("myTask");
                                     console.log(myTasks);
                                     console.log(pendingTasks);
+                                    setTaskStateUpdated(true);
                                     setNotifyMsg({
                                         isOpen: true,
                                         message:
@@ -270,6 +272,7 @@ export default function VolunteerSearchTask() {
                                     console.log(error);
                                 });
                         } else {
+                            setTaskStateUpdated(true);
                             setNotifyMsg({
                                 isOpen: true,
                                 message:
@@ -300,6 +303,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -330,6 +334,7 @@ export default function VolunteerSearchTask() {
                                 console.log("myTask");
                                 console.log(myTasks);
                                 console.log(pendingTasks);
+                                setTaskStateUpdated(true);
                                 setNotifyMsg({
                                     isOpen: true,
                                     message:
@@ -362,7 +367,11 @@ export default function VolunteerSearchTask() {
                     <CircularProgress color="secondary" />
                 </div>
             ) : (
-                    <div style={{ height: "100%" }}>
+                    <div style={{ height: "100%" }}>                 
+                
+                {!taskStateUpdated && (<div>  <CircularProgress />
+                    <CircularProgress color="secondary" /></div>)}
+                    
                         <Grid
                             id="tasks"
                             container
