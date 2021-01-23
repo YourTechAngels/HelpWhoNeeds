@@ -27,7 +27,7 @@ export default function VolunteerSearchTask() {
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
-
+    const[taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
             .get("http://localhost:8000/api/accounts/get_user_by_id/", {
@@ -71,14 +71,15 @@ export default function VolunteerSearchTask() {
                 const allTask = data.map((task) => {
                     return {
                         id: `${task.id}`,
-                        lastName: `${task.requestee.last_name}`,
-                        firstName: `${task.requestee.first_name}`,
-                        taskType: `${task.task_type.task_type}`,
+                        lastName: `${task.requestee_details.last_name}`,
+                        firstName: `${task.requestee_details.first_name}`,
+                        taskType: `${task.task_type}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
                         distance: 1,//`${task.id}`,
-                        volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                        //volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                        volId: `${task.volunteer}`,
                         status: `${task.status}`,
                     };
                 });
@@ -154,6 +155,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -186,7 +188,7 @@ export default function VolunteerSearchTask() {
                                     console.log("assignTasks");
                                     console.log(unassignedTasks);
                                     console.log(pendingTasks);
-
+                                    setTaskStateUpdated(true);
                                     setNotifyMsg({
                                         isOpen: true,
                                         message:
@@ -206,8 +208,7 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });
-                
+                    });                 
             },
         });
     };
@@ -225,6 +226,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -259,6 +261,7 @@ export default function VolunteerSearchTask() {
                                     console.log("myTask");
                                     console.log(myTasks);
                                     console.log(pendingTasks);
+                                    setTaskStateUpdated(true);
                                     setNotifyMsg({
                                         isOpen: true,
                                         message:
@@ -270,6 +273,7 @@ export default function VolunteerSearchTask() {
                                     console.log(error);
                                 });
                         } else {
+                            setTaskStateUpdated(true);
                             setNotifyMsg({
                                 isOpen: true,
                                 message:
@@ -300,6 +304,7 @@ export default function VolunteerSearchTask() {
                     ...confirmDialog,
                     isOpen: false,
                 });
+                setTaskStateUpdated(false);
                 axios
                     .get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .then((response) => {
@@ -330,6 +335,7 @@ export default function VolunteerSearchTask() {
                                 console.log("myTask");
                                 console.log(myTasks);
                                 console.log(pendingTasks);
+                                setTaskStateUpdated(true);
                                 setNotifyMsg({
                                     isOpen: true,
                                     message:
@@ -362,7 +368,11 @@ export default function VolunteerSearchTask() {
                     <CircularProgress color="secondary" />
                 </div>
             ) : (
-                    <div style={{ height: "100%" }}>
+                    <div style={{ height: "100%" }}>                 
+                
+                {!taskStateUpdated && (<div>  <CircularProgress />
+                    <CircularProgress color="secondary" /></div>)}
+                    
                         <Grid
                             id="tasks"
                             container
@@ -371,7 +381,7 @@ export default function VolunteerSearchTask() {
                             justify="center"
                         >
                             {!hideMyTask && (
-                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
+                                <Grid className="my-tasks" item xs={12} sm={7} align="right">
                                     <Hidden smUp>
                                         <Button
                                             variant="contained"
@@ -399,7 +409,7 @@ export default function VolunteerSearchTask() {
                             )}
 
                             {!hideNewTask && (
-                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
+                                <Grid className="new-tasks" item xs={12} sm={5} align="right">
                                     <Hidden smUp>
                                         {" "}
                                         <Button

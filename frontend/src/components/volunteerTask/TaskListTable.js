@@ -15,7 +15,7 @@ const options = {
     download: false,
     sortOrder: {
         name: "start",
-        direction: "desc",
+        direction: "asc",
     },
 };
 
@@ -67,18 +67,17 @@ export default function TaskListTable({
         },
         {
             name: "volId",
-            label: "volunteer ID",
-            viewColumns: false,
-            options: { display: false, sort: false, filter: false },
+            label: "volunteer ID",            
+            options: { display: false, sort: false, filter: false, viewColumns: false },
         },
         {
             name: "status",
-            label: "State",
-            viewColumns: false,
+            label: "State",         
             options: {
                 display: false,
                 filter: false,
                 sort: false,
+                viewColumns: false,
                 width: "10%",
             },
         },
@@ -151,23 +150,23 @@ export default function TaskListTable({
         {
             name: "start",
             label: "Start Date",
-            viewColumns: false,
             options: {
                 filter: true,
                 sort: true,
                 display: false,
+                viewColumns: false,
                 customBodyRender: (value) =>
                     moment(new Date(value)).format(SPACED_DATE_FORMAT),
             },
         },
         {
             name: "end",
-            label: "End Date",
-            viewColumns: false,
+            label: "End Date",           
             options: {
                 filter: true,
                 sort: true,
                 display: false,
+                viewColumns: false,
                 customBodyRender: (value) =>
                     moment(new Date(value)).format(SPACED_DATE_FORMAT),
             },

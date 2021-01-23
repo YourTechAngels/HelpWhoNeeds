@@ -1,14 +1,15 @@
-from django.shortcuts import render
+from rest_framework.parsers import JSONParser
+from rest_framework.decorators import parser_classes
 from rest_framework import viewsets
 from .serializers import TaskSerializer
 from .models import Task
 from accounts.models import User
-import datetime
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
 from helpwhoneeds.settings import EMAIL_HOST_USER
+import datetime
 
 
 # send email function to notify requestee about task status
@@ -74,8 +75,11 @@ class TaskView(viewsets.ModelViewSet):
     def get_vol_task(self, request, *args, **kwargs):
         vol_id = self.request.query_params.get('volId')
 
-        queryset = Task.objects.filter(Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
-
+        queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
+                                        &Q(start_time__gte= datetime.datetime.now())           
+                                        &Q(end_time__gte= datetime.datetime.now())                                        
+                                        )
+                                
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -100,6 +104,6 @@ class TaskView(viewsets.ModelViewSet):
         task_object.save()
         serializer = TaskSerializer(task_object)
 
-        send_email(task_object, prev_state_task,prev_vol_email)
+        #send_email(task_object, prev_state_task,prev_vol_email)
 
         return Response(serializer.data)
