@@ -7,6 +7,7 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemove }) {
 
+
     const theme = () => createMuiTheme({
         overrides: {
             // MUIDataTableToolbar: {
@@ -76,18 +77,23 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
         download: false,
         rowsPerPage: 20,
         rowsPerPageOptions: [5, 10, 20],
-        // resizableColumns: true,
-        sortOrder: {
+        setRowProps: row => {
+            if (row[5] === "Assigned") {
+                return {
+                    style: { background: "palegreen" }
+                }
+            }
+            if (row[5] === "Open") {
+                return {
+                    style: { background: "peachpuff" }
+                }
+            }
+        },
+    // resizableColumns: true,
+    sortOrder: {
             name: "start",
             direction: "desc",
         },
-        // TODO customize when backend connected
-        // serverSide: true,
-        // onTableChange: (action, tableState) => {
-        //     this.xhrRequest('my.api.com/tableData', result => {
-        //       this.setState({ data: result });
-        //     });
-        //   }
     };
 
     const columns = [
@@ -95,7 +101,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             name: "id",
             label: "ID",
             width: "5%",
-            options: { display: false, sort: true, filter: false },
+            options: { display: true, sort: true, filter: false },
         },
         {
             name: "taskType",
@@ -108,7 +114,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             },
         },
         {
-            name: "taskDetails",    
+            name: "taskDetails",
             label: " Task Detail",
 
             options: {
@@ -207,7 +213,8 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                     size="small"
                                     className="button"
                                     style={{
-                                        marginLeft: 10 }}
+                                        marginLeft: 10
+                                    }}
                                     onClick={() => {
                                         console.log(tableMeta.rowData[0])
                                         handleEdit(tableMeta.rowData[0])
@@ -216,14 +223,15 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                     Edit
                     </Button>
                                 : null}
-                                {["Open"].includes(tableMeta.rowData[5]) ?
+                            {["Open"].includes(tableMeta.rowData[5]) ?
                                 <Button
                                     variant="contained"
                                     color="secondary"
                                     size="small"
                                     className="button"
                                     style={{
-                                        marginLeft: 10 }}
+                                        marginLeft: 10
+                                    }}
                                     onClick={() => {
                                         console.log(tableMeta.rowData[0])
                                         handleRemove(tableMeta.rowData[0])
