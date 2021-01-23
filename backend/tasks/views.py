@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
 from helpwhoneeds.settings import EMAIL_HOST_USER
+import datetime
 
 
 # send email function to notify requestee about task status
@@ -154,7 +155,7 @@ class TaskView(viewsets.ModelViewSet):
         task_object.save()
         serializer = TaskSerializer(task_object)
 
-        send_email(task_object, prev_state_task,prev_vol_email)
+        #send_email(task_object, prev_state_task,prev_vol_email)
 
         return Response(serializer.data)
     

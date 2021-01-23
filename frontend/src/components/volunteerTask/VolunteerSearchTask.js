@@ -71,14 +71,15 @@ export default function VolunteerSearchTask() {
                 const allTask = data.map((task) => {
                     return {
                         id: `${task.id}`,
-                        lastName: `${task.requestee.last_name}`,
-                        firstName: `${task.requestee.first_name}`,
-                        taskType: `${task.task_type.task_type}`,
+                        lastName: `${task.requestee_details.last_name}`,
+                        firstName: `${task.requestee_details.first_name}`,
+                        taskType: `${task.task_type}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
                         distance: 1,//`${task.id}`,
-                        volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                        //volId: `${task.volunteer?.id}`, //need to find a way to assign null
+                        volId: `${task.volunteer}`,
                         status: `${task.status}`,
                     };
                 });
