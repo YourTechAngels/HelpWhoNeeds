@@ -1,13 +1,15 @@
-from django.shortcuts import render
+from rest_framework.parsers import JSONParser
+from rest_framework.decorators import parser_classes
 from rest_framework import viewsets
 from .serializers import TaskSerializer
 from .models import Task
 from accounts.models import User
-import datetime
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
+from helpwhoneeds.settings import EMAIL_HOST_USER
+
 
 # send email function to notify requestee about task status
 def send_email(task, prev_state_task, prev_vol_email):
@@ -25,7 +27,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',           
-            from_email='helpwhomeeds.info@gmail.com',
+            from_email=EMAIL_HOST_USER,
             to=[task.volunteer.email],
             #to=['kusumthapamagar@gmail.com']
             # bcc = ['kusumthapamagar@gmail.com']
@@ -40,7 +42,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-            from_email = 'helpwhomeeds.info@gmail.com',
+            from_email = EMAIL_HOST_USER,
             to =[task.requestee.email]
             )   
         volunteer_email.send() 
@@ -60,10 +62,9 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',  
-                from_email='helpwhomeeds.info@gmail.com',
+                from_email=EMAIL_HOST_USER,
                 to=[prev_vol_email]
                 )
-            
 
             requestee_email = EmailMessage(       
                 subject = 'Task Requested is returned',
@@ -74,7 +75,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-                from_email = 'helpwhomeeds.info@gmail.com',
+                from_email = EMAIL_HOST_USER,
                 to =[task.requestee.email]
                 )  
             volunteer_email.send()  
@@ -94,7 +95,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',
-                from_email='helpwhomeeds.info@gmail.com',
+                from_email=EMAIL_HOST_USER,
                 to=[prev_vol_email]
                 )         
 
@@ -107,11 +108,12 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-                from_email = 'helpwhomeeds.info@gmail.com',
+                from_email = EMAIL_HOST_USER,
                 to =[task.requestee.email]
                 )  
             volunteer_email.send()  
             requestee_email.send()
+
 
 class TaskView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
@@ -156,3 +158,13 @@ class TaskView(viewsets.ModelViewSet):
 
         return Response(serializer.data)
     
+
+# access by user_id as a parameter
+class RequesteeTasksView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskSerializer
+    queryset = Task.objects.filter
+
+    def get_queryset(self):
+        req_uid = self.request.query_params.get('requid')
+        queryset = Task.objects.filter(requestee=User.objects.get(uid=req_uid).id)
+        return queryset
