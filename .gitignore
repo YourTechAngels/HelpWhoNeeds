@@ -31,5 +31,5 @@ backend/venv/
 **/__pycache__/
 **/db.sqlite3
 
-#email info
+# security settings
 **/security_settings.py
