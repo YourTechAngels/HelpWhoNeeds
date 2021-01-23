@@ -8,6 +8,7 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
+from helpwhoneeds.settings import EMAIL_HOST_USER
 
 
 # send email function to notify requestee about task status
@@ -26,7 +27,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',           
-            from_email='helpwhomeeds.info@gmail.com',
+            from_email=EMAIL_HOST_USER,
             to=[task.volunteer.email],
             #to=['kusumthapamagar@gmail.com']
             # bcc = ['kusumthapamagar@gmail.com']
@@ -41,7 +42,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-            from_email = 'helpwhomeeds.info@gmail.com',
+            from_email = EMAIL_HOST_USER,
             to =[task.requestee.email]
             )   
         volunteer_email.send() 
@@ -61,10 +62,9 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',  
-                from_email='helpwhomeeds.info@gmail.com',
+                from_email=EMAIL_HOST_USER,
                 to=[prev_vol_email]
                 )
-            
 
             requestee_email = EmailMessage(       
                 subject = 'Task Requested is returned',
@@ -75,7 +75,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-                from_email = 'helpwhomeeds.info@gmail.com',
+                from_email = EMAIL_HOST_USER,
                 to =[task.requestee.email]
                 )  
             volunteer_email.send()  
@@ -95,7 +95,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',
-                from_email='helpwhomeeds.info@gmail.com',
+                from_email=EMAIL_HOST_USER,
                 to=[prev_vol_email]
                 )         
 
@@ -108,7 +108,7 @@ def send_email(task, prev_state_task, prev_vol_email):
                 f'Email: {task.requestee.email}\n'+
                 f'Start Time: {task.start_time.ctime()}\n'+
                 f'End Time: {task.end_time.ctime()}\n',          
-                from_email = 'helpwhomeeds.info@gmail.com',
+                from_email = EMAIL_HOST_USER,
                 to =[task.requestee.email]
                 )  
             volunteer_email.send()  

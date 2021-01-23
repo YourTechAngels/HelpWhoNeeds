@@ -31,7 +31,7 @@ function App() {
                 <AppNavBar />
                 <div className="AppContent">
                 <Switch>
-                <Route exact path="/">
+                <Route exact path="/helpwhoneeds">
                     <Landing />
                 </Route>
                 <Route path="/about">
@@ -66,7 +66,7 @@ function App() {
                 </Route>    
                 <Route path="/termconditions">
                     <TermConditions />
-                </Route>    
+                </Route>
                 <PrivateRoute path="/profile" component= {Profile} /> 
                 <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
