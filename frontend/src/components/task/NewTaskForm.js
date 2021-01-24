@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-// import Checkbox from '@material-ui/core/Checkbox'
 import Typography from '@material-ui/core/Typography'
 import Grid from "@material-ui/core/Grid"
 import Dialog from '@material-ui/core/Dialog'
@@ -19,9 +18,8 @@ const useStyles = makeStyles({
     }
 })
 
-function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updateTask, updTaskId }) {
-
-    console.log("Task update dialog with id: ", updTaskId)
+function FormDialog({ open, handleClose, taskType, addTask, defaultValues,
+    updateTask, updTaskId, reqId }) {
 
     useEffect(() => {
         reset(defaultValues);
@@ -29,12 +27,12 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
 
 
     const dialogHeader = {
-        "Shopping": "Shopping",
-        "Pharmacy": "Collect medicine",
-        "Dog Walking": "Dog Walking",
-        "Hospital": "Visit Hospital Appointment",
-        "Chat": "Friendly Chat",
-        "Other": "I need help with ...",
+        "GRO": "Shopping",
+        "PHA": "Collect medicine",
+        "DOG": "Dog Walking",
+        "HOS": "Visit Hospital Appointment",
+        "CHAT": "Friendly Chat",
+        "ANY": "I need help with ...",
     }
 
     const getFormDate = date => {
@@ -53,19 +51,53 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
         handleClose()
     }
 
+    // TODO Call through DB
+    // Minimum time needed to perform a task *in minutes*
+    const minDuration = 30
+
+    const createItem = (data, start, end) => {
+        let item = {}
+        item["task_type"] = taskType
+        item["description"] = data.taskDetails || ""
+        item["dbs_required"] = data.dbsReq
+        item["start_time"] = start
+        item["end_time"] = end
+        // TODO correct!!!! Requestee ID hardcoded!!!!!
+        console.log("Requestee ID: ", reqId)
+        item["requestee"] = reqId > 0 ? reqId : 100
+        item["volunteer"] = null
+        console.log("item created: ", item)
+        return item
+    }
+    
     const onSubmit = (data) => {
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
         const item = createItem(data, start, end)
-        axios.post("/api/tasks/", item).catch(function (error) {
-            console.log(error.request); console.log(error.config)})
+        console.log("Submitting item: ", item)
+        axios.post("/api/tasks/", item)
+            .then(function (response) {
+                console.log("RESPONSE: ", response)
+                console.log("DATA: ", response.data)
+                const newTaskId = (response.status === 201) ? response.data.id : -1
+                if (newTaskId > 0) {
+                    console.log("Adding new item to the list of tasks... New Task id=", newTaskId)
+                    addTask({
+                        id: newTaskId, taskType: taskType,
+                        taskDetails: data.taskDetails, start: start, end: end
+                    })
+                    console.log("onSubmit: newTaskId: ", newTaskId)
+                }
+                else
+                    console.log("Something was unsuccessful. Request status: ", response.status)
+            })
+            .catch(function (error) {
+                console.log(error.request)
+                console.log(error.config)
+            })
 
-        addTask({
-            taskType: taskType, taskDetails: data.taskDetails,
-            start: start, end: end
-        })
         console.log("onSubmit: updTaskId: ", updTaskId)
-        if (updTaskId < 0) 
+        if (updTaskId < 0)
             addTask({
                 taskType: taskType, taskDetails: data.taskDetails,
                 start: start, end: end
@@ -79,46 +111,6 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues, updat
     };
 
     const watchAll = watch()
-
-    // TODO Call through DB
-    // Minimum time needed to perform a task *in minutes*
-    const minDuration = 30
-
-    const createItem = (data, start, end) => {
-        const backendTaskTypes = {
-            "Shopping": "GRO",
-            "Pharmacy": "PHA",
-            "Dog Walking": "DOG",
-            "Hospital": "HOS",
-            "Chat": "CHAT",
-            "Other": "ANY", }
-        let item = {}
-        item["task_type"] = backendTaskTypes[taskType]
-        item["description"] = data.taskDetails || null
-        item["dbs_needed"] = data.dbsReq
-        item["start_time"] = start
-        item["end_time"] = end
-        console.log("item created: ", item)
-        return item
-    }
-
-    // const onSubmit = (data) => {
-    //     console.log("SUBMITTED: ", data)
-    //     // setSubmittedData(data)
-    //     const startHours = getHours(data.startTime)
-    //     const startMins = getMinutes(data.startTime)
-    //     const endHours = getHours(data.endTime)
-    //     const endMins = getMinutes(data.endTime)
-    //     data.startDate = setMinutes(setHours(data.startDate, startHours), startMins)
-    //     data.endDate = setMinutes(setHours(data.endDate, endHours), endMins)
-
-    //     const item = createItem(data)
-    //     axios.post("http://localhost:8000/api/tasks/", item).catch(function (error) {
-    //         console.log(error.request); console.log(error.config)})
-    //     addTask({tasType: taskType, taskDetails: data.taskDetails,
-    //             startTime: data.startDate, endTime: data.endTime, dbsReq: false})
-    //     handleClose()
-    // };
 
     const validateTimes = () => {
         const start = new Date(watchAll.startDate + "T" + watchAll.startTime)

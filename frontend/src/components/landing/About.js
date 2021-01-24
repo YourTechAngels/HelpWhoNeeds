@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { makeStyles, Button } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import Grid from "@material-ui/core/Grid";
 
 
@@ -46,37 +46,38 @@ const About = () =>  {
         <Grid container 
         
               direction="row"
-              alignItems="center" spacing={3} >
+             // alignItems="centre" 
+             spacing={4} 
+             justify="center"
+              
+              >
 
-                  <Grid container item xs={2} spacing={3}>
+                  <Grid item xs={2} >
                <Link to={'/legal'} variant="body2">
                   Legal
                </Link> </Grid>
                
-               <Grid container item xs={2} spacing={3}>
+               <Grid  item xs={2}>
                <Link to={`/cookie`} variant="body2">
-                  Cookie
+                  Cookies
                </Link> </Grid>
 
-               <Grid container item xs={2} spacing={3}>
+               <Grid  item xs={2} >
                <Link to={`/support`} variant="body2">
                   Support
                </Link> </Grid>
 
-               <Grid container item xs={2} spacing={3}>
-               <Link to={`/termcondition`} variant="body2">
-                  Terms Conditions
+               <Grid  item xs={2}>
+               <Link to={`/termconditions`} variant="body2">
+                  TermsConditions
                </Link> </Grid>
 
-               <Grid container item xs={2} spacing={3}>
-               <Link to={`/contact`} variant="body2">
-                  Contact
+               <Grid item xs={2}>
+               <Link to={`/privacy`} variant="body2">
+                  Privacy
                </Link> </Grid>
 
-               </Grid>
-       
-                            
-                
+               </Grid>          
 
     </div>
 

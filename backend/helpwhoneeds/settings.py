@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 import os
+from .security_settings import email_password, email_user, db_user, db_pass, db_host
 
 from pathlib import Path
 
@@ -78,12 +80,24 @@ WSGI_APPLICATION = 'helpwhoneeds.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.sqlite3',
+# 		'NAME': BASE_DIR / 'db.sqlite3',
+# 	}
+# }
+
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': BASE_DIR / 'db.sqlite3',
+		'ENGINE': 'django.db.backends.mysql',
+		'NAME': 'hwn',
+		'USER': db_user,
+		'PASSWORD': db_pass,
+		'HOST': db_host,
+		'PORT': '3306',
 	}
 }
+
 
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"
@@ -128,3 +142,11 @@ STATIC_URL = '/static/'
 CORS_ORIGIN_WHITELIST = [
 	'http://localhost:3000'
 ]
+
+#gmail 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = email_user
+EMAIL_HOST_PASSWORD = email_password
