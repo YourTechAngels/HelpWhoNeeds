@@ -8,14 +8,14 @@ import { useAuth } from "../../contexts/AuthContext";
 
 function AddTask() {
 
-    const readableTaskTypes = {
-        "GRO": "Shopping",
-        "PHA": "Pharmacy",
-        "DOG": "Dog Walking",
-        "HOS": "Hospital",
-        "CHAT": "Chat",
-        "ANY": "Other",
-    }
+    // const readableTaskTypes = {
+    //     "GRO": "Shopping",
+    //     "PHA": "Pharmacy",
+    //     "DOG": "Dog Walking",
+    //     "HOS": "Hospital",
+    //     "CHAT": "Chat",
+    //     "ANY": "Other",
+    // }
 
     const readableStatus = {
         "OP": "Open",
@@ -25,11 +25,26 @@ function AddTask() {
         "DN": "Completed",
     }
 
-    const { currentUser } = useAuth()
-    // const userUID =  "WKERfsSJNM"  // user with no tasks
+    // const { currentUser } = useAuth()
+    // const userUID = "WKERfsSJNM"  // user with no tasks
     const userUID = "WNVuNlpmfs" // currentUser.uid
     const [reqId, setReqId] = useState(-1)
     const [taskList, setTaskList] = useState([])
+
+    const parseDbTask = (dbTask) => {
+        console.log(dbTask)
+        let task = {}
+        task.id = dbTask.id
+        task.taskType = dbTask.task_type
+        task.taskTypeName = dbTask.task_type_name
+        task.taskDetails = dbTask.description
+        task.start = dbTask.start_time
+        task.end = dbTask.end_time
+        task.dbsReq = dbTask.dbs_required
+        task.status = dbTask.status
+        task.statusName = dbTask.status_name
+        return task
+    }
 
     useEffect(() => {
         const options = {
@@ -43,56 +58,38 @@ function AddTask() {
         axios(options)
             .then((response) => {
                 console.log(response.data)
-                // else {
-                //     axios.get("http://localhost:8000/api/accounts/get_user_by_id/", {
-                //         params: { uId: userUID, },
-                //     })
-                //         .then((response) => {
-                //             const data = response.data;
-                //             console.log("userdata");
-                //             console.log(data);
-                //             console.log(data[0]);
-                //             setReqId(response.data[0])
-                //         })
-                //         .catch(function (error) {
-                //             console.log("error");
-                //             console.log(error.request);
-                //             console.log(error.config);
-                //             console.log(error.message);
-                //         });
-                // }
-                const taskData = response.data.map(task => {
-                    return (
-                        {
-                            id: `${task.id}`,
-                            taskType: readableTaskTypes[`${task.task_type}`],
-                            taskDetails: `${task.description}`,
-                            start: `${task.start_time}`,
-                            end: (`${task.end_time}`),
-                            status: readableStatus[`${task.status}`]
-                        })
-                })
-                
-                if (response.data.length > 0) {
-                    // console.log("Req id will be....", response.data[0].requestee)
-                    setReqId(response.data[0].requestee)
-                    console.log("Requestee ID: ", reqId, typeof reqId) }
+                const taskData = response.data.map(task => parseDbTask(task))
                 setTaskList(taskData)
+
+                if (response.data.length > 0) {
+                    setReqId(response.data[0].requestee)
+                    console.log("Requestee ID: ", reqId, typeof reqId)
+                }
+                else {
+                    console.log("Asking user id..")
+                    axios.get("/api/accounts/get_user_by_id/", {
+                        params: { uId: userUID, },
+                    })
+                        .then((response) => {
+                            console.log(response)
+                            console.log("Requestee id: ", response.data[0]);
+                            setReqId(response.data[0])
+                        })
+                        .catch(function (error) {
+                            console.log("error");
+                            console.log(error.message, error.request);
+                        })
+                }
             })
             .catch(error => {
                 console.log("error")
+                console.log(error.message);
                 console.log(error.request);
                 console.log(error.config);
-                console.log(error.message);
             })
     }, [])
 
-    const [nextId, setNextId] = useState(11)
-
     const addTask = newTask => {
-        newTask.id = nextId
-        setNextId(nextId + 1)
-        newTask.status = "Open"
         const updatedTaskList = [...taskList, newTask]
         setTaskList(updatedTaskList)
     }
@@ -169,8 +166,8 @@ function AddTask() {
         <NewTaskButtons handleClickOpen={handleClickOpen} />
 
         <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
-            addTask={addTask} defaultValues={newTaskDefaults} updateTask={updateTask}
-            updTaskId={updTaskId} reqId={reqId} />
+            parseDbTask={parseDbTask} addTask={addTask} defaultValues={newTaskDefaults} 
+            updateTask={updateTask} updTaskId={updTaskId} reqId={reqId} />
 
         <TasksTable taskList={taskList} handleCopy={handleCopy}
             handleEdit={handleEdit} handleRemove={handleRemove} />
