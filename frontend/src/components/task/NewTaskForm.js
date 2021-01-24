@@ -18,10 +18,8 @@ const useStyles = makeStyles({
     }
 })
 
-function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, defaultValues,
-    updateTask, updTaskId, reqId }) {
-
-    console.log("atsk type: ", taskType)
+function FormDialog({ open, handleClose, taskType, defaultValues, 
+    updTaskId, updateTaskList, reqId }) {
 
     useEffect(() => {
         reset(defaultValues);
@@ -60,7 +58,6 @@ function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, default
     const createItem = (data, start, end) => {
         let item = {}
         item["task_type"] = taskType
-        console.log("taskType", taskType)
         item["description"] = data.taskDetails || ""
         item["dbs_required"] = data.dbsReq
         item["start_time"] = start
@@ -69,8 +66,6 @@ function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, default
         console.log("Requestee ID: ", reqId)
         item["requestee"] = reqId > 0 ? reqId : 100
         item["volunteer"] = null
-        // if (updTaskId > 0)
-        //     item["id"] = updTaskId
         console.log("item created: ", item)
         return item
     }
@@ -83,13 +78,13 @@ function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, default
         if (updTaskId < 0)
             axios.post("/api/tasks/", item)
                 .then(function (response) {
-                    console.log("RESPONSE: ", response)
-                    console.log("DATA: ", response.data)
+                    console.log("POST RESPONSE: ", response)
+                    console.log("POST RESPONSE DATA: ", response.data)
                     const newTaskId = (response.status === 201) ? response.data.id : -1
                     if (newTaskId > 0) {
                         console.log("Adding new item to the list of tasks... New Task id=", newTaskId)
                         const newTask = response.data
-                        addTask(parseDbTask(newTask))
+                        updateTaskList(newTask, -1)
                         console.log("onSubmit: newTaskId: ", newTaskId)
                     }
                     else
@@ -102,14 +97,14 @@ function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, default
         else
             axios.put("/api/tasks/" + updTaskId + '/', item)
                 .then(function (response) {
-                    console.log("RESPONSE: ", response)
-                    console.log("DATA: ", response.data)
-                    // const newTaskId = (response.status === 201) ? response.data.id : -1
-                    updateTask({
-                        taskType: taskType, taskDetails: data.taskDetails,
-                        start: start, end: end
-                    }, updTaskId)
-                    console.log("onSubmit: updated task with id: ", updTaskId)
+                    console.log("PUT RESPONSE: ", response)
+                    console.log("PUT RESPONSE DATA: ", response.data.id)
+                    if (response.status === 200) {
+                        const updatedTask = response.data
+                        updateTaskList(updatedTask, response.data.id)
+                        console.log("onSubmit: updated task with id: ", updTaskId)
+                    }
+                    else console.log("Something went wrong on task update.. Response status: ", response.status)
                 }
                 )
                 .catch(function (error) {
@@ -118,16 +113,6 @@ function FormDialog({ open, handleClose, taskType, parseDbTask, addTask, default
                 })
 
         console.log("onSubmit: updTaskId: ", updTaskId)
-        // if (updTaskId < 0)
-        //     addTask({
-        //         taskType: taskType, taskDetails: data.taskDetails,
-        //         start: start, end: end
-        //     })
-        // else
-        //     updateTask({
-        //         taskType: taskType, taskDetails: data.taskDetails,
-        //         start: start, end: end
-        //     }, updTaskId)
         resetAndClose()
     };
 

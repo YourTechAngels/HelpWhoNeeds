@@ -3,27 +3,11 @@ import NewTaskButtons from './NewTaskButtons'
 import NewTaskForm from './NewTaskForm'
 import TasksTable from './TaskTable'
 import axios from "axios"
+import moment from "moment";
 import { useAuth } from "../../contexts/AuthContext";
 
 
 function AddTask() {
-
-    // const readableTaskTypes = {
-    //     "GRO": "Shopping",
-    //     "PHA": "Pharmacy",
-    //     "DOG": "Dog Walking",
-    //     "HOS": "Hospital",
-    //     "CHAT": "Chat",
-    //     "ANY": "Other",
-    // }
-
-    const readableStatus = {
-        "OP": "Open",
-        "EXP": "Expired",
-        "AS": "Assigned",
-        "CL": "Canceled",
-        "DN": "Completed",
-    }
 
     // const { currentUser } = useAuth()
     // const userUID = "WKERfsSJNM"  // user with no tasks
@@ -32,7 +16,6 @@ function AddTask() {
     const [taskList, setTaskList] = useState([])
 
     const parseDbTask = (dbTask) => {
-        console.log(dbTask)
         let task = {}
         task.id = dbTask.id
         task.taskType = dbTask.task_type
@@ -95,16 +78,16 @@ function AddTask() {
     }
 
     const updateTask = (updTask, id) => {
-        if (id < 0) { // should not happen but in case
-            console.log("ERROR: task to be updated does not exists")
-            return
-        }
-        if (updTask.end > new Date())  // expected to be so but just in case
-            updTask.status = "Open"
-        updTask.id = id
         let updatedTaskList = taskList.filter(task => task.id !== id)
         updatedTaskList = [...updatedTaskList, updTask]
         setTaskList(updatedTaskList)
+    }
+
+    const updateTaskList = (dbTask, id) => {
+        if (id < 0)
+            addTask(parseDbTask(dbTask))
+        else
+            updateTask(parseDbTask(dbTask), id)
     }
 
     const taskDefaults = {
@@ -146,8 +129,11 @@ function AddTask() {
         const taskToEdit = taskList.find(task => task.id === id)
         setTaskType(taskToEdit.taskType)
         setNewTaskDefaults({
-            ...newTaskDefaults,
             taskDetails: taskToEdit.taskDetails,
+            startDate: moment(taskToEdit.start).format('YYYY-MM-DD'),
+            startTime: moment(taskToEdit.start).format('HH:mm'),
+            endDate: moment(taskToEdit.end).format('YYYY-MM-DD'),
+            endTime: moment(taskToEdit.end).format('HH:mm'),
         })
         setUpdTaskId(id)
         setShowAddDialog(true)
@@ -166,8 +152,8 @@ function AddTask() {
         <NewTaskButtons handleClickOpen={handleClickOpen} />
 
         <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
-            parseDbTask={parseDbTask} addTask={addTask} defaultValues={newTaskDefaults} 
-            updateTask={updateTask} updTaskId={updTaskId} reqId={reqId} />
+            defaultValues={newTaskDefaults} updTaskId={updTaskId}
+            updateTaskList={updateTaskList} reqId={reqId} />
 
         <TasksTable taskList={taskList} handleCopy={handleCopy}
             handleEdit={handleEdit} handleRemove={handleRemove} />
