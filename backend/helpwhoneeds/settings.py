@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-from .security_settings import email_password, email_user
+from .security_settings import email_password, email_user, db_user, db_pass, db_host
 
 from pathlib import Path
 
@@ -80,12 +80,24 @@ WSGI_APPLICATION = 'helpwhoneeds.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.sqlite3',
+# 		'NAME': BASE_DIR / 'db.sqlite3',
+# 	}
+# }
+
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': BASE_DIR / 'db.sqlite3',
+		'ENGINE': 'django.db.backends.mysql',
+		'NAME': 'hwn',
+		'USER': db_user,
+		'PASSWORD': db_pass,
+		'HOST': db_host,
+		'PORT': '3306',
 	}
 }
+
 
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"

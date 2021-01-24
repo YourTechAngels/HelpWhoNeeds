@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import AccountSerializer
 from .models import User
@@ -5,16 +6,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 import datetime
 from django.db.models import Q
-from rest_framework.response import Response
-from rest_framework.decorators import action
-
 
 
 class AccountView(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
     queryset = User.objects.all()
 
-<<<<<<< HEAD
     @action(detail=False, methods=['GET'], name='Get User By Id')
     def get_user_by_id(self, request, *args, **kwargs):
         user_uid = self.request.query_params.get('uid')
@@ -43,13 +40,3 @@ class AccountView(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-=======
-    @action(detail=False,methods=['GET'], name='Get User By Id')
-    def get_user_by_id(self, request, *args, **kwargs):
-        user_uid = self.request.query_params.get('uId')
-        queryset = User.objects.filter(uid=user_uid).distinct()
-        
-        serializer = self.get_serializer(queryset, many=True)
-
-        return Response(serializer.data)
->>>>>>> 60be7c465b57bc64602ac710f041d544a7f6fad5
