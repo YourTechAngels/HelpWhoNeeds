@@ -5,7 +5,6 @@ import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
 import ConfirmDialog from "./CofirmDialog";
 import Grid from "@material-ui/core/Grid";
-//import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
@@ -78,7 +77,6 @@ export default function VolunteerSearchTask() {
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
                         distance: 1,//`${task.id}`,
-                        //volId: `${task.volunteer?.id}`, //need to find a way to assign null
                         volId: `${task.volunteer}`,
                         status: `${task.status}`,
                     };
