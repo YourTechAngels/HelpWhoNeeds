@@ -107,3 +107,13 @@ class TaskView(viewsets.ModelViewSet):
         #send_email(task_object, prev_state_task,prev_vol_email)
 
         return Response(serializer.data)
+
+
+# access by user_id as a parameter
+class RequesteeTasksView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        req_uid = self.request.query_params.get('requid')
+        queryset = Task.objects.filter(requestee=User.objects.get(uid=req_uid).id)
+        return queryset
