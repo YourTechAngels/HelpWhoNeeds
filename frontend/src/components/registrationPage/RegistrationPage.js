@@ -68,6 +68,7 @@ export default function RegistrationPage(props) {
     const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
     const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
     const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
+    const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
     console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
 
     axios.post("http://localhost:8000/api/accounts/", {
@@ -75,7 +76,7 @@ export default function RegistrationPage(props) {
       last_name: `${formData.lastName}`,
       uid: `${uID}`,
       email: `${email}`,
-      date_of_birth: `${formData.dateOfBirth}`,
+      date_of_birth: `${dob}`,
       phone_number: `${formData.phoneNumber}`,
       post_code: `${formData.postcode}`,
       address_line_1: `${addLine1}`,
@@ -184,7 +185,7 @@ export default function RegistrationPage(props) {
             <TextField
               id="phoneNumber"
               name="phoneNumber"
-              type="number"
+              // type="number"
               label="Phone Number"
               onChange={handleChange}
               value={phoneNumber || ''}

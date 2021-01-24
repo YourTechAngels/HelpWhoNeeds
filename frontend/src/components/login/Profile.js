@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import FormControl from '@material-ui/core/FormControl';
+import { CircularProgress } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
@@ -26,17 +27,17 @@ const useStyles = {
 
 };
 
+
 export default function Profile(props) {          
 
     const initialInputState = {
-        firstname: "", lastName: "", dateOfBirth: "", phoneNumber: "", postcode: "", address1: "", address2: "",city: "", county: "", email:""
+        firstName: "", lastName: "", dateOfBirth: "", phoneNumber: "", postcode: "", address1: "", address2: "",city: "", county: "", email:""
       }
-    const [formData, setFormData,] = useState({ initialInputState })
-    const { firstname, lastName, dateOfBirth, phoneNumber, postcode, address1, address2, city, county, email } = formData
-    const [message, setMessage] = useState("")
+    const [formData, setFormData,] = useState({initialInputState})
+    const { firstName, lastName, dateOfBirth, phoneNumber, postcode, address1, address2, city, county, email } = formData
+    const [successMessage, setSuccessMessage] = useState("")
     const emailRef = useRef()
     const postcodeRef = useRef()
-    // const firstnameRef = useRef()
     const passwordConfirmRef = useRef()
     const passwordRef = useRef()
     const address1Ref = useRef()
@@ -47,6 +48,7 @@ export default function Profile(props) {
     const uID = currentUser.uid
     const emailID = currentUser.email
     const [DBSchecked, setDBSChecked] = useState(false);
+    const [checked, setChecked] = React.useState(true);
     const [addressLine1, setAddressLine1] = useState("")
     const [addressLine2, setAddressLine2] = useState("")
     const [countyName, setCountyName] = useState("");
@@ -54,69 +56,56 @@ export default function Profile(props) {
     const [addressList, setAddressList] = useState("");
     const [postCodeSearched, setpostCodeSearched] = useState(false);
     const [errors, setErrors] = useState("")
+    const[id, setId] = useState("")
+    const[isVolunteer, setIsVolunteer] = useState(false)
     const [errorpostcode, setErrorpostcode] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
     const param = useParams();
     const user = param.user;
+     
     
     useEffect(() => {
-        getProfile() ;
-    }, []);
-    
-    const getProfile =(e) => {
-        // e.preventDefault()
-        axios
-            .get("http://localhost:8000/api/accounts/", {
-                params : { uid : `${uID}` }
+          axios.get('http://localhost:8000/api/accounts/get_user_by_id/',
+            {
+                params : { uid : uID }
             })
             .then(
                 (response) => {
-                    const dataSet =response.data[0];
-                    console.log(dataSet);
-                    console.log(dataSet.first_name);
-                    console.log(dataSet.last_name);
-                    console.log(dataSet.date_of_birth);
-                    // console.log(dataSet.city);
+                    const responseData = (response.data[0]);
+                    console.log(responseData);
+                    const userDataSet = {
+                        firstName : `${responseData.first_name}`,
+                        lastName : `${responseData.last_name}`,
+                        dateOfBirth: `${responseData.date_of_birth}`,
+                        phoneNumber : `${responseData.phone_number}`,
+                        postcode: `${responseData.post_code}`,
+                        address1 : `${responseData.address_line_1}`,
+                        address2 : `${responseData.address_line_2}`,
+                        city : `${responseData.city}`,
+                        county : `${responseData.county}`,
+                        email : `${responseData.email}`
+                    }
                     
-                    setFormData({ ...formData, lastname : (dataSet.last_name)});
-                    setFormData({ ...formData, dateOfBirth : (dataSet.date_of_birth)});
-                    setFormData({ ...formData, address1 : (dataSet.address_line_1)});
-                    setFormData({ ...formData, address2 : (dataSet.address_line_2)});
-                    setFormData({ ...formData, city : (dataSet.city)});
-                    setFormData({ ...formData, county : (dataSet.county)});
-                    setFormData({ ...formData, email : (dataSet.email)});
-                    // console.log(formData.lastName)
-                    console.log("database json out ");
-                    
-                    // const allTask= data.map(task => {
-                        return ({
-
-                            setFormData({ ...formData, firstname : (dataSet.first_name)});
-                            
-                            // setFormData(lastName: data.last_name,
-                            // firstname : data.first_name
-                            // firstname: data.first_name,
-                            // taskType: `${task.task_type}`,
-                            // taskDetails: `${task.description}`,
-                            // start: `${task.start_time}`,
-                            // end: (`${task.end_time}`),
-                            // distance: `${task.id}`,
-                            // // volId:  (`${task.volunteer}` ?  `${task.volunteer.id}`: null) , //not working properlhy
-                            // volId: (`${task.volunteer?.id}`), //need to find a way to assign null
-                            // status: `${task.status}                          
-
-                        });
-                }
-            )
-            .catch(function (error) {
-                console.log("error")
-                console.log(error.request);
-                console.log(error.config);
-                console.log(error.message);
-
-            });
-        }
+                    setFormData({ lastName : (userDataSet.lastName), firstName: (userDataSet.firstName), dateOfBirth: (userDataSet.dateOfBirth),
+                    postcode: (userDataSet.postcode), phoneNumber : (userDataSet.phoneNumber) , address1: (userDataSet.address1), address2: (userDataSet.address2),
+                    city: (userDataSet.city), county: (userDataSet.county), email: (userDataSet.email)})
+                    setId(responseData.id)
+                    console.log(responseData.is_volunteer)
+                    setIsVolunteer(responseData.is_volunteer)
+                    setDBSChecked(responseData.dbs)
+                    console.log(responseData.dbs)
+                    console.log(formData)
+                    console.log(isVolunteer+' '+DBSchecked);
+                })
+                .catch(function (error) {
+                    console.log("error")
+                    console.log(error.request);
+                    console.log(error.config);
+                    console.log(error.message);
+    
+                });            
+        }, [uID]);
         
        
     const handleChange = (e) => {
@@ -134,10 +123,11 @@ export default function Profile(props) {
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
         const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
+        const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
         console.log(emailRef.current.value)
         if(emailRef.current.value === "" || emailRef.current.value === null) {
-            setMessage("Data has been updated successfully")
+            // setMessage("Data has been updated successfully")
                 console.log(formData)
         }
         else {
@@ -148,7 +138,8 @@ export default function Profile(props) {
         setLoading(true)
         setErrors("")
           if  (emailRef.current.value !== currentUser.email) { 
-            promises.push(updateEmail(emailRef.current.value))
+            //   setFormData({ email : (emailRef.current.value) }
+              promises.push(updateEmail(emailRef.current.value))
           }
           if (passwordRef.current.value) {
             promises.push(updatePassword(passwordRef.current.value))
@@ -156,7 +147,7 @@ export default function Profile(props) {
       
           Promise.all(promises)
             .then(() => {
-               history.push("/")
+              history.push("/helpwhoneeds/")
             })
             .catch(() => {
               setErrors("Failed to update account")
@@ -165,11 +156,36 @@ export default function Profile(props) {
               setLoading(false)
             }) 
         }
+        axios.patch('http://localhost:8000/api/accounts/'+id+'/',
+
+         { 
+            first_name: `${formData.firstName}`,
+            last_name: `${formData.lastName}`,
+            email: `${emailRef.current.value}`,
+            date_of_birth: `${dob}`,
+            phone_number: `${formData.phoneNumber}`,
+            post_code: `${formData.postcode}`,
+            address_line_1: `${addLine1}`,
+            address_line_2: `${addLine2}`,
+            city: `${addCity}`,
+            county: `${addCounty}`,
+            dbs: `${DBSchecked}`,
+         },
+        )
+       .then(function (response) {
+        console.log(response);
+        setSuccessMessage("Data has been updated successfully")
+     console.log(successMessage)
+        // history.push("/profile/")
+      })
+       .catch(function (error) {
+        console.log(error);
+      });
+     console.log(successMessage)
     }
     const handleClick = (e) => {
         e.preventDefault();
-        const API_Key = process.env.REACT_APP_POSTCODE_API_KEY
-        axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?api-key=${API_Key}`)
+        axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?api-key=${process.env.REACT_APP_POSTCODE_API_KEY}`)
           .then(function (response) {
             const responseData = response.data
             setAddressList(responseData.addresses)
@@ -192,16 +208,15 @@ export default function Profile(props) {
           setCityName(addressStore[5])
           setCountyName(addressStore[6])
         }
-      }
-    
+      }    
 
     return (
 
         <React.Fragment>
-        <div style={{ width: "80vw" }}>
+        <div style={{ width: "80vw" }}> 
             <h2 align="center"> My Profile</h2>
-            { !errors && message && <Alert severity="success">
-                <AlertTitle>{message}</AlertTitle>
+             { !errors && successMessage && <Alert severity="success">
+                <AlertTitle>{successMessage}</AlertTitle>
             </Alert>}
             { errors && <Alert severity="error">
                 <AlertTitle>{errors}</AlertTitle>
@@ -210,17 +225,18 @@ export default function Profile(props) {
                 <p style={{ paddingLeft: 8 }}>Please enter your details here</p> </Grid>
 
             <form onSubmit={handleSubmit} >
+                
                 <Grid container spacing={3} >
                     <Grid item xs={12} sm={6}>
                         <TextField                        
-                            id="firstname"
+                            id="firstName"
                             type="text"
-                            name="firstname"
+                            name="firstName"
                             label="First name"
                             variant="outlined"
                             // inputRef ={firstnameRef}
                             onChange={handleChange}
-                            value={firstname||''}
+                            value={firstName||''}
                             style={useStyles.textFld}
                             autoComplete="given-name"
                         />
@@ -231,9 +247,9 @@ export default function Profile(props) {
                             name="lastName"
                             type="text"
                             label="Last name"
-                            onChange={handleChange}
-                            value={lastName}
                             variant="outlined"
+                            onChange={handleChange}
+                            value={lastName||''}
                             style={useStyles.textFld}
                             autoComplete="family-name"
                         />
@@ -248,16 +264,17 @@ export default function Profile(props) {
                             }}
                             label="Date Of Birth"
                             onChange={handleChange}
-                            value={dateOfBirth || ''}
+                            value={dateOfBirth||''}
                             variant="outlined"
                             style={useStyles.textFld}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
+                        required
                         id="phoneNumber"
                         name="phoneNumber"
-                        type="number"
+                        // type="number"
                         label="Phone Number"
                         onChange={handleChange}
                         value={phoneNumber || ''}
@@ -446,11 +463,16 @@ export default function Profile(props) {
                   
                     <Grid item xs={12}>
 
-                        {(`${user}` === 'volunteer') &&
+                        {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'true') &&
+                            <FormControlLabel
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" checked="checked" onChange={handleChecked}  />}
+                                label="I have a valid DBS certificate"
+                            />}
+                          {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'false') &&
                             <FormControlLabel
                                 control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" value={DBSchecked} onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
-                            />}
+                            />}  
 
                     </Grid>
                 </Grid>
@@ -464,9 +486,9 @@ export default function Profile(props) {
                         </Grid>
                     </ButtonGroup>
                 </Grid>
-            </form>
+        
+            </form> 
             </div>
         </React.Fragment>
-
     )
 }
