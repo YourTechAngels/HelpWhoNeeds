@@ -8,7 +8,6 @@ import { useAuth } from "../../contexts/AuthContext";
 
 
 function AddTask() {
-
     // const { currentUser } = useAuth()
     // const userUID = "WKERfsSJNM"  // user with no tasks
     const userUID = "WNVuNlpmfs" // currentUser.uid

@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles'
 
+
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
     root: {
@@ -20,6 +21,8 @@ const useStyles = makeStyles({
 
 function FormDialog({ open, handleClose, taskType, defaultValues, 
     updTaskId, updateTaskList, reqId }) {
+
+    console.log("atsk type: ", taskType)
 
     useEffect(() => {
         reset(defaultValues);
@@ -58,6 +61,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
     const createItem = (data, start, end) => {
         let item = {}
         item["task_type"] = taskType
+        console.log("taskType", taskType)
         item["description"] = data.taskDetails || ""
         item["dbs_required"] = data.dbsReq
         item["start_time"] = start
@@ -66,6 +70,8 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
         console.log("Requestee ID: ", reqId)
         item["requestee"] = reqId > 0 ? reqId : 100
         item["volunteer"] = null
+        // if (updTaskId > 0)
+        //     item["id"] = updTaskId
         console.log("item created: ", item)
         return item
     }
