@@ -5,6 +5,7 @@ import Landing from "./components/landing/Landing"
 import Legal from "./components/landing/Legal"
 import Cookie from "./components/landing/Cookie"
 import Support from "./components/landing/Support"
+import Privacy from "./components/landing/Privacy"
 import TermConditions from "./components/landing/TermConditions"
 import About from "./components/landing/About"
 import Contact from "./components/landing/Contact"
@@ -20,18 +21,17 @@ import VolunteerWelcome from "./components/volunteerTask/VolunteerWelcomePage"
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute"
-
+    
 function App() {
     
     return (
-        
         <Router>
             <AuthProvider>
             <div className="App">
                 <AppNavBar />
                 <div className="AppContent">
                 <Switch>
-                <Route exact path="/helpwhoneeds/">
+                <Route exact path="/helpwhoneeds">
                     <Landing />
                 </Route>
                 <Route path="/about">
@@ -55,6 +55,9 @@ function App() {
                 <Route path="/support">
                     <Support />
                 </Route>    
+                <Route path="/privacy">
+                    <Privacy />
+                </Route>    
                 <Route path="/cookie">
                     <Cookie />
                 </Route>
@@ -63,11 +66,7 @@ function App() {
                 </Route>    
                 <Route path="/termconditions">
                     <TermConditions />
-                </Route>    
-                 
-                <Route path="/requestee/tasks">
-                    <AddTask />
-                </Route>  
+                </Route>
                 <PrivateRoute path="/profile" component= {Profile} /> 
                 <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
