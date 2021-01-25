@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
-import ConfirmDialog from "./CofirmDialog";
+import ConfirmDialog from "../structure/CofirmDialog";
 import Grid from "@material-ui/core/Grid";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
