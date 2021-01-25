@@ -13,7 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
 import { useAuth } from "../../contexts/AuthContext"
-import Notifications from "../structure/Notifications"
+import Notification from "../structure/Notification"
 
 const useStyles = {
     textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -72,7 +72,7 @@ export default function Profile(props) {
      
     
     useEffect(() => {
-          axios.get('http://localhost:8000/api/accounts/get_user_by_id/',
+          axios.get('/api/accounts/get_user_by_id/',
             {
                 params : { uid : uID }
             })
@@ -119,19 +119,20 @@ export default function Profile(props) {
     }
     const handleChecked = (e) => {
         console.log('inside check handle'+DBSChecked)
-        // const check = 'false'
         setDBSChecked(e.target.checked)
         console.log('after setting falsefor dbs '+DBSChecked)
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        // console.log(county + ' ' + uID + ' ' + DBSchecked);
+        
         const addLine1 = (addressLine1 === '' ? (address1Ref.current.value) : addressLine1)
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
         const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
         const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
+        const mail = (errors === ''? email : currentUser.email)
+        console.log(mail)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
         console.log(emailRef.current.value)
         console.log('dbs checked before sending to db is '+DBSChecked)
@@ -156,21 +157,23 @@ export default function Profile(props) {
       
           Promise.all(promises)
             .then(() => {
-              history.push("/helpwhoneeds/")
+            //   history.push("/helpwhoneeds/")
+            
             })
-            .catch(() => {
-              setErrors("Failed to update account")
+            .catch((error) => {
+              setErrors(error.message)
+              console.log(errors)
             })
             .finally(() => {
               setLoading(false)
             }) 
         }
-        axios.patch('http://localhost:8000/api/accounts/'+id+'/',
-
+        axios.patch('/api/accounts/'+id+'/',
+        
          { 
             first_name: `${formData.firstName}`,
             last_name: `${formData.lastName}`,
-            email: `${emailRef.current.value}`,
+            email: `${mail}`,
             date_of_birth: `${dob}`,
             phone_number: `${formData.phoneNumber}`,
             post_code: `${formData.postcode}`,
@@ -185,7 +188,7 @@ export default function Profile(props) {
         console.log(response);
         setSuccessMessage("Data has been updated successfully")
         console.log('dbs when on databse is'+DBSChecked)
-     console.log(successMessage)
+        console.log(successMessage)
         // history.push("/profile/")
       })
        .catch(function (error) {
@@ -204,7 +207,6 @@ export default function Profile(props) {
             console.log(addressList)
           })
           .catch(error => {
-            setErrorpostcode('No addresses found at the given post code')
             setNotifyMsg({
                 isOpen: true,
                 message:
@@ -332,7 +334,7 @@ export default function Profile(props) {
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
-                     {errorpostcode &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+                     {errorpostcode &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
                 
                      {/* <Alert severity="error">This is an error message!</Alert>
                     //                 <Alert severity="error">

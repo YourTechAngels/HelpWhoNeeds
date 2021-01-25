@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
-import Notifications from "../structure/Notifications"
+import Notification from "../structure/Notification"
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -77,7 +77,7 @@ export default function RegistrationPage(props) {
     const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
     console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
 
-    axios.post("http://localhost:8000/api/accounts/", {
+    axios.post("/api/accounts/", {
       first_name: `${formData.firstName}`,
       last_name: `${formData.lastName}`,
       uid: `${uID}`,
@@ -241,7 +241,7 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
-              {errors &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+              {errors &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
           </Grid>
 
           <Grid item xs={12}>
