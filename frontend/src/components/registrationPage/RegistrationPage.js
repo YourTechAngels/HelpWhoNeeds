@@ -13,6 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
+import Notifications from "../structure/Notifications"
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -107,6 +108,12 @@ export default function RegistrationPage(props) {
       })
       .catch(error => {
         setErrors('No addresses found at the given post code')
+        setNotifyMsg({
+          isOpen: true,
+          message:
+              "No addresses found at the given post code",
+          type: "error",
+      })
         console.log(error);
       })
   }
@@ -228,9 +235,7 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
-            {errors && <Alert severity="error">
-              <AlertTitle>Error: {errors}</AlertTitle>
-            </Alert>}
+              {errors &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
           </Grid>
 
           <Grid item xs={12}>
