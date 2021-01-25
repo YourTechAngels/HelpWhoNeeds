@@ -33,7 +33,7 @@ class AccountView(viewsets.ModelViewSet):
         user_object.address_line_2 = data.get("address_line_2", user_object.address_line_2)
         user_object.city = data.get("city", user_object.city)
         user_object.county = data.get("county", user_object.county)
-        user_object.city = data.get("address_line_1", user_object.city)
+        user_object.dbs = data.get("dbs", user_object.dbs)
 
         user_object.save()
         serializer = AccountSerializer(user_object)
