@@ -5,7 +5,6 @@ import TaskDialog from "./TaskDetail";
 import Notification from "./Notification";
 import ConfirmDialog from "./CofirmDialog";
 import Grid from "@material-ui/core/Grid";
-//import initialTasks from "./TaskListData";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
@@ -30,10 +29,9 @@ export default function VolunteerSearchTask() {
     const[taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
-            .get("http://localhost:8000/api/accounts/get_user_by_id/", {
-                params: {
-                    uId: userUID,
-                },
+            .get("http://localhost:8000/api/accounts/get_user_by_id/",
+            {
+                params : { uid : userUID }
             })
             .then((response) => {
                 const data = response.data;
@@ -44,7 +42,7 @@ export default function VolunteerSearchTask() {
                     id: `${data[0].id}`,
                 };
 
-                console.log("userId");
+                console.log("userId by uuid");
                 console.log(user.id);
                 setUserId(user.id);
             })
@@ -78,7 +76,6 @@ export default function VolunteerSearchTask() {
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
                         distance: 1,//`${task.id}`,
-                        //volId: `${task.volunteer?.id}`, //need to find a way to assign null
                         volId: `${task.volunteer}`,
                         status: `${task.status}`,
                     };
@@ -164,7 +161,7 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer?.email}`,
+                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
@@ -235,7 +232,7 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer?.email}`,
+                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
@@ -313,7 +310,7 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer?.email}`,
+                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
