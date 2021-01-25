@@ -161,7 +161,6 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
@@ -170,8 +169,7 @@ export default function VolunteerSearchTask() {
                                 .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                     status: "OP",
                                     volId: null,
-                                    prevTaskState: selectedTask.status,
-                                    prevTaskVolEmail: selectedTask.volEmail,
+                                    isUpdatedByVol: true,
                                 })
                                 .then(function (response) {
                                     console.log(response);
@@ -232,7 +230,6 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
@@ -241,8 +238,7 @@ export default function VolunteerSearchTask() {
                                 .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                     status: "AS",
                                     volId: userId,
-                                    prevTaskState: selectedTask.status,
-                                    prevTaskVolEmail: null,
+                                    isUpdatedByVol: true,
                                 })
                                 .then(function (response) {
                                     console.log(response);
@@ -310,7 +306,6 @@ export default function VolunteerSearchTask() {
                         const task = response.data;
                         const selectedTask = {
                             status: `${task.status}`,
-                            volEmail: `${task.volunteer_details?.email}`,
                         };
                         console.log("slected tasks");
                         console.log(selectedTask);
@@ -318,8 +313,7 @@ export default function VolunteerSearchTask() {
                             axios
                                 .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                     status: "DN",
-                                    prevTaskState: selectedTask.status,
-                                    prevTaskVolEmail: selectedTask.volEmail,
+                                    isUpdatedByVol: true,
                                 })
                                 .then(function (response) {
                                     console.log(response);
