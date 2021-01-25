@@ -104,7 +104,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             options: { display: true, sort: true, filter: false },
         },
         {
-            name: "taskType",
+            name: "taskTypeName",
             label: "Task Type",
 
             options: {
@@ -154,7 +154,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             },
         },
         {
-            name: "status",
+            name: "statusName",
             label: "State",
             options: {
                 filter: true,

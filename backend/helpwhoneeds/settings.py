@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+<<<<<<< HEAD
 from .security_settings import email_password, email_user, db_user, db_pass, db_host
+=======
+from .security_settings import *
+>>>>>>> a2315475773157a448bf80fbbd673e6e3c00d58b
 
 from pathlib import Path
 
@@ -22,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'u*(0))ye2^ybr7c*9s(=^4%zd^v=%71dm!i_tyd^*(w$$!sura'
+SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

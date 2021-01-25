@@ -8,11 +8,12 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
-import { ButtonGroup } from '@material-ui/core';
+import { ButtonGroup, Input } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
+import Notifications from "../structure/Notifications"
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -37,6 +38,8 @@ export default function RegistrationPage(props) {
   const address2Ref = useRef()
   const cityRef = useRef()
   const countyRef = useRef()
+  const [countyName, setCountyName] = useState("");
+  const [cityName, setCityName] = useState("");
   const param = useParams();
   const user = param.user;
   const { currentUser } = useAuth()
@@ -45,13 +48,17 @@ export default function RegistrationPage(props) {
   const [DBSchecked, setDBSChecked] = useState(false);
   const [addressLine1, setAddressLine1] = useState("")
   const [addressLine2, setAddressLine2] = useState("")
-  const [countyName, setCountyName] = useState("");
-  const [cityName, setCityName] = useState("");
   const [addressList, setAddressList] = useState("");
-  const [postCodeSearched, setpostCodeSearched] = useState(false);
   const [errors, setErrors] = useState("");
-  
-  
+  const [postCodeSearched, setpostCodeSearched] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [notifyMsg, setNotifyMsg] = useState({
+      isOpen: false,
+      message: " ",
+      type: " ",
+  });
+  // const [isVolunteer, setIsVolunteer] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
@@ -68,7 +75,6 @@ export default function RegistrationPage(props) {
     const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
     const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
     const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
-    const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
     console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
 
     axios.post("http://localhost:8000/api/accounts/", {
@@ -76,7 +82,7 @@ export default function RegistrationPage(props) {
       last_name: `${formData.lastName}`,
       uid: `${uID}`,
       email: `${email}`,
-      date_of_birth: `${dob}`,
+      date_of_birth: `${formData.dateOfBirth}`,
       phone_number: `${formData.phoneNumber}`,
       post_code: `${formData.postcode}`,
       address_line_1: `${addLine1}`,
@@ -108,6 +114,12 @@ export default function RegistrationPage(props) {
       })
       .catch(error => {
         setErrors('No addresses found at the given post code')
+        setNotifyMsg({
+          isOpen: true,
+          message:
+              "No addresses found at the given post code",
+          type: "error",
+      })
         console.log(error);
       })
   }
@@ -125,8 +137,8 @@ export default function RegistrationPage(props) {
 
   return (
     <React.Fragment>
-      <div style={{ width: "80vw" }}>
-      <h2 align="center"> Registration form</h2>
+       <div style={{ width: "80vw" }}> 
+            <h2 align="center"> Registration form</h2>
       { message && <Alert severity="success">
         <AlertTitle>{message}</AlertTitle>
       </Alert>}
@@ -185,7 +197,7 @@ export default function RegistrationPage(props) {
             <TextField
               id="phoneNumber"
               name="phoneNumber"
-              // type="number"
+              type="number"
               label="Phone Number"
               onChange={handleChange}
               value={phoneNumber || ''}
@@ -229,9 +241,7 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
-            {errors && <Alert severity="error">
-              <AlertTitle>Error: {errors}</AlertTitle>
-            </Alert>}
+              {errors &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
           </Grid>
 
           <Grid item xs={12}>
@@ -358,3 +368,5 @@ export default function RegistrationPage(props) {
 
   )
 }
+
+

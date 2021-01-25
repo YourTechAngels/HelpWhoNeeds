@@ -9,11 +9,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import FormControl from '@material-ui/core/FormControl';
-import { CircularProgress } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
 import { useAuth } from "../../contexts/AuthContext"
+import Notifications from "../structure/Notifications"
 
 const useStyles = {
     textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -47,13 +47,13 @@ export default function Profile(props) {
     const { currentUser, updatePassword, updateEmail } = useAuth()
     const uID = currentUser.uid
     const emailID = currentUser.email
-    const [DBSchecked, setDBSChecked] = useState(false);
+    const [DBSChecked, setDBSChecked] = useState(false);
     const [checked, setChecked] = React.useState(true);
     const [addressLine1, setAddressLine1] = useState("")
     const [addressLine2, setAddressLine2] = useState("")
     const [countyName, setCountyName] = useState("");
     const [cityName, setCityName] = useState("");
-    const [addressList, setAddressList] = useState("");
+    const [addressList, setAddressList] = useState("")
     const [postCodeSearched, setpostCodeSearched] = useState(false);
     const [errors, setErrors] = useState("")
     const[id, setId] = useState("")
@@ -61,8 +61,16 @@ export default function Profile(props) {
     const [errorpostcode, setErrorpostcode] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
-    const param = useParams();
-    const user = param.user;
+    const [open, setOpen] = useState(false)
+    const [lat, setLat] = useState()
+    
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
+    // const param = useParams();
+    // const user = param.user;
      
     
     useEffect(() => {
@@ -96,7 +104,7 @@ export default function Profile(props) {
                     setDBSChecked(responseData.dbs)
                     console.log(responseData.dbs)
                     console.log(formData)
-                    console.log(isVolunteer+' '+DBSchecked);
+                    console.log(isVolunteer+' '+DBSChecked);
                 })
                 .catch(function (error) {
                     console.log("error")
@@ -112,13 +120,15 @@ export default function Profile(props) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     const handleChecked = (e) => {
+        console.log('inside check handle'+DBSChecked)
+        // const check = 'false'
         setDBSChecked(e.target.checked)
-        console.log(DBSchecked)
+        console.log('after setting falsefor dbs '+DBSChecked)
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        console.log(county + ' ' + uID + ' ' + DBSchecked);
+        // console.log(county + ' ' + uID + ' ' + DBSchecked);
         const addLine1 = (addressLine1 === '' ? (address1Ref.current.value) : addressLine1)
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
@@ -126,9 +136,35 @@ export default function Profile(props) {
         const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
         console.log(emailRef.current.value)
-        if(emailRef.current.value === "" || emailRef.current.value === null) {
-            // setMessage("Data has been updated successfully")
-                console.log(formData)
+
+        if(emailRef.current.value === "" || emailRef.current.value === null || emailRef.current.value === currentUser.email) {
+            axios.patch('http://localhost:8000/api/accounts/'+id+'/',
+            { 
+               first_name: `${formData.firstName}`,
+               last_name: `${formData.lastName}`,
+               date_of_birth: `${dob}`,
+               phone_number: `${formData.phoneNumber}`,
+               post_code: `${formData.postcode}`,
+               address_line_1: `${addLine1}`,
+               address_line_2: `${addLine2}`,
+               city: `${addCity}`,
+               county: `${addCounty}`,
+               dbs: DBSChecked,
+            },
+           )
+          .then(function (response) {
+           console.log(response);
+           setSuccessMessage("Data has been updated successfully")
+            console.log('dbs when on databse is'+DBSChecked)
+            console.log(successMessage)
+           // history.push("/profile/")
+         })
+          .catch(function (error) {
+           console.log(error);
+         });
+        console.log(successMessage)// 
+        setSuccessMessage("Data has been updated successfully")
+        console.log(formData)
         }
         else {
         if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -138,51 +174,50 @@ export default function Profile(props) {
         setLoading(true)
         setErrors("")
           if  (emailRef.current.value !== currentUser.email) { 
-            //   setFormData({ email : (emailRef.current.value) }
-              promises.push(updateEmail(emailRef.current.value))
+               promises.push(updateEmail(emailRef.current.value))
           }
           if (passwordRef.current.value) {
             promises.push(updatePassword(passwordRef.current.value))
           }
-      
           Promise.all(promises)
             .then(() => {
+                axios.patch('http://localhost:8000/api/accounts/'+id+'/',
+
+                { 
+                   first_name: `${formData.firstName}`,
+                   last_name: `${formData.lastName}`,
+                   email: `${emailRef.current.value}`,
+                   date_of_birth: `${dob}`,
+                   phone_number: `${formData.phoneNumber}`,
+                   post_code: `${formData.postcode}`,
+                   address_line_1: `${addLine1}`,
+                   address_line_2: `${addLine2}`,
+                   city: `${addCity}`,
+                   county: `${addCounty}`,
+                   dbs: DBSChecked,
+                },
+               )
+              .then(function (response) {
+               console.log(response);
+               setSuccessMessage("Data has been updated successfully")
+            console.log(successMessage)
+               // history.push("/profile/")
+             })
+              .catch(function (error) {
+               console.log(error);
+             });
+            console.log(successMessage)  
               history.push("/helpwhoneeds/")
             })
             .catch(() => {
-              setErrors("Failed to update account")
+              setErrors("Failed to update Data")
             })
             .finally(() => {
               setLoading(false)
             }) 
         }
-        axios.patch('http://localhost:8000/api/accounts/'+id+'/',
-
-         { 
-            first_name: `${formData.firstName}`,
-            last_name: `${formData.lastName}`,
-            email: `${emailRef.current.value}`,
-            date_of_birth: `${dob}`,
-            phone_number: `${formData.phoneNumber}`,
-            post_code: `${formData.postcode}`,
-            address_line_1: `${addLine1}`,
-            address_line_2: `${addLine2}`,
-            city: `${addCity}`,
-            county: `${addCounty}`,
-            dbs: `${DBSchecked}`,
-         },
-        )
-       .then(function (response) {
-        console.log(response);
-        setSuccessMessage("Data has been updated successfully")
-     console.log(successMessage)
-        // history.push("/profile/")
-      })
-       .catch(function (error) {
-        console.log(error);
-      });
-     console.log(successMessage)
     }
+
     const handleClick = (e) => {
         e.preventDefault();
         axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?api-key=${process.env.REACT_APP_POSTCODE_API_KEY}`)
@@ -195,6 +230,12 @@ export default function Profile(props) {
           })
           .catch(error => {
             setErrorpostcode('No addresses found at the given post code')
+            setNotifyMsg({
+                isOpen: true,
+                message:
+                    "No addresses found at the given post code",
+                type: "error",
+            })
             console.log(errorpostcode);
           })
       }
@@ -316,10 +357,14 @@ export default function Profile(props) {
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
-                    {errorpostcode && <Alert severity="error">
-                    <AlertTitle>Error: {errorpostcode}</AlertTitle>
-                    </Alert>}
-                    </Grid>
+                     {errorpostcode &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+                
+                     {/* <Alert severity="error">This is an error message!</Alert>
+                    //                 <Alert severity="error">
+                    // <AlertTitle>Error: {errorpostcode}</AlertTitle>
+                    // </Alert> */}
+                    
+                </Grid>
 
                     <Grid item xs={12}>
                     {(!postCodeSearched) &&
@@ -463,14 +508,14 @@ export default function Profile(props) {
                   
                     <Grid item xs={12}>
 
-                        {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'true') &&
+                        {(isVolunteer === true) && (DBSChecked === true) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" checked="checked" onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} checked="checked" onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}
-                          {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'false') &&
+                          {(isVolunteer === true) && (DBSChecked === false) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" value={DBSchecked} onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}  
 

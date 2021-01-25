@@ -29,8 +29,12 @@ frontend/debug.log
 backend/venv/
 backend/env/
 **/.idea
-**/__pycache__/
 **/db.sqlite3
+
+# cache and optimized files
+__pycache__
+*.py[co]
+*~
 
 # security settings
 **/security_settings.py
