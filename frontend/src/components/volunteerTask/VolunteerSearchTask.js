@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
-import Notification from "./Notification";
 import ConfirmDialog from "../structure/ConfirmDialog";
 import Grid from "@material-ui/core/Grid";
 import TaskListTable from "./TaskListTable";
@@ -11,6 +10,7 @@ import Hidden from "@material-ui/core/Hidden";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress } from "@material-ui/core";
+import Notification from "../structure/Notification";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -434,7 +434,7 @@ export default function VolunteerSearchTask() {
                             title="Task Summary"
                             data={dialogData}
                         />
-                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={true} />
                         <ConfirmDialog
                             confirmDialog={confirmDialog}
                             setConfirmDialog={setConfirmDialog}
