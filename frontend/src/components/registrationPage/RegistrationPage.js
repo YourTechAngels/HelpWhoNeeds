@@ -51,6 +51,12 @@ export default function RegistrationPage(props) {
   const [addressList, setAddressList] = useState("");
   const [errors, setErrors] = useState("");
   const [postCodeSearched, setpostCodeSearched] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [notifyMsg, setNotifyMsg] = useState({
+      isOpen: false,
+      message: " ",
+      type: " ",
+  });
   // const [isVolunteer, setIsVolunteer] = useState(false);
 
   const handleChange = (e) => {
