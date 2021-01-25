@@ -9,11 +9,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import FormControl from '@material-ui/core/FormControl';
-import { CircularProgress } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
 import { useAuth } from "../../contexts/AuthContext"
+import Notifications from "../structure/Notifications"
 
 const useStyles = {
     textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -61,8 +61,14 @@ export default function Profile(props) {
     const [errorpostcode, setErrorpostcode] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
-    const param = useParams();
-    const user = param.user;
+    const [open, setOpen] = React.useState(false);
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
+    // const param = useParams();
+    // const user = param.user;
      
     
     useEffect(() => {
@@ -199,6 +205,12 @@ export default function Profile(props) {
           })
           .catch(error => {
             setErrorpostcode('No addresses found at the given post code')
+            setNotifyMsg({
+                isOpen: true,
+                message:
+                    "No addresses found at the given post code",
+                type: "error",
+            })
             console.log(errorpostcode);
           })
       }
@@ -218,7 +230,7 @@ export default function Profile(props) {
 
         <React.Fragment>
         <div style={{ width: "80vw" }}> 
-            <h2 align="center"> My Profile</h2>
+            <h4 align="center"> My Profile</h4>
              { !errors && successMessage && <Alert severity="success">
                 <AlertTitle>{successMessage}</AlertTitle>
             </Alert>}
@@ -320,10 +332,14 @@ export default function Profile(props) {
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
-                    {errorpostcode && <Alert severity="error">
-                    <AlertTitle>Error: {errorpostcode}</AlertTitle>
-                    </Alert>}
-                    </Grid>
+                     {errorpostcode &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+                
+                     {/* <Alert severity="error">This is an error message!</Alert>
+                    //                 <Alert severity="error">
+                    // <AlertTitle>Error: {errorpostcode}</AlertTitle>
+                    // </Alert> */}
+                    
+                </Grid>
 
                     <Grid item xs={12}>
                     {(!postCodeSearched) &&
