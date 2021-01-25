@@ -28,8 +28,12 @@ frontend/debug.log
 # django
 backend/venv/
 **/.idea
-**/__pycache__/
 **/db.sqlite3
+
+# cache and optimized files
+__pycache__
+*.py[co]
+*~
 
 # security settings
 **/security_settings.py
