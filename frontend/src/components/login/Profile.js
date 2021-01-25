@@ -47,7 +47,7 @@ export default function Profile(props) {
     const { currentUser, updatePassword, updateEmail } = useAuth()
     const uID = currentUser.uid
     const emailID = currentUser.email
-    const [DBSchecked, setDBSChecked] = useState(false);
+    const [DBSChecked, setDBSChecked] = useState(false);
     const [checked, setChecked] = React.useState(true);
     const [addressLine1, setAddressLine1] = useState("")
     const [addressLine2, setAddressLine2] = useState("")
@@ -96,7 +96,7 @@ export default function Profile(props) {
                     setDBSChecked(responseData.dbs)
                     console.log(responseData.dbs)
                     console.log(formData)
-                    console.log(isVolunteer+' '+DBSchecked);
+                    console.log(isVolunteer+' '+DBSChecked);
                 })
                 .catch(function (error) {
                     console.log("error")
@@ -112,13 +112,15 @@ export default function Profile(props) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     const handleChecked = (e) => {
+        console.log('inside check handle'+DBSChecked)
+        // const check = 'false'
         setDBSChecked(e.target.checked)
-        console.log(DBSchecked)
+        console.log('after setting falsefor dbs '+DBSChecked)
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        console.log(county + ' ' + uID + ' ' + DBSchecked);
+        // console.log(county + ' ' + uID + ' ' + DBSchecked);
         const addLine1 = (addressLine1 === '' ? (address1Ref.current.value) : addressLine1)
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
@@ -126,6 +128,7 @@ export default function Profile(props) {
         const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
         console.log(emailRef.current.value)
+        console.log('dbs checked before sending to db is '+DBSChecked)
         if(emailRef.current.value === "" || emailRef.current.value === null) {
             // setMessage("Data has been updated successfully")
                 console.log(formData)
@@ -169,12 +172,13 @@ export default function Profile(props) {
             address_line_2: `${addLine2}`,
             city: `${addCity}`,
             county: `${addCounty}`,
-            dbs: `${DBSchecked}`,
+            dbs: DBSChecked,
          },
         )
        .then(function (response) {
         console.log(response);
         setSuccessMessage("Data has been updated successfully")
+        console.log('dbs when on databse is'+DBSChecked)
      console.log(successMessage)
         // history.push("/profile/")
       })
@@ -463,14 +467,14 @@ export default function Profile(props) {
                   
                     <Grid item xs={12}>
 
-                        {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'true') &&
+                        {(isVolunteer === true) && (DBSChecked === true) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" checked="checked" onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} checked="checked" onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}
-                          {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'false') &&
+                          {(isVolunteer === true) && (DBSChecked === false) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" value={DBSchecked} onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}  
 
