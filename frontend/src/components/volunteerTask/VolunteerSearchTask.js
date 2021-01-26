@@ -34,6 +34,7 @@ export default function VolunteerSearchTask() {
                 params : { uid : userUID }
             })
             .then((response) => {
+             // if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -45,6 +46,9 @@ export default function VolunteerSearchTask() {
                 console.log("userId by uuid");
                 console.log(user.id);
                 setUserId(user.id);
+            /*}else{
+                console.log("error in fetching user data");                
+            }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -64,6 +68,7 @@ export default function VolunteerSearchTask() {
                 },
             })
             .then((response) => {
+                //if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
                 const allTask = data.map((task) => {
@@ -71,7 +76,8 @@ export default function VolunteerSearchTask() {
                         id: `${task.id}`,
                         lastName: `${task.requestee_details.last_name}`,
                         firstName: `${task.requestee_details.first_name}`,
-                        taskType: `${task.task_type}`,
+                        taskType:`${task.task_type_name}`,
+                        //taskType: `${task.task_type}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
@@ -84,6 +90,10 @@ export default function VolunteerSearchTask() {
                 setDataFetched(true);
                 console.log("tasks");
                 console.log(allTask);
+            /*}
+            else{//error on getting data
+                console.log("error in fetching data");
+            }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -372,7 +382,7 @@ export default function VolunteerSearchTask() {
                             justify="center"
                         >
                             {!hideMyTask && (
-                                <Grid className="my-tasks" item xs={12} sm={7} align="right">
+                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         <Button
                                             variant="contained"
@@ -400,7 +410,7 @@ export default function VolunteerSearchTask() {
                             )}
 
                             {!hideNewTask && (
-                                <Grid className="new-tasks" item xs={12} sm={5} align="right">
+                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         {" "}
                                         <Button
