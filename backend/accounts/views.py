@@ -35,6 +35,8 @@ class AccountView(viewsets.ModelViewSet):
         user_object.county = data.get("county", user_object.county)
         user_object.dbs = data.get("dbs", user_object.dbs)
         user_object.email = data.get("email", user_object.email)
+        user_object.latitude = data.get("latitude", user_object.latitude)
+        user_object.longitude = data.get("longitude", user_object.longitude)
 
         user_object.save()
         serializer = AccountSerializer(user_object)
