@@ -89,6 +89,7 @@ export default function Profile(props) {
                 (response) => {
                     const responseData = (response.data[0]);
                     console.log(responseData);
+                    console.log('hi')
                     const userDataSet = {
                         firstName : `${responseData.first_name}`,
                         lastName : `${responseData.last_name}`,
@@ -300,6 +301,7 @@ export default function Profile(props) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{ max: getFormDate(new Date()) }}
                             label="Date Of Birth"
                             onChange={handleChange}
                             value={dateOfBirth||''}
