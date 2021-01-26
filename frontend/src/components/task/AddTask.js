@@ -138,11 +138,26 @@ function AddTask() {
         setShowAddDialog(true)
     }
 
-    const handleRemove = id => {
-        const copyTaskList = [...taskList]
-        let taskToCancel = copyTaskList.find(task => task.id === id)
-        taskToCancel.status = "Cancelled"
-        setTaskList(copyTaskList)
+    const handleCancel = id => {
+        axios.patch("/api/tasks/" + id + '/', { status: "CL" })
+            .then(function (response) {
+                console.log("PATCH RESPONSE: ", response)
+                console.log("PATCH RESPONSE DATA: ", response.data.id)
+                if (response.status === 200) {
+                    const updatedTask = response.data
+                    updateTaskList(updatedTask, response.data.id)
+                    console.log("onSubmit: updated task with id: ", updTaskId)
+                    // update frontend list of task
+                    // console.log(updateTask)
+                    updateTaskList(updatedTask, id)
+                }
+                else console.log("Something went wrong on task update..",
+                    "Response status: ", response.status)
+            })
+            .catch(function (error) {
+                console.log(error.request)
+                console.log(error.config)
+            })
     }
 
 
@@ -155,7 +170,7 @@ function AddTask() {
             updateTaskList={updateTaskList} reqId={reqId} />
 
         <TasksTable taskList={taskList} handleCopy={handleCopy}
-            handleEdit={handleEdit} handleRemove={handleRemove} />
+            handleEdit={handleEdit} handleCancel={handleCancel} />
     </div>
 }
 
