@@ -13,7 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
 import { useAuth } from "../../contexts/AuthContext"
-import Notifications from "../structure/Notifications"
+import Notification from "../structure/Notification"
 
 const useStyles = {
     textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -332,7 +332,7 @@ export default function Profile(props) {
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
-                     {errorpostcode &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+                     {errorpostcode &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
                 
                      {/* <Alert severity="error">This is an error message!</Alert>
                     //                 <Alert severity="error">

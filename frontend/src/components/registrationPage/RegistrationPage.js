@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
-import Notifications from "../structure/Notifications"
+import Notification from "../structure/Notification"
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -241,7 +241,7 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
-              {errors &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+              {errors &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false} />}
           </Grid>
 
           <Grid item xs={12}>
