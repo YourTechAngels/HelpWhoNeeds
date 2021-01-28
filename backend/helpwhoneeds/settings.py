@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'django.contrib.gis',
 	'corsheaders',
 	'rest_framework',
 	'tasks',
@@ -89,12 +90,12 @@ WSGI_APPLICATION = 'helpwhoneeds.wsgi.application'
 
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'hwn',
+		'ENGINE': db_engine,
+		'NAME': db_name,
 		'USER': db_user,
 		'PASSWORD': db_pass,
 		'HOST': db_host,
-		'PORT': '3306',
+		'PORT': db_port,
 	}
 }
 
@@ -149,3 +150,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = email_user
 EMAIL_HOST_PASSWORD = email_password
+
+#geofeatures
+GDAL_LIBRARY_PATH = gdal_lib
+GEOS_LIBRARY_PATH = geos_lib
