@@ -20,6 +20,8 @@ class User(AbstractUser):
     county = models.CharField(max_length=150, blank=True)
     is_volunteer = models.BooleanField(default=False)
     dbs = models.BooleanField(default=False)
+    longitude = models.FloatField(blank=True, null=True)
+    latutude = models.FloatField(blank=True, null=True)
     location = gismodels.PointField(geography=True, default=Point(0.0, 0.0))
 
 
