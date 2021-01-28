@@ -9,11 +9,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
 import FormControl from '@material-ui/core/FormControl';
-import { CircularProgress } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { ButtonGroup } from '@material-ui/core';
 import { useAuth } from "../../contexts/AuthContext"
+import Notification from "../structure/Notification"
 
 const useStyles = {
     textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -47,7 +47,7 @@ export default function Profile(props) {
     const { currentUser, updatePassword, updateEmail } = useAuth()
     const uID = currentUser.uid
     const emailID = currentUser.email
-    const [DBSchecked, setDBSChecked] = useState(false);
+    const [DBSChecked, setDBSChecked] = useState(false);
     const [checked, setChecked] = React.useState(true);
     const [addressLine1, setAddressLine1] = useState("")
     const [addressLine2, setAddressLine2] = useState("")
@@ -61,12 +61,27 @@ export default function Profile(props) {
     const [errorpostcode, setErrorpostcode] = useState("")
     const [loading, setLoading] = useState(false)
     const history = useHistory()
-    const param = useParams();
-    const user = param.user;
+    const [open, setOpen] = React.useState(false);
+    const [long, setLong] = useState()
+    const [lat, setLat] = useState()
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
+    // const param = useParams();
+    // const user = param.user;
+
+    const getFormDate = date => {
+        let year = date.getFullYear();
+        let month = (1 + date.getMonth()).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return year + '-' + month + '-' + day
+    }
      
     
     useEffect(() => {
-          axios.get('http://localhost:8000/api/accounts/get_user_by_id/',
+          axios.get('/api/accounts/get_user_by_id/',
             {
                 params : { uid : uID }
             })
@@ -77,7 +92,7 @@ export default function Profile(props) {
                     const userDataSet = {
                         firstName : `${responseData.first_name}`,
                         lastName : `${responseData.last_name}`,
-                        dateOfBirth: `${responseData.date_of_birth}`,
+                        dateOfBirth: `${responseData.date_of_birth === '1900-01-01'?'' : responseData.date_of_birth}`,
                         phoneNumber : `${responseData.phone_number}`,
                         postcode: `${responseData.post_code}`,
                         address1 : `${responseData.address_line_1}`,
@@ -87,16 +102,17 @@ export default function Profile(props) {
                         email : `${responseData.email}`
                     }
                     
+
                     setFormData({ lastName : (userDataSet.lastName), firstName: (userDataSet.firstName), dateOfBirth: (userDataSet.dateOfBirth),
                     postcode: (userDataSet.postcode), phoneNumber : (userDataSet.phoneNumber) , address1: (userDataSet.address1), address2: (userDataSet.address2),
                     city: (userDataSet.city), county: (userDataSet.county), email: (userDataSet.email)})
                     setId(responseData.id)
                     console.log(responseData.is_volunteer)
-                    setIsVolunteer(responseData.is_volunteer)
+                    setIsVolunteer(responseData.is_volunteer)                   
                     setDBSChecked(responseData.dbs)
                     console.log(responseData.dbs)
                     console.log(formData)
-                    console.log(isVolunteer+' '+DBSchecked);
+                    console.log(isVolunteer+' '+DBSChecked);
                 })
                 .catch(function (error) {
                     console.log("error")
@@ -112,20 +128,26 @@ export default function Profile(props) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     const handleChecked = (e) => {
+        console.log('inside check handle'+DBSChecked)
         setDBSChecked(e.target.checked)
-        console.log(DBSchecked)
+        console.log('after setting falsefor dbs '+DBSChecked)
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
-        console.log(county + ' ' + uID + ' ' + DBSchecked);
+        
         const addLine1 = (addressLine1 === '' ? (address1Ref.current.value) : addressLine1)
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
         const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
-        const dob = (dateOfBirth === undefined ? '1900-00-00': dateOfBirth)
+        const dob = (dateOfBirth === undefined ? '1900-01-01': dateOfBirth)
+        const mail = (errors === ''? email : currentUser.email)
+        console.log(mail)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
         console.log(emailRef.current.value)
+        console.log('dbs checked before sending to db is '+DBSChecked)
+        console.log('longit before sending to db'+long)
+        console.log('latit before sending to db'+lat)
         if(emailRef.current.value === "" || emailRef.current.value === null) {
             // setMessage("Data has been updated successfully")
                 console.log(formData)
@@ -147,21 +169,23 @@ export default function Profile(props) {
       
           Promise.all(promises)
             .then(() => {
-              history.push("/helpwhoneeds/")
+            //   history.push("/helpwhoneeds/")
+            
             })
-            .catch(() => {
-              setErrors("Failed to update account")
+            .catch((error) => {
+              setErrors(error.message)
+              console.log(errors)
             })
             .finally(() => {
               setLoading(false)
             }) 
         }
-        axios.patch('http://localhost:8000/api/accounts/'+id+'/',
-
+        axios.patch('/api/accounts/'+id+'/',
+        
          { 
             first_name: `${formData.firstName}`,
             last_name: `${formData.lastName}`,
-            email: `${emailRef.current.value}`,
+            email: `${mail}`,
             date_of_birth: `${dob}`,
             phone_number: `${formData.phoneNumber}`,
             post_code: `${formData.postcode}`,
@@ -169,13 +193,16 @@ export default function Profile(props) {
             address_line_2: `${addLine2}`,
             city: `${addCity}`,
             county: `${addCounty}`,
-            dbs: `${DBSchecked}`,
+            dbs: DBSChecked,
+            latitude: `${lat}`,
+            longitude: `${long}`,
          },
         )
        .then(function (response) {
         console.log(response);
         setSuccessMessage("Data has been updated successfully")
-     console.log(successMessage)
+        console.log('dbs when on databse is'+DBSChecked)
+        console.log(successMessage)
         // history.push("/profile/")
       })
        .catch(function (error) {
@@ -188,21 +215,33 @@ export default function Profile(props) {
         axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?api-key=${process.env.REACT_APP_POSTCODE_API_KEY}`)
           .then(function (response) {
             const responseData = response.data
+            setLat(responseData.latitude)
+            setLong(responseData.longitude)
+            console.log(responseData)
+            console.log('lat is'+lat)
+            console.log('long is'+long)
             setAddressList(responseData.addresses)
             addressList === ' ' ? setErrorpostcode('No addresses found at the given post code') :
               setpostCodeSearched(true)
             console.log(addressList)
           })
           .catch(error => {
-            setErrorpostcode('No addresses found at the given post code')
+            setNotifyMsg({
+                isOpen: true,
+                message:
+                    "No addresses found at the given post code",
+                type: "error",
+            })
             console.log(errorpostcode);
           })
       }
       const updateAddress = (e) => {
+        console.log(e)  
         const valueList = [...e.target.selectedOptions].map(opt => opt.value);
         if ({ valueList } !== '') {
           let addressStore = valueList.toString().split(',')
           console.log(addressStore)
+        //   setLat()
           setAddressLine1(addressStore[0])
           setAddressLine2(addressStore[1])
           setCityName(addressStore[5])
@@ -214,7 +253,7 @@ export default function Profile(props) {
 
         <React.Fragment>
         <div style={{ width: "80vw" }}> 
-            <h2 align="center"> My Profile</h2>
+            <h4 align="center"> My Profile</h4>
              { !errors && successMessage && <Alert severity="success">
                 <AlertTitle>{successMessage}</AlertTitle>
             </Alert>}
@@ -262,6 +301,7 @@ export default function Profile(props) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{ max: getFormDate(new Date()) }}
                             label="Date Of Birth"
                             onChange={handleChange}
                             value={dateOfBirth||''}
@@ -316,10 +356,14 @@ export default function Profile(props) {
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
-                    {errorpostcode && <Alert severity="error">
-                    <AlertTitle>Error: {errorpostcode}</AlertTitle>
-                    </Alert>}
-                    </Grid>
+                     {errorpostcode &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
+                
+                     {/* <Alert severity="error">This is an error message!</Alert>
+                    //                 <Alert severity="error">
+                    // <AlertTitle>Error: {errorpostcode}</AlertTitle>
+                    // </Alert> */}
+                    
+                </Grid>
 
                     <Grid item xs={12}>
                     {(!postCodeSearched) &&
@@ -463,14 +507,14 @@ export default function Profile(props) {
                   
                     <Grid item xs={12}>
 
-                        {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'true') &&
+                        {(isVolunteer === true) && (DBSChecked === true) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" checked="checked" onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} checked="checked" onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}
-                          {(`${isVolunteer}` === 'true') && (`${DBSchecked}` === 'false') &&
+                          {(isVolunteer === true) && (DBSChecked === false) &&
                             <FormControlLabel
-                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="dbsCheck" value={DBSchecked} onChange={handleChecked}  />}
+                                control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}  
 

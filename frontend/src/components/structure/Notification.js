@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Notification(props) {
     const classes = useStyles();
-    const { notify, setNotify } = props;
+    const { notify, setNotify, verticalPosTop } = props;
 
     const handleClose = (event, reason) => {
         if (reason === "clickaway") {
@@ -20,13 +20,15 @@ function Notification(props) {
             isOpen: false,
         });
     };
-
     return (
         <Snackbar
             className={classes.root}
             open={notify.isOpen}
             autoHideDuration={2000}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            anchorOrigin={{
+                vertical: verticalPosTop ? "top" : "bottom",
+                horizontal: "center",
+            }}
             onClose={handleClose}
         >
             <Alert severity={notify.type} onClose={handleClose}>
@@ -36,4 +38,6 @@ function Notification(props) {
     );
 }
 
+
 export default Notification;
+

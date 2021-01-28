@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 
-export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemove }) {
+export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel }) {
 
 
     const theme = () => createMuiTheme({
@@ -104,7 +104,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             options: { display: true, sort: true, filter: false },
         },
         {
-            name: "taskType",
+            name: "taskTypeName",
             label: "Task Type",
 
             options: {
@@ -154,7 +154,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             },
         },
         {
-            name: "status",
+            name: "statusName",
             label: "State",
             options: {
                 filter: true,
@@ -234,7 +234,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                     }}
                                     onClick={() => {
                                         console.log(tableMeta.rowData[0])
-                                        handleRemove(tableMeta.rowData[0])
+                                        handleCancel(tableMeta.rowData[0])
                                     }}
                                 >
                                     Cancel

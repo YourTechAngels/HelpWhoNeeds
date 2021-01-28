@@ -31,10 +31,13 @@ class TaskType(models.Model):
     def __str__(self):
         return self.get_task_type_display()
 
+
 class Task(models.Model):
-    task_type = models.ForeignKey(TaskType, to_field='task_type', on_delete=models.CASCADE)
+    task_type = models.ForeignKey(TaskType, to_field='task_type', choices=TASK_TYPE_CHOICES,
+                                  on_delete=models.CASCADE)
     requestee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requestee')
     volunteer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='volunteer')
+    requested_vol = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='requested_volunteer')
     description = models.TextField(default='', blank=True)
     dbs_required = models.BooleanField(default=False)
     start_time = models.DateTimeField()
@@ -55,7 +58,7 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.task_type}: {self.description}"
-
+    
     class Meta:
         ordering = ['start_time']
 

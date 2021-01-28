@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles'
 
+
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
     root: {
@@ -18,8 +19,8 @@ const useStyles = makeStyles({
     }
 })
 
-function FormDialog({ open, handleClose, taskType, addTask, defaultValues,
-    updateTask, updTaskId, reqId }) {
+function FormDialog({ open, handleClose, taskType, defaultValues, 
+    updTaskId, updateTaskList, reqId }) {
 
     useEffect(() => {
         reset(defaultValues);
@@ -69,44 +70,50 @@ function FormDialog({ open, handleClose, taskType, addTask, defaultValues,
         console.log("item created: ", item)
         return item
     }
-    
+
     const onSubmit = (data) => {
         const start = new Date(data.startDate + "T" + data.startTime)
         const end = new Date(data.endDate + "T" + data.endTime)
         const item = createItem(data, start, end)
         console.log("Submitting item: ", item)
-        axios.post("/api/tasks/", item)
-            .then(function (response) {
-                console.log("RESPONSE: ", response)
-                console.log("DATA: ", response.data)
-                const newTaskId = (response.status === 201) ? response.data.id : -1
-                if (newTaskId > 0) {
-                    console.log("Adding new item to the list of tasks... New Task id=", newTaskId)
-                    addTask({
-                        id: newTaskId, taskType: taskType,
-                        taskDetails: data.taskDetails, start: start, end: end
-                    })
-                    console.log("onSubmit: newTaskId: ", newTaskId)
+        if (updTaskId < 0)
+            axios.post("/api/tasks/", item)
+                .then(function (response) {
+                    console.log("POST RESPONSE: ", response)
+                    console.log("POST RESPONSE DATA: ", response.data)
+                    const newTaskId = (response.status === 201) ? response.data.id : -1
+                    if (newTaskId > 0) {
+                        console.log("Adding new item to the list of tasks... New Task id=", newTaskId)
+                        const newTask = response.data
+                        updateTaskList(newTask, -1)
+                        console.log("onSubmit: newTaskId: ", newTaskId)
+                    }
+                    else
+                        console.log("Something was unsuccessful. Request status: ", response.status)
+                })
+                .catch(function (error) {
+                    console.log(error.request)
+                    console.log(error.config)
+                })
+        else
+            axios.put("/api/tasks/" + updTaskId + '/', item)
+                .then(function (response) {
+                    console.log("PUT RESPONSE: ", response)
+                    console.log("PUT RESPONSE DATA: ", response.data.id)
+                    if (response.status === 200) {
+                        const updatedTask = response.data
+                        updateTaskList(updatedTask, response.data.id)
+                        console.log("onSubmit: updated task with id: ", updTaskId)
+                    }
+                    else console.log("Something went wrong on task update.. Response status: ", response.status)
                 }
-                else
-                    console.log("Something was unsuccessful. Request status: ", response.status)
-            })
-            .catch(function (error) {
-                console.log(error.request)
-                console.log(error.config)
-            })
+                )
+                .catch(function (error) {
+                    console.log(error.request)
+                    console.log(error.config)
+                })
 
         console.log("onSubmit: updTaskId: ", updTaskId)
-        if (updTaskId < 0)
-            addTask({
-                taskType: taskType, taskDetails: data.taskDetails,
-                start: start, end: end
-            })
-        else
-            updateTask({
-                taskType: taskType, taskDetails: data.taskDetails,
-                start: start, end: end
-            }, updTaskId)
         resetAndClose()
     };
 
