@@ -2,8 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
-import Notification from "./Notification";
-import ConfirmDialog from "./CofirmDialog";
+import ConfirmDialog from "../structure/ConfirmDialog";
 import Grid from "@material-ui/core/Grid";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
@@ -11,6 +10,7 @@ import Hidden from "@material-ui/core/Hidden";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress } from "@material-ui/core";
+import Notification from "../structure/Notification";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -34,6 +34,7 @@ export default function VolunteerSearchTask() {
                 params : { uid : userUID }
             })
             .then((response) => {
+             // if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -45,6 +46,9 @@ export default function VolunteerSearchTask() {
                 console.log("userId by uuid");
                 console.log(user.id);
                 setUserId(user.id);
+            /*}else{
+                console.log("error in fetching user data");                
+            }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -64,6 +68,7 @@ export default function VolunteerSearchTask() {
                 },
             })
             .then((response) => {
+                //if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
                 const allTask = data.map((task) => {
@@ -71,7 +76,8 @@ export default function VolunteerSearchTask() {
                         id: `${task.id}`,
                         lastName: `${task.requestee_details.last_name}`,
                         firstName: `${task.requestee_details.first_name}`,
-                        taskType: `${task.task_type}`,
+                        taskType:`${task.task_type_name}`,
+                        //taskType: `${task.task_type}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
@@ -84,6 +90,10 @@ export default function VolunteerSearchTask() {
                 setDataFetched(true);
                 console.log("tasks");
                 console.log(allTask);
+            /*}
+            else{//error on getting data
+                console.log("error in fetching data");
+            }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -372,7 +382,7 @@ export default function VolunteerSearchTask() {
                             justify="center"
                         >
                             {!hideMyTask && (
-                                <Grid className="my-tasks" item xs={12} sm={7} align="right">
+                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         <Button
                                             variant="contained"
@@ -400,7 +410,7 @@ export default function VolunteerSearchTask() {
                             )}
 
                             {!hideNewTask && (
-                                <Grid className="new-tasks" item xs={12} sm={5} align="right">
+                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         {" "}
                                         <Button
@@ -434,7 +444,7 @@ export default function VolunteerSearchTask() {
                             title="Task Summary"
                             data={dialogData}
                         />
-                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={true} />
                         <ConfirmDialog
                             confirmDialog={confirmDialog}
                             setConfirmDialog={setConfirmDialog}

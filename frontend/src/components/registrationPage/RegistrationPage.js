@@ -266,7 +266,9 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
+
               {errors &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
+
           </Grid>
 
           <Grid item xs={12}>
