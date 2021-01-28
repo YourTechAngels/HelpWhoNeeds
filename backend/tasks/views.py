@@ -34,6 +34,8 @@ def send_email(task, prev_state_task, prev_assigned_vol):
         vol_body_first_line = 'You have recently marked the task  as completed.\n'
         req_subject = 'Task Requested is Completed'
         req_body_first_line = 'The task you have requested has been completed.\n'
+    else:
+        return
 
     common_body = f'Please see the details below: \n\n' + \
                 f'Task: {task.task_type} \n' + \
@@ -88,36 +90,34 @@ class TaskView(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         task_object = self.get_object()
         data = request.data
-        if(data["isUpdatedByVol"]):
+
+        if data.get("isUpdatedByVol", None):
             prev_state_task = task_object.status
             if task_object.volunteer is not None:
-                    prev_assigned_vol= User.objects.get(id = task_object.volunteer.id)                                     
+                    prev_assigned_vol = User.objects.get(id = task_object.volunteer.id)
             else:
-                    prev_assigned_vol = None        
-            
-            
+                    prev_assigned_vol = None
             try:
                 if data["volId"] is None:
                     task_object.volunteer = None
                 else:
                     volunteer = User.objects.get(id = data["volId"])
                     task_object.volunteer = volunteer
-                    
             except KeyError:
                 pass
 
             task_object.status = data.get("status", task_object.status)
-        else:
-            #Natalie please add you bits her
-            pass
-        
-        task_object.save()
-        serializer = TaskSerializer(task_object)
+            task_object.save()
+            serializer = TaskSerializer(task_object)
 
-        if(data["isUpdatedByVol"]):
             send_email(task_object, prev_state_task, prev_assigned_vol)
 
-        return Response(serializer.data)
+            return Response(serializer.data)
+
+        # any standard partial task update
+        else:
+            kwargs['partial'] = True
+            return self.update(request, *args, **kwargs)
 
 
 # access by user_id as a parameter

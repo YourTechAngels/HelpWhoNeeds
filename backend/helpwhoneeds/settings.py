@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'django.contrib.gis',
 	'corsheaders',
 	'rest_framework',
 	'tasks',
@@ -89,14 +90,36 @@ WSGI_APPLICATION = 'helpwhoneeds.wsgi.application'
 
 DATABASES = {
 	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'hwn',
+		'ENGINE': db_engine,
+		'NAME': db_name,
 		'USER': db_user,
 		'PASSWORD': db_pass,
 		'HOST': db_host,
-		'PORT': '3306',
+		'PORT': db_port,
 	}
 }
+
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.db.backends.postgresql',
+# 		'NAME': 'hwn',
+# 		'USER': db_user,
+# 		'PASSWORD': db_pass,
+# 		'HOST': db_host,
+# 		'PORT': '5432',
+# 	}
+# }
+
+# DATABASES = {
+# 	'default': {
+# 		'ENGINE': 'django.contrib.gis.db.backends.mysql',
+# 		'NAME': 'hwn',
+# 		'USER': db_user,
+# 		'PASSWORD': db_pass,
+# 		'HOST': db_host,
+# 		'PORT': '3306',
+# 	}
+# }
 
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"
@@ -139,8 +162,15 @@ STATIC_URL = '/static/'
 
 # we whitelist localhost:3000 because that's where frontend will be served
 CORS_ORIGIN_WHITELIST = [
-	'http://localhost:3000'
+	'http://localhost:3000',
+	# 'https://yourtechangels.github.io/'
 ]
+
+# CORS_ALLOWED_ORIGINS = [
+# 	"https://yourtechangels.github.io/"
+# 	]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 #gmail 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -149,3 +179,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = email_user
 EMAIL_HOST_PASSWORD = email_password
+
+#geofeatures
+GDAL_LIBRARY_PATH = gdal_lib
+GEOS_LIBRARY_PATH = geos_lib
