@@ -3,6 +3,7 @@ const TermConditions = () => (
     <div>
         <h2>Terms & Conditions</h2>
         <p>
+            
             These are our Terms & Conditions. </p>
             <p>What’s covered in these terms </p>
            <p> We know it’s tempting to skip these Terms of Service, 

@@ -1,24 +1,24 @@
 import React, { useState } from "react"
 import { makeStyles, Button } from "@material-ui/core"
 import Grid from '@material-ui/core/Grid';
-
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = {
-  textFld: { width: '85%', height: 40, paddingLeft: 8 } , 
+  textFld: { width: '85%', height: 40, paddingLeft: 8 },
   button: {
     border: '4px',
     fontWeight: 'bold',
     marginLeft: 10,
     marginTop: '10px',
   },
-  divContentWrapper:{
+  divContentWrapper: {
     textAlign: "center",
     minHeight: "100%",
     paddingLeft: "50px",
-}
-  };
+  }
+};
 
- 
+
 const Contact = () => {
   const [status, setStatus] = useState("Submit");
   const handleSubmit = async (e) => {
@@ -44,19 +44,64 @@ const Contact = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="name">Name:</label>
-        <input type="text" id="name" required />
+        <Grid container direction="row" justify="center" alignItems="center" spacing={10} >
+          <Grid item xs={12}>
+            <TextField
+              required
+              id="name"
+              type="text"
+              name="Name"
+              label="Name"
+              variant="outlined"
+              inputProps={{ maxLength: 20 }}
+              style={useStyles.textFld}
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              id="email"
+              type="text"
+              name="Email"
+              label="Email"
+              variant="outlined"
+              inputProps={{ maxLength: 20 }}
+              style={useStyles.textFld}
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              id="message"
+              type="text"
+              name="Message"
+              label="Message"
+              variant="outlined"
+              inputProps={{ maxLength: 100 }}
+              style={useStyles.textFld}
+              required
+              multiline
+              rows={6}
+            />
+
+          </Grid>
+        </Grid>
+
+        <Grid container
+          justify="left" alignItems="left" spacing={3} >
+          <Grid item xs={12}>
+            <button color="secondary" variant="contained" type="submit">{status} </button>
+          </Grid>
+        </Grid>
+
+
       </div>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" required />
-      </div>
-      <div>
-        <label htmlFor="message">Message:</label>
-        <textarea id="message" required />
-      </div>
-      <button type="submit">{status}</button>
+
     </form>
+
+
   );
 };
 
