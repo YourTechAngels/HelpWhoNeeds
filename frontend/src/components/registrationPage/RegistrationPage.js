@@ -106,8 +106,8 @@ export default function RegistrationPage(props) {
       county: `${addCounty}`,
       dbs: `${DBSchecked}`,
       is_volunteer: `${is_volunteer}`,
-      latitude: `${lat}`,
-      longitude: `${long}`,
+      latitude: lat,
+      longitude: long,
     })
       .then(function (response) {
         console.log(response);
@@ -266,7 +266,9 @@ export default function RegistrationPage(props) {
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
+
               {errors &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
+
           </Grid>
 
           <Grid item xs={12}>

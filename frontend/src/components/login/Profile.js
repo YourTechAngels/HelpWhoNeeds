@@ -92,7 +92,7 @@ export default function Profile(props) {
                     const userDataSet = {
                         firstName : `${responseData.first_name}`,
                         lastName : `${responseData.last_name}`,
-                        dateOfBirth: `${responseData.date_of_birth}`,
+                        dateOfBirth: `${responseData.date_of_birth === '1900-01-01'?'' : responseData.date_of_birth}`,
                         phoneNumber : `${responseData.phone_number}`,
                         postcode: `${responseData.post_code}`,
                         address1 : `${responseData.address_line_1}`,
@@ -102,6 +102,7 @@ export default function Profile(props) {
                         email : `${responseData.email}`
                     }
                     
+
                     setFormData({ lastName : (userDataSet.lastName), firstName: (userDataSet.firstName), dateOfBirth: (userDataSet.dateOfBirth),
                     postcode: (userDataSet.postcode), phoneNumber : (userDataSet.phoneNumber) , address1: (userDataSet.address1), address2: (userDataSet.address2),
                     city: (userDataSet.city), county: (userDataSet.county), email: (userDataSet.email)})
@@ -300,6 +301,7 @@ export default function Profile(props) {
                             InputLabelProps={{
                                 shrink: true,
                             }}
+                            inputProps={{ max: getFormDate(new Date()) }}
                             label="Date Of Birth"
                             onChange={handleChange}
                             value={dateOfBirth||''}
