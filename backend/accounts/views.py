@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 import datetime
 from django.db.models import Q
+from django.contrib.gis.measure import Distance
+from django.contrib.gis.geos import Point
 
 
 class AccountView(viewsets.ModelViewSet):
@@ -37,9 +39,17 @@ class AccountView(viewsets.ModelViewSet):
         user_object.email = data.get("email", user_object.email)
         user_object.latitude = data.get("latitude", user_object.latitude)
         user_object.longitude = data.get("longitude", user_object.longitude)
-
+        user_object.location = f'Point({data.get("latitude")} {data.get("longitude")})'
+        print(user_object.location)
         user_object.save()
         serializer = AccountSerializer(user_object)
 
         return Response(serializer.data)
 
+    def perform_create(self, serializer):        
+        serializer.save(location = Point((self.request.data['latitude']), (self.request.data['longitude'])))
+        print(serializer.data.get("location"))
+
+
+
+    
