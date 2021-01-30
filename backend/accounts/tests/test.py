@@ -27,17 +27,14 @@ class UserTest(TestCase):
             'dbs': 0
         }
         self.invalid_payload = {
-            'first_name': '',
-            'post_code': ''
+            'first_name': None,
+            'post_code': None
         }
 
     def test_create_valid_user(self):
         response = self.client.post('/api/accounts/', self.valid_payload, format='json')
         result = json.loads(response.content)
-        self.assertEqual(result, (['uid'], ['gOZULA4bKPaYtQJiCLljcUEe9kfg']))
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 1)
-        # self.assertEqual(User.objects.get().uid, 'gOZULA4bKPaYtQJiCLljcUEe9kfg')
+        self.assertEqual(result['uid'], 'gOZULA4bKPaYtQJiCLljcUEe9kfg')
 
     def test_create_invalid_user(self):
         response = self.client.post('/api/accounts/', self.invalid_payload, format='json')
