@@ -140,7 +140,7 @@ export default function Profile(props) {
         const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
         const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
         const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
-        const dob = (dateOfBirth === undefined ? '1900-01-01': dateOfBirth)
+        const dob = (dateOfBirth === '' ? '1900-01-01': dateOfBirth)
         const mail = (errors === ''? email : currentUser.email)
         console.log(mail)
         console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
@@ -353,6 +353,7 @@ export default function Profile(props) {
                         label="Select Addresses"
                         onChange={updateAddress}
                         >
+                          <option value='' selected> </option>  
                         {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                         </Select>
                     </FormControl>}
