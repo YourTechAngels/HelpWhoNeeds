@@ -26,15 +26,15 @@ export default function VolunteerSearchTask() {
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
-    const[taskStateUpdated, setTaskStateUpdated] = useState(true);
+    const [taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
-            .get("http://localhost:8000/api/accounts/get_user_by_id/",
-            {
-                params : { uid : userUID }
+            //.get("http://localhost:8000/api/accounts/get_user_by_id/",
+            .get("/api/accounts/get_user_by_id/", {
+                params: { uid: userUID },
             })
             .then((response) => {
-             // if (response.status === 200) {
+                // if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -46,9 +46,9 @@ export default function VolunteerSearchTask() {
                 console.log("userId by uuid");
                 console.log(user.id);
                 setUserId(user.id);
-            /*}else{
-                console.log("error in fetching user data");                
-            }*/
+                /*}else{
+                            console.log("error in fetching user data");                
+                        }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -62,7 +62,8 @@ export default function VolunteerSearchTask() {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8000/api/tasks/get_vol_task", {
+            //.get("http://localhost:8000/api/tasks/get_vol_task", {
+            .get("/api/tasks/get_vol_task", {
                 params: {
                     volId: userId,
                 },
@@ -76,24 +77,25 @@ export default function VolunteerSearchTask() {
                         id: `${task.id}`,
                         lastName: `${task.requestee_details.last_name}`,
                         firstName: `${task.requestee_details.first_name}`,
-                        taskType:`${task.task_type_name}`,
+                        taskType: `${task.task_type_name}`,
                         //taskType: `${task.task_type}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
-                        distance: 1,//`${task.id}`,
+                        distance: 1, //`${task.id}`,
                         volId: `${task.volunteer}`,
                         status: `${task.status}`,
+                    
                     };
                 });
                 setPendingTasks(allTask);
                 setDataFetched(true);
                 console.log("tasks");
                 console.log(allTask);
-            /*}
-            else{//error on getting data
-                console.log("error in fetching data");
-            }*/
+                /*}
+                        else{//error on getting data
+                            console.log("error in fetching data");
+                        }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -154,9 +156,9 @@ export default function VolunteerSearchTask() {
     const handleReject = (taskId) => {
         setConfirmDialog({
             isOpen: true,
-            title: "Are you sure to return your assigned Task?",
+            title: "Are you sure to cancel your assigned Task?",
             subTitle:
-                "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+                "Once rejected you will no longer be able to see the task.To retake the task you need to go to Search Task and Accept it again.",
             onConfirm: () => {
                 setConfirmDialog({
                     ...confirmDialog,
@@ -164,7 +166,8 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -176,7 +179,8 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "OP",
                                     volId: null,
                                     isUpdatedByVol: true,
@@ -185,7 +189,9 @@ export default function VolunteerSearchTask() {
                                     console.log(response);
                                     //change status is frontend
                                     const returnTask = pendingTasks.map((task) =>
-                                        task.id === taskId ? { ...task, volId: null, status: "OP" } : task
+                                        task.id === taskId
+                                            ? { ...task, volId: null, status: "OP" }
+                                            : task
                                     );
                                     setPendingTasks(returnTask);
                                     console.log("myTask");
@@ -213,11 +219,11 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });                 
+                    });
             },
         });
     };
-    
+
     const handleAccept = (taskId) => {
         console.log("Accepted userID");
         console.log(userId);
@@ -233,7 +239,8 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -245,7 +252,8 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "OP") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "AS",
                                     volId: userId,
                                     isUpdatedByVol: true,
@@ -309,7 +317,8 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -321,28 +330,29 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "DN",
                                     isUpdatedByVol: true,
                                 })
                                 .then(function (response) {
                                     console.log(response);
                                     const assignTask = pendingTasks.map((task) =>
-                                    task.id === taskId ? { ...task, status: "DN" } : task
-                                );
-                                setPendingTasks(assignTask);
-                                console.log("assignTasks");
-                                console.log(unassignedTasks);
-                                console.log("myTask");
-                                console.log(myTasks);
-                                console.log(pendingTasks);
-                                setTaskStateUpdated(true);
-                                setNotifyMsg({
-                                    isOpen: true,
-                                    message:
-                                        "Task is successfully marked as completed.Email notification will be sent shortly.",
-                                    type: "success",
-                                });
+                                        task.id === taskId ? { ...task, status: "DN" } : task
+                                    );
+                                    setPendingTasks(assignTask);
+                                    console.log("assignTasks");
+                                    console.log(unassignedTasks);
+                                    console.log("myTask");
+                                    console.log(myTasks);
+                                    console.log(pendingTasks);
+                                    setTaskStateUpdated(true);
+                                    setNotifyMsg({
+                                        isOpen: true,
+                                        message:
+                                            "Task is successfully marked as completed.Email notification will be sent shortly.",
+                                        type: "success",
+                                    });
                                 })
                                 .catch(function (error) {
                                     console.log(error);
@@ -356,7 +366,7 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });               
+                    });
             },
         });
     };
@@ -369,11 +379,15 @@ export default function VolunteerSearchTask() {
                     <CircularProgress color="secondary" />
                 </div>
             ) : (
-                    <div style={{ height: "100%" }}>                 
-                
-                {!taskStateUpdated && (<div>  <CircularProgress />
-                    <CircularProgress color="secondary" /></div>)}
-                    
+                    <div style={{ height: "100%" }}>
+                        {!taskStateUpdated && (
+                            <div>
+                                {" "}
+                                <CircularProgress />
+                                <CircularProgress color="secondary" />
+                            </div>
+                        )}
+
                         <Grid
                             id="tasks"
                             container
@@ -394,7 +408,7 @@ export default function VolunteerSearchTask() {
                                             }}
                                         >
                                             Search New Tasks
-                                </Button>{" "}
+                                    </Button>{" "}
                                     </Hidden>
 
                                     <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
@@ -444,7 +458,11 @@ export default function VolunteerSearchTask() {
                             title="Task Summary"
                             data={dialogData}
                         />
-                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={true} />
+                        <Notification
+                            notify={notifyMsg}
+                            setNotify={setNotifyMsg}
+                            verticalPosTop={true}
+                        />
                         <ConfirmDialog
                             confirmDialog={confirmDialog}
                             setConfirmDialog={setConfirmDialog}
