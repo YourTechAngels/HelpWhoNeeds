@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import { useAuth } from "../../contexts/AuthContext"
-import Notifications from "../structure/Notifications"
+import Notification from "../structure/Notification"
 
 const useStyles = {
   textFld: { width: '85%', height: 40, paddingLeft: 8 },
@@ -50,6 +50,9 @@ export default function RegistrationPage(props) {
   const [addressLine2, setAddressLine2] = useState("")
   const [addressList, setAddressList] = useState("");
   const [errors, setErrors] = useState("");
+  // const [errorDob, setErrorDob] = useState("");
+  const [long, setLong] = useState()
+  const [lat, setLat] = useState()
   const [postCodeSearched, setpostCodeSearched] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [notifyMsg, setNotifyMsg] = useState({
@@ -59,7 +62,14 @@ export default function RegistrationPage(props) {
   });
   // const [isVolunteer, setIsVolunteer] = useState(false);
 
+  const getFormDate = date => {
+    let year = date.getFullYear();
+    let month = (1 + date.getMonth()).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+    return year + '-' + month + '-' + day
+}
   const handleChange = (e) => {
+    
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
@@ -75,14 +85,19 @@ export default function RegistrationPage(props) {
     const addLine2 = (addressLine2 === '' ? (address2Ref.current.value) : addressLine2)
     const addCity = (cityName === '' ? (cityRef.current.value) : cityName)
     const addCounty = (countyName === '' ? (countyRef.current.value) : countyName)
+    console.log('dob before'+dateOfBirth)
+    const dob = (dateOfBirth === undefined ? '1900-01-01' : dateOfBirth)
+    console.log('dob after'+dob)
     console.log(addLine1 + '' + addLine2 + ' ' + addCity+' '+addCounty)
+    console.log('longit before sending to db'+long)
+    console.log('latit before sending to db'+lat)
 
     axios.post("http://localhost:8000/api/accounts/", {
       first_name: `${formData.firstName}`,
       last_name: `${formData.lastName}`,
       uid: `${uID}`,
       email: `${email}`,
-      date_of_birth: `${formData.dateOfBirth}`,
+      date_of_birth: `${dob}`,
       phone_number: `${formData.phoneNumber}`,
       post_code: `${formData.postcode}`,
       address_line_1: `${addLine1}`,
@@ -91,6 +106,8 @@ export default function RegistrationPage(props) {
       county: `${addCounty}`,
       dbs: `${DBSchecked}`,
       is_volunteer: `${is_volunteer}`,
+      latitude: lat,
+      longitude: long,
     })
       .then(function (response) {
         console.log(response);
@@ -107,6 +124,11 @@ export default function RegistrationPage(props) {
     axios.get(`https://api.getAddress.io/find/${postcodeRef.current.value}?api-key=${API_Key}`)
       .then(function (response) {
         const responseData = response.data
+        console.log(responseData.latitude)
+        setLat(responseData.latitude)
+        setLong(responseData.longitude)
+        console.log('lat is'+lat)
+        console.log('long is'+long)
         setAddressList(responseData.addresses)
         addressList === ' ' ? setErrors('No addresses found at the given post code') :
           setpostCodeSearched(true)
@@ -137,8 +159,8 @@ export default function RegistrationPage(props) {
 
   return (
     <React.Fragment>
-       <div style={{ width: "80vw" }}> 
-            <h2 align="center"> Registration form</h2>
+
+      <h2 align="center"> Registration form</h2>
       { message && <Alert severity="success">
         <AlertTitle>{message}</AlertTitle>
       </Alert>}
@@ -185,6 +207,7 @@ export default function RegistrationPage(props) {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{ max: getFormDate(new Date()) }}
               label="Date Of Birth"
               onChange={handleChange}
               value={dateOfBirth || ''}
@@ -197,13 +220,14 @@ export default function RegistrationPage(props) {
             <TextField
               id="phoneNumber"
               name="phoneNumber"
-              type="number"
               label="Phone Number"
+              type='number'
               onChange={handleChange}
               value={phoneNumber || ''}
               variant="outlined"
-              inputProps={{ maxLength: 12 }}
+              inputProps={{ maxLength: 11 }}
               style={useStyles.textFld}
+              // helperText='Phone number should start with 0 or +44'
             />
           </Grid>
 
@@ -238,10 +262,13 @@ export default function RegistrationPage(props) {
                   label="Select Addresses"
                   onChange={updateAddress}
                 >
+                  <option value='' selected> </option>
                   {addressList.map(addressArray => <option key={addressArray} value={addressArray}>{addressArray}</option>)}
                 </Select>
               </FormControl>}
-              {errors &&  <Notifications notify={notifyMsg} setNotify={setNotifyMsg} />}
+
+              {errors &&  <Notification notify={notifyMsg} setNotify={setNotifyMsg} verticalPosTop={false}/>}
+
           </Grid>
 
           <Grid item xs={12}>
@@ -363,10 +390,7 @@ export default function RegistrationPage(props) {
           </Grid>
         </Grid>
       </form>
-      </div>
     </React.Fragment>
 
   )
 }
-
-
