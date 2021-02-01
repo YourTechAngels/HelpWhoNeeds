@@ -5,6 +5,7 @@ import TasksTable from './TaskTable'
 import axios from "axios"
 import moment from "moment";
 import { useAuth } from "../../contexts/AuthContext";
+import SearchVolunteerDialog from './SearchVolunteer'
 
 
 function AddTask() {
@@ -115,6 +116,12 @@ function AddTask() {
             updateTask(parseDbTask(dbTask), id)
     }
 
+    const requestVolunteer =(dbTask, volId)=>
+    {
+
+    }
+    
+
     const taskDefaults = {
         taskDetails: "",
         startDate: null,
@@ -124,6 +131,8 @@ function AddTask() {
     }
 
     const [showAddDialog, setShowAddDialog] = React.useState(false);
+    const [showSearchDialog, setShowSearchDialog] = React.useState(false);
+    const [dialogData, setDialogData] = React.useState(null);
     const [taskType, setTaskType] = React.useState(null);
     const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
     const [updTaskId, setUpdTaskId] = React.useState(-1)
@@ -132,7 +141,7 @@ function AddTask() {
         setTaskType(taskTypeList.find(type => type.task_type == taskType))
         setShowAddDialog(true)
     }
-
+    
     const handleClose = () => {
         setTaskType(null)
         setShowAddDialog(false)
@@ -140,10 +149,19 @@ function AddTask() {
         setUpdTaskId(-1)
     }
 
+    const handleSearchOpen = (e, dialogData) => {        
+        setShowSearchDialog(true);
+        setDialogData(dialogData);
+    }
+
+    const handleSearchClose = () => {      
+        setShowSearchDialog(false);
+        setDialogData(null);       
+    }
+
     const findTaskType = id => {
         return taskTypeList.find(type => type.id == id)
     }
-
     const handleCopy = id => {
         const taskToCopy = taskList.find(task => task.id === id)
         setTaskType(findTaskType(taskToCopy.taskType))
@@ -168,6 +186,13 @@ function AddTask() {
         setShowAddDialog(true)
     }
 
+    const handleSearchVol = (e, id) => {
+        const taskToRequest = taskList.find(task => task.id === id)
+        console.log(taskToRequest);
+        if (taskToRequest != null) {
+            handleSearchOpen(e, taskToRequest);
+        }
+    };
     const handleCancel = id => {
         axios.patch("/api/tasks/" + id + '/', { status: "CL" })
             .then(function (response) {
@@ -200,7 +225,14 @@ function AddTask() {
             updateTaskList={updateTaskList} reqId={reqId} />
 
         <TasksTable taskList={taskList} handleCopy={handleCopy}
-            handleEdit={handleEdit} handleCancel={handleCancel} />
+            handleEdit={handleEdit} handleCancel={handleCancel} handleSearchVol={handleSearchVol}/>
+        
+        <SearchVolunteerDialog
+                            open={showSearchDialog}
+                            handleClose={handleSearchClose}
+                            title="Search Volunteer"
+                            data={dialogData}
+                        />
     </div>
 }
 

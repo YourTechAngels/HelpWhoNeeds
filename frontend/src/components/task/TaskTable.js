@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 
-export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel }) {
+export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel, handleSearchVol }) {
 
 
     const theme = () => createMuiTheme({
@@ -140,6 +140,36 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                 },
             },
         },
+       /* {
+            name: "id",
+            label: " Task Detail",
+
+            options: {
+                filter: false,
+                sort: false,
+                viewColumns: false,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            style={{
+                                marginLeft: 2,
+                                minWidth: "70px",
+                            }}
+                            value={value}
+                            onClick={(e) => {
+                                console.log(tableMeta.rowData[0])
+                                handleSearchVol(e, tableMeta.rowData[0]);
+                            }}
+                        >
+                            Search
+                        </Button>
+                    );
+                },
+            },
+        },*/
         {
             name: "start",
             label: "Time Period",
