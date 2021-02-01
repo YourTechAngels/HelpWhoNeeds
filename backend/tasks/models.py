@@ -9,7 +9,7 @@ TASK_TYPE_CHOICES = (
         ("GRO", "Groceries"),
         ("PHA", "Pharmacy"),
         ("DOG", "Dog Walk"),
-        ("HOS", "Hospital Appointment"),
+        ("HOS", "Hospital"),
         ("CHAT", "Phone Chat"),
         ("ANY", "Other"),
     )

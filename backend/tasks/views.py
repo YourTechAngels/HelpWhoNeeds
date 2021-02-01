@@ -1,8 +1,8 @@
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import parser_classes
 from rest_framework import viewsets
-from .serializers import TaskSerializer
-from .models import Task
+from .serializers import TaskSerializer, TaskTypeSerializer
+from .models import Task, TaskType
 from accounts.models import User
 from django.db.models import Q
 from rest_framework.response import Response
@@ -128,3 +128,8 @@ class RequesteeTasksView(viewsets.ReadOnlyModelViewSet):
         req_uid = self.request.query_params.get('requid')
         queryset = Task.objects.filter(requestee=User.objects.get(uid=req_uid).id)
         return queryset
+    
+
+class TaskTypeView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskTypeSerializer
+    queryset = TaskType.objects.all()
