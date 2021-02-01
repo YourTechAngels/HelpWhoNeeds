@@ -27,3 +27,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return (self.first_name + " " + self.last_name).strip() or self.username or self.email
+
+class Meta:
+    indexes = [
+            models.Index(fields=['latitude',]),
+            models.Index(fields=['longitude',])
+]
