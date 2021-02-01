@@ -9,14 +9,13 @@ TASK_TYPE_CHOICES = (
         ("GRO", "Groceries"),
         ("PHA", "Pharmacy"),
         ("DOG", "Dog Walk"),
-        ("HOS", "Hospital Appointment"),
+        ("HOS", "Hospital"),
         ("CHAT", "Phone Chat"),
         ("ANY", "Other"),
     )
 
 STATUS_CHOICES = (
         ("OP", "Open"),
-        ("EXP", "Expired"),
         ("AS", "Assigned"),
         ("CL", "Canceled"),
         ("DN", "Completed"),
@@ -24,7 +23,7 @@ STATUS_CHOICES = (
 
 
 class TaskType(models.Model):
-    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES, primary_key=True)
+    task_type = models.CharField(max_length=5, choices=TASK_TYPE_CHOICES)
     min_duration = models.IntegerField(default=30)
     dbs_required = models.BooleanField()
 
@@ -33,11 +32,12 @@ class TaskType(models.Model):
 
 
 class Task(models.Model):
-    task_type = models.ForeignKey(TaskType, to_field='task_type', choices=TASK_TYPE_CHOICES,
-                                  on_delete=models.CASCADE)
+    task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name='tasktype')
     requestee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requestee')
-    volunteer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='volunteer')
-    requested_vol = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='requested_volunteer')
+    volunteer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True,
+                                  related_name='volunteer')
+    requested_vol = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True,
+                                      related_name='requested_volunteer')
     description = models.TextField(default='', blank=True)
     dbs_required = models.BooleanField(default=False)
     start_time = models.DateTimeField()
@@ -47,7 +47,7 @@ class Task(models.Model):
     
     def clean(self):
         if hasattr(self, "task_type") and self.task_type.task_type in ["ANY", "GRO"] and not self.description:
-            raise ValidationError({"description" : f"Description is required when '{self.task_type}' task type selected"})
+            raise ValidationError({"description": f"Description is required when '{self.task_type}' task type selected"})
         if self.end_time and self.end_time <= timezone.now():
             raise ValidationError({"end_time" : "End time cannot be in the past"})
         if self.start_time and self.start_time >= self.end_time:

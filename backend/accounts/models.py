@@ -22,7 +22,7 @@ class User(AbstractUser):
     dbs = models.BooleanField(default=False)
     longitude = models.FloatField(blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
-    location = gismodels.PointField(geography=True, default=Point(0.0, 0.0))
+    location = gismodels.PointField(geography=True, null=True)
 
 
     def __str__(self):
