@@ -81,7 +81,7 @@ export default function Profile(props) {
      
     
     useEffect(() => {
-          axios.get('http://18.132.50.108/api/accounts/get_user_by_id/',
+          axios.get('/api/accounts/get_user_by_id/',
             {
                 params : { uid : uID }
             })
@@ -180,7 +180,7 @@ export default function Profile(props) {
               setLoading(false)
             }) 
         }
-        axios.patch('http://18.132.50.108/api/accounts/'+id+'/',
+        axios.patch('/api/accounts/'+id+'/',
         
          { 
             first_name: `${formData.firstName}`,

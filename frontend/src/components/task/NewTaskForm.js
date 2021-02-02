@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form'
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles'
 
+
 const useStyles = makeStyles({
     p: { margin: "10px 2px 10px 2px" },
     root: {
@@ -35,6 +36,10 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
         "ANY": "I need help with ...",
     }
 
+    const taskTypeId = taskType ? taskType.id : null
+    const taskTypeCode = taskType ? taskType.task_type : null
+    const minDuration = taskType ? taskType.min_duration : null
+
     const getFormDate = date => {
         let year = date.getFullYear();
         let month = (1 + date.getMonth()).toString().padStart(2, '0');
@@ -45,19 +50,14 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
     const { register, handleSubmit, reset, errors, watch, setValue, clearErrors } =
         useForm({ defaultValues: defaultValues, mode: "all" })
 
-
     const resetAndClose = () => {
         reset()
         handleClose()
     }
 
-    // TODO Call through DB
-    // Minimum time needed to perform a task *in minutes*
-    const minDuration = 30
-
     const createItem = (data, start, end) => {
         let item = {}
-        item["task_type"] = taskType
+        item["task_type"] = taskTypeId
         item["description"] = data.taskDetails || ""
         item["dbs_required"] = data.dbsReq
         item["start_time"] = start
@@ -75,6 +75,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
         const end = new Date(data.endDate + "T" + data.endTime)
         const item = createItem(data, start, end)
         console.log("Submitting item: ", item)
+        // adding new task
         if (updTaskId < 0)
             axios.post("/api/tasks/", item)
                 .then(function (response) {
@@ -94,6 +95,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
                     console.log(error.request)
                     console.log(error.config)
                 })
+        // updating existing task
         else
             axios.put("/api/tasks/" + updTaskId + '/', item)
                 .then(function (response) {
@@ -158,13 +160,13 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
             <Dialog open={open} onClose={resetAndClose} fullWidth maxWidth="sm">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <DialogTitle id="dialog-add-task">
-                        {dialogHeader[taskType]}
+                        {dialogHeader[taskTypeCode]}
                     </DialogTitle>
                     <DialogContent>
                         < TextField
                             id="taskDetails"
                             name="taskDetails"
-                            inputRef={register({ required: ["Shopping", "Other"].includes(taskType) })}
+                            inputRef={register({ required: ["GRO", "ANY"].includes(taskTypeCode) })}
                             // autoFocus
                             label="Details"
                             multiline
@@ -277,7 +279,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
                             Cancel
                         </Button>
                         <Button type="Submit" color="primary">
-                            Add
+                            Submit
                         </Button>
                     </DialogActions>
                 </form>

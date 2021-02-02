@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 
-export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemove }) {
+export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel, handleSearchVol }) {
 
 
     const theme = () => createMuiTheme({
@@ -72,25 +72,30 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
     });
 
     const options = {
-        selectableRows: "none",
+        selectableRows: false,
         print: false,
         download: false,
         rowsPerPage: 20,
         rowsPerPageOptions: [5, 10, 20],
         setRowProps: row => {
-            if (row[5] === "Assigned") {
+            if (row[6] === "Assigned") {
                 return {
                     style: { background: "palegreen" }
                 }
             }
-            if (row[5] === "Open") {
+            if (row[6] === "Open") {
                 return {
-                    style: { background: "peachpuff" }
+                    style: { background: "lemonchiffon" }
+                }
+            }
+            if (row[6] === "Expired") {
+                return {
+                    style: { background: "lightpink" }
                 }
             }
         },
-    // resizableColumns: true,
-    sortOrder: {
+        // resizableColumns: true,
+        sortOrder: {
             name: "start",
             direction: "desc",
         },
@@ -100,8 +105,14 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
         {
             name: "id",
             label: "ID",
-            width: "5%",
-            options: { display: true, sort: true, filter: false },
+
+            options: {
+                display: false,
+                sort: true,
+                filter: false,
+                width: "5%",
+                viewColumns: false
+            },
         },
         {
             name: "taskTypeName",
@@ -115,7 +126,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
         },
         {
             name: "taskDetails",
-            label: " Task Detail",
+            label: "Task Detail",
 
             options: {
                 display: true,
@@ -129,28 +140,105 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                 },
             },
         },
+       /* {
+            name: "id",
+            label: " Task Detail",
+
+            options: {
+                filter: false,
+                sort: false,
+                viewColumns: false,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            style={{
+                                marginLeft: 2,
+                                minWidth: "70px",
+                            }}
+                            value={value}
+                            onClick={(e) => {
+                                console.log(tableMeta.rowData[0])
+                                handleSearchVol(e, tableMeta.rowData[0]);
+                            }}
+                        >
+                            Search
+                        </Button>
+                    );
+                },
+            },
+        },*/
         {
             name: "start",
-            label: "Start Time",
+            label: "Time Period",
             options: {
-                filter: true,
+                filter: false,
                 sort: true,
                 width: "10%",
 
-                customBodyRender: (value) =>
-                    moment(value).format('lll'),
+                customBodyRender: (value, tableMeta) => {
+                    return <div>
+                        {moment(value).format('lll')}<br/>
+                        {moment(tableMeta.rowData[4]).format('lll')}</div>},
             },
         },
         {
             name: "end",
             label: "End Time",
             options: {
-                filter: true,
+                display: false,
+                filter: false,
+                sort: false,
+                viewColumns: false,
+                // width: "10%",
+
+                //     customBodyRender: (value) =>
+                //         moment(value).format('lll'),
+            },
+        },
+        {
+            name: "volunteerId",
+            label: "Volunteer",
+            options: {
+                filter: false,
                 sort: true,
                 width: "10%",
-
-                customBodyRender: (value) =>
-                    moment(value).format('lll'),
+                customBodyRender: (value, tableMeta) => {
+                    return <div>
+                        {tableMeta.rowData[6] == "Open" && !tableMeta.rowData[8] ?
+                            /* Open status*/
+                            (tableMeta.rowData[9] ?
+                                <b>Requested</b> :
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    className="button"
+                                    onClick={() => {}}
+                                >
+                                    Search
+                                </Button> ) : null
+                        }
+                        {tableMeta.rowData[6] == "Open" && tableMeta.rowData[8] ?
+                            /* Open Expired*/
+                            tableMeta.rowData[9]
+                            : null
+                        }
+                        {value ?
+                            /* All other states*/
+                            <Button
+                                variant="contained"
+                                color="default"
+                                size="small"
+                                className="button"
+                                onClick={() => {}}
+                            >
+                                Contact
+                            </Button> : null}
+                    </div>
+                },
             },
         },
         {
@@ -160,6 +248,9 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                 filter: true,
                 sort: true,
                 width: "10%",
+                customBodyRender: (value, tableMeta) =>
+                    tableMeta.rowData[8] &&
+                    (["Open", "Assigned"].includes(value)) ? "Expired" : value ,
             },
         },
         {
@@ -169,21 +260,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
             options: {
                 sort: false,
                 filter: false,
-                width: "40%",
-                // customBodyRender: (value, tableMeta, updateValue) => {
-                //     return (
-                //         <Button
-                //             variant="contained"
-                //             color="primary"
-                //             size="small"
-                //             style={{ marginLeft: 16 }}
-                //             value={value}
-                //             onClick={(e) => handleClickOpen(e, value)}
-                //         >
-                //             View
-                //         </Button>
-                //     );
-                // },
+                width: "30%",
                 customBodyRender: (value, tableMeta) => {
                     return (
                         <div>
@@ -191,22 +268,15 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                 variant="contained"
                                 color="primary"
                                 size="small"
-                                // disabled={tableMeta.rowData[1] === null ? false : true}
-                                // style={{
-                                //     marginLeft: 16,
-                                //     backgroundColor:
-                                //         tableMeta.rowData[1] === null ? "green" : "lightgrey",
-                                // }}
                                 className="button"
-                                // value={value}
                                 onClick={() => {
                                     console.log(tableMeta.rowData[0])
                                     handleCopy(tableMeta.rowData[0])
                                 }}
                             >
                                 Copy
-                        </Button>
-                            {["Open", "Expired"].includes(tableMeta.rowData[5]) ?
+                            </Button>
+                            {["Open", "Expired"].includes(tableMeta.rowData[6]) ?
                                 <Button
                                     variant="contained"
                                     color="default"
@@ -221,9 +291,9 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                     }}
                                 >
                                     Edit
-                    </Button>
+                                </Button>
                                 : null}
-                            {["Open"].includes(tableMeta.rowData[5]) ?
+                            {["Open"].includes(tableMeta.rowData[6]) && !tableMeta.rowData[8] ?
                                 <Button
                                     variant="contained"
                                     color="secondary"
@@ -234,15 +304,35 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleRemo
                                     }}
                                     onClick={() => {
                                         console.log(tableMeta.rowData[0])
-                                        handleRemove(tableMeta.rowData[0])
+                                        handleCancel(tableMeta.rowData[0])
                                     }}
                                 >
                                     Cancel
-                    </Button>
+                                </Button>
                                 : null}
                         </div>
                     );
                 },
+            },
+        },
+        {
+            name: "expired",
+            label: "Expired",
+            options: {
+                display: false,
+                filter: false,
+                viewColumns: false,
+                // width: "5%",
+            },
+        },
+        {
+            name: "requestedVol",
+            label: "Requested Vol",
+            options: {
+                display: false,
+                filter: false,
+                viewColumns: false,
+                // width: "5%",
             },
         },
     ];

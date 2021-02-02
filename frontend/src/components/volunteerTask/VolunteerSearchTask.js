@@ -2,8 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import TaskDialog from "./TaskDetail";
-import Notification from "./Notification";
-import ConfirmDialog from "./CofirmDialog";
+import ConfirmDialog from "../structure/ConfirmDialog";
 import Grid from "@material-ui/core/Grid";
 import TaskListTable from "./TaskListTable";
 import Button from "@material-ui/core/Button";
@@ -11,6 +10,7 @@ import Hidden from "@material-ui/core/Hidden";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { CircularProgress } from "@material-ui/core";
+import Notification from "../structure/Notification";
 
 const useStyles = makeStyles((theme) => ({
     h5: {
@@ -26,14 +26,14 @@ export default function VolunteerSearchTask() {
     const [userId, setUserId] = useState(null);
     const [pendingTasks, setPendingTasks] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
-    const[taskStateUpdated, setTaskStateUpdated] = useState(true);
+    const [taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
-            .get("http://localhost:8000/api/accounts/get_user_by_id/",
-            {
-                params : { uid : userUID }
+            .get("/api/accounts/get_user_by_id/", {
+                params: { uid: userUID },
             })
             .then((response) => {
+                //if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -45,6 +45,9 @@ export default function VolunteerSearchTask() {
                 console.log("userId by uuid");
                 console.log(user.id);
                 setUserId(user.id);
+                /*}else{
+                            console.log("error in fetching user data");                
+                        }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -57,33 +60,40 @@ export default function VolunteerSearchTask() {
     }, [userUID, userId]);
 
     useEffect(() => {
-        axios
-            .get("http://localhost:8000/api/tasks/get_vol_task", {
+        axios            
+            .get("/api/tasks/get_vol_task", {
                 params: {
                     volId: userId,
                 },
             })
             .then((response) => {
+                //if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
                 const allTask = data.map((task) => {
                     return {
                         id: `${task.id}`,
                         lastName: `${task.requestee_details.last_name}`,
-                        firstName: `${task.requestee_details.first_name}`,
-                        taskType: `${task.task_type}`,
+                        firstName: `${task.requestee_details.first_name}`,                        
+                        taskType: `${task.task_type_details.task_type_name}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
-                        distance: 1,//`${task.id}`,
+                        distance: `${task.distance}`,
                         volId: `${task.volunteer}`,
                         status: `${task.status}`,
+                        postCode: `${task.requestee_details.post_code}`,
+                    
                     };
                 });
                 setPendingTasks(allTask);
                 setDataFetched(true);
                 console.log("tasks");
                 console.log(allTask);
+                /*}
+                        else{//error on getting data
+                            console.log("error in fetching data");
+                        }*/
             })
             .catch(function (error) {
                 console.log("error");
@@ -99,12 +109,11 @@ export default function VolunteerSearchTask() {
 
     const myTasks = pendingTasks
         ? pendingTasks.filter(
-            (task) => task.status === "AS" //|| task.status === "CL" //&& Number(task.volId) === 3
+            (task) => task.status === "AS" //|| task.status === "CL" 
         )
         : null;
     const unassignedTasks = pendingTasks.filter(
-        (task) =>
-            //task.volId === null
+        (task) =>           
             task.status === "OP"
     );
 
@@ -144,9 +153,9 @@ export default function VolunteerSearchTask() {
     const handleReject = (taskId) => {
         setConfirmDialog({
             isOpen: true,
-            title: "Are you sure to return your assigned Task?",
+            title: "Are you sure to cancel your assigned Task?",
             subTitle:
-                "Once rejected it will be unassigned from you.To reassign the task you need to go to search task and accept it again.",
+                "Once rejected you will no longer be able to see the task.To retake the task you need to go to Search Task and Accept it again.",
             onConfirm: () => {
                 setConfirmDialog({
                     ...confirmDialog,
@@ -154,7 +163,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -166,7 +175,7 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "OP",
                                     volId: null,
                                     isUpdatedByVol: true,
@@ -175,7 +184,9 @@ export default function VolunteerSearchTask() {
                                     console.log(response);
                                     //change status is frontend
                                     const returnTask = pendingTasks.map((task) =>
-                                        task.id === taskId ? { ...task, volId: null, status: "OP" } : task
+                                        task.id === taskId
+                                            ? { ...task, volId: null, status: "OP" }
+                                            : task
                                     );
                                     setPendingTasks(returnTask);
                                     console.log("myTask");
@@ -203,11 +214,11 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });                 
+                    });
             },
         });
     };
-    
+
     const handleAccept = (taskId) => {
         console.log("Accepted userID");
         console.log(userId);
@@ -223,7 +234,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -235,7 +246,7 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "OP") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "AS",
                                     volId: userId,
                                     isUpdatedByVol: true,
@@ -299,7 +310,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("http://localhost:8000/api/tasks/" + taskId + "/")
+                    .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -311,28 +322,28 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("http://localhost:8000/api/tasks/" + taskId + "/", {
+                                .patch("/api/tasks/" + taskId + "/", {
                                     status: "DN",
                                     isUpdatedByVol: true,
                                 })
                                 .then(function (response) {
                                     console.log(response);
                                     const assignTask = pendingTasks.map((task) =>
-                                    task.id === taskId ? { ...task, status: "DN" } : task
-                                );
-                                setPendingTasks(assignTask);
-                                console.log("assignTasks");
-                                console.log(unassignedTasks);
-                                console.log("myTask");
-                                console.log(myTasks);
-                                console.log(pendingTasks);
-                                setTaskStateUpdated(true);
-                                setNotifyMsg({
-                                    isOpen: true,
-                                    message:
-                                        "Task is successfully marked as completed.Email notification will be sent shortly.",
-                                    type: "success",
-                                });
+                                        task.id === taskId ? { ...task, status: "DN" } : task
+                                    );
+                                    setPendingTasks(assignTask);
+                                    console.log("assignTasks");
+                                    console.log(unassignedTasks);
+                                    console.log("myTask");
+                                    console.log(myTasks);
+                                    console.log(pendingTasks);
+                                    setTaskStateUpdated(true);
+                                    setNotifyMsg({
+                                        isOpen: true,
+                                        message:
+                                            "Task is successfully marked as completed.Email notification will be sent shortly.",
+                                        type: "success",
+                                    });
                                 })
                                 .catch(function (error) {
                                     console.log(error);
@@ -346,7 +357,7 @@ export default function VolunteerSearchTask() {
                         console.log(error.request);
                         console.log(error.config);
                         console.log(error.message);
-                    });               
+                    });
             },
         });
     };
@@ -359,11 +370,15 @@ export default function VolunteerSearchTask() {
                     <CircularProgress color="secondary" />
                 </div>
             ) : (
-                    <div style={{ height: "100%" }}>                 
-                
-                {!taskStateUpdated && (<div>  <CircularProgress />
-                    <CircularProgress color="secondary" /></div>)}
-                    
+                    <div style={{ height: "100%" }}>
+                        {!taskStateUpdated && (
+                            <div>
+                                {" "}
+                                <CircularProgress />
+                                <CircularProgress color="secondary" />
+                            </div>
+                        )}
+
                         <Grid
                             id="tasks"
                             container
@@ -372,7 +387,7 @@ export default function VolunteerSearchTask() {
                             justify="center"
                         >
                             {!hideMyTask && (
-                                <Grid className="my-tasks" item xs={12} sm={7} align="right">
+                                <Grid className="my-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         <Button
                                             variant="contained"
@@ -384,7 +399,7 @@ export default function VolunteerSearchTask() {
                                             }}
                                         >
                                             Search New Tasks
-                                </Button>{" "}
+                                    </Button>{" "}
                                     </Hidden>
 
                                     <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
@@ -400,7 +415,7 @@ export default function VolunteerSearchTask() {
                             )}
 
                             {!hideNewTask && (
-                                <Grid className="new-tasks" item xs={12} sm={5} align="right">
+                                <Grid className="new-tasks" item xs={12} sm={6} align="right">
                                     <Hidden smUp>
                                         {" "}
                                         <Button
@@ -434,7 +449,11 @@ export default function VolunteerSearchTask() {
                             title="Task Summary"
                             data={dialogData}
                         />
-                        <Notification notify={notifyMsg} setNotify={setNotifyMsg} />
+                        <Notification
+                            notify={notifyMsg}
+                            setNotify={setNotifyMsg}
+                            verticalPosTop={true}
+                        />
                         <ConfirmDialog
                             confirmDialog={confirmDialog}
                             setConfirmDialog={setConfirmDialog}
