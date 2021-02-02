@@ -39,8 +39,8 @@ class AccountView(viewsets.ModelViewSet):
         user_object.email = data.get("email", user_object.email)
         user_object.latitude = data.get("latitude", user_object.latitude)
         user_object.longitude = data.get("longitude", user_object.longitude)
-        user_object.location = f'Point({user_object.latitude} {user_object.longitude})'
-        #user_object.location = f'Point({data.get("latitude")} {data.get("longitude")})'
+        #user_object.location = f'Point({user_object.latitude} {user_object.longitude})'
+        user_object.location = f'Point({data.get("latitude")} {data.get("longitude")})'
         user_object.is_available = data.get("is_available", user_object.is_available)
         print(user_object.latitude)
         print(user_object.longitude)
