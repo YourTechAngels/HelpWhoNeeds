@@ -29,13 +29,10 @@ class TaskSerializer(serializers.ModelSerializer):
     expired = serializers.SerializerMethodField()
 
     def get_distance_between_vol_and_vul(self, Task):
-        volunteer = self.context.get("logged_in_volunteer",None)   
-        #volunteer =  self.context['logged_in_volunteer'] 
+        volunteer = self.context.get("logged_in_volunteer",None)         
         if volunteer:
-            volunteer_location = volunteer.location
-            #print(volunteer_location)
+            volunteer_location = volunteer.location           
             return round((volunteer_location.distance(Task.requestee.location))*100,2)
-
         else:
             return None
 			

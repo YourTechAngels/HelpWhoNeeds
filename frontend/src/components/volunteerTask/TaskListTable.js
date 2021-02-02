@@ -106,7 +106,7 @@ export default function TaskListTable({
             label: "Full Name",
             options: {
                 filter: false,
-                sort: false,
+                sort: true,
                 customBodyRender: (value, tableMeta, updateValue) => {
                     //console.log(tableMeta.rowData, '......');
                     return (
@@ -173,14 +173,24 @@ export default function TaskListTable({
         },
         {
             name: "distance",
-            label: "Dist",
+            label: "Dist(mi)",
             options: {
                 filter: true,
                 sort: true,
                 width: "5%",
             },
         },
-
+        {
+            name: "postCode",
+            label: "Postcode",
+            options: {
+                filter: true,
+                display: false,
+                viewColumns: true,
+                sort: true,
+                width: "5%",
+            },
+        },
         {
             name: "id",
             label: "Action",
