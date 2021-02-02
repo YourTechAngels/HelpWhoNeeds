@@ -39,7 +39,7 @@ function AddTask() {
     useEffect(() => {
         const options = {
             method: 'GET',
-            url: "/api/requestee/tasks/",
+            url: "https://letmeknow.uk/api/requestee/tasks/",
             timeout: 8000,
             params: {
                 requid: userUID,
@@ -57,7 +57,7 @@ function AddTask() {
                 }
                 else {
                     console.log("Asking user id..")
-                    axios.get("/api/accounts/get_user_by_id/", {
+                    axios.get("https://letmeknow.uk/api/accounts/get_user_by_id/", {
                         params: { uId: userUID, },
                     })
                         .then((response) => {
@@ -80,7 +80,7 @@ function AddTask() {
     }, [])
 
     useEffect(() => {
-        axios.get("/api/tasktypes/")
+        axios.get("https://letmeknow.uk/api/tasktypes/")
             .then((response) => {
                 // console.log("Task types:", response.data)
                 setTaskTypeList(response.data)
@@ -194,7 +194,7 @@ function AddTask() {
         }
     };
     const handleCancel = id => {
-        axios.patch("/api/tasks/" + id + '/', { status: "CL" })
+        axios.patch("https://letmeknow.uk/api/tasks/" + id + '/', { status: "CL" })
             .then(function (response) {
                 console.log("PATCH RESPONSE: ", response)
                 console.log("PATCH RESPONSE DATA: ", response.data.id)

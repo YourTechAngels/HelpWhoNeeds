@@ -77,7 +77,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
         console.log("Submitting item: ", item)
         // adding new task
         if (updTaskId < 0)
-            axios.post("/api/tasks/", item)
+            axios.post("https://letmeknow.uk/api/tasks/", item)
                 .then(function (response) {
                     console.log("POST RESPONSE: ", response)
                     console.log("POST RESPONSE DATA: ", response.data)
@@ -97,7 +97,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
                 })
         // updating existing task
         else
-            axios.put("/api/tasks/" + updTaskId + '/', item)
+            axios.put("https://letmeknow.uk/api/tasks/" + updTaskId + '/', item)
                 .then(function (response) {
                     console.log("PUT RESPONSE: ", response)
                     console.log("PUT RESPONSE DATA: ", response.data.id)
