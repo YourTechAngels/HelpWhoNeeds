@@ -29,12 +29,11 @@ export default function VolunteerSearchTask() {
     const [taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
-            //.get("http://localhost:8000/api/accounts/get_user_by_id/",
             .get("/api/accounts/get_user_by_id/", {
                 params: { uid: userUID },
             })
             .then((response) => {
-                // if (response.status === 200) {
+                //if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -61,8 +60,7 @@ export default function VolunteerSearchTask() {
     }, [userUID, userId]);
 
     useEffect(() => {
-        axios
-            //.get("http://localhost:8000/api/tasks/get_vol_task", {
+        axios            
             .get("/api/tasks/get_vol_task", {
                 params: {
                     volId: userId,
@@ -76,15 +74,15 @@ export default function VolunteerSearchTask() {
                     return {
                         id: `${task.id}`,
                         lastName: `${task.requestee_details.last_name}`,
-                        firstName: `${task.requestee_details.first_name}`,
-                        taskType: `${task.task_type_name}`,
-                        //taskType: `${task.task_type}`,
+                        firstName: `${task.requestee_details.first_name}`,                        
+                        taskType: `${task.task_type_details.task_type_name}`,
                         taskDetails: `${task.description}`,
                         start: `${task.start_time}`,
                         end: `${task.end_time}`,
-                        distance: 1, //`${task.id}`,
+                        distance: `${task.distance}`,
                         volId: `${task.volunteer}`,
                         status: `${task.status}`,
+                        postCode: `${task.requestee_details.post_code}`,
                     
                     };
                 });
@@ -111,12 +109,11 @@ export default function VolunteerSearchTask() {
 
     const myTasks = pendingTasks
         ? pendingTasks.filter(
-            (task) => task.status === "AS" //|| task.status === "CL" //&& Number(task.volId) === 3
+            (task) => task.status === "AS" //|| task.status === "CL" 
         )
         : null;
     const unassignedTasks = pendingTasks.filter(
-        (task) =>
-            //task.volId === null
+        (task) =>           
             task.status === "OP"
     );
 
@@ -166,7 +163,6 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
@@ -179,7 +175,6 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                 .patch("/api/tasks/" + taskId + "/", {
                                     status: "OP",
                                     volId: null,
@@ -239,7 +234,6 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
@@ -252,7 +246,6 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "OP") {
                             axios
-                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                 .patch("/api/tasks/" + taskId + "/", {
                                     status: "AS",
                                     volId: userId,
@@ -317,7 +310,6 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    //.get("http://localhost:8000/api/tasks/" + taskId + "/")
                     .get("/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
@@ -330,7 +322,6 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                //.patch("http://localhost:8000/api/tasks/" + taskId + "/", {
                                 .patch("/api/tasks/" + taskId + "/", {
                                     status: "DN",
                                     isUpdatedByVol: true,

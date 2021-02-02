@@ -40,7 +40,7 @@ def send_email(task, prev_state_task, prev_assigned_vol):
         return
 
     common_body = f'Please see the details below: \n\n' + \
-                f'Task: {task.task_type_name} \n' + \
+                f'Task: {task.task_type} \n' + \
                 f'Task Details: {task.description} \n' + \
                 f'When: {task.start_time.strftime(time_format)} - {task.end_time.strftime(time_format)}\n\n'
 
@@ -81,15 +81,10 @@ class TaskView(viewsets.ModelViewSet):
         vol_id = self.request.query_params.get('volId')       
         volunteer=User.objects.get(id=vol_id)
         context = {"logged_in_volunteer": volunteer}
-        print(volunteer.location)
-        print(Distance(volunteer.location),(volunteer.location))
         queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
                                         &Q(start_time__gte= datetime.datetime.now())           
                                         &Q(end_time__gte= datetime.datetime.now())   
-                                        # &Q(requestee_id__in = [82,117]
-
-                                        &Q(requestee__in = 
-                                        #User.objects.filter(id__in =[82,117])                                        
+                                        &Q(requestee__in =                                                                        
                                         User.objects.filter( location__distance_lte=(
                                                                                 volunteer.location,
                                                                                 Distance(mi=1)
