@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/helpwhoneeds/static/css/main.0c897a77.chunk.css",
-    "main.js": "/helpwhoneeds/static/js/main.8cd5024f.chunk.js",
-    "main.js.map": "/helpwhoneeds/static/js/main.8cd5024f.chunk.js.map",
+    "main.js": "/helpwhoneeds/static/js/main.a7ae72ce.chunk.js",
+    "main.js.map": "/helpwhoneeds/static/js/main.a7ae72ce.chunk.js.map",
     "runtime-main.js": "/helpwhoneeds/static/js/runtime-main.0d5abadf.js",
     "runtime-main.js.map": "/helpwhoneeds/static/js/runtime-main.0d5abadf.js.map",
     "static/js/2.e2bba01b.chunk.js": "/helpwhoneeds/static/js/2.e2bba01b.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.0d5abadf.js",
     "static/js/2.e2bba01b.chunk.js",
     "static/css/main.0c897a77.chunk.css",
-    "static/js/main.8cd5024f.chunk.js"
+    "static/js/main.a7ae72ce.chunk.js"
   ]
 }
