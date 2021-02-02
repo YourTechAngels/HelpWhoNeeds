@@ -83,7 +83,7 @@ export default function Profile(props) {
      
     
     useEffect(() => {
-          axios.get('https://letmeknow.uk/api/accounts/get_user_by_id/',
+          axios.get('/api/accounts/get_user_by_id/',
             {
                 params : { uid : uID }
             })
@@ -191,7 +191,7 @@ export default function Profile(props) {
               setLoading(false)
             }) 
         }
-        axios.patch('https://letmeknow.uk/api/accounts/'+id+'/',
+        axios.patch('/api/accounts/'+id+'/',
         
          { 
             first_name: `${formData.firstName}`,
