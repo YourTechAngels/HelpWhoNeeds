@@ -8,5 +8,5 @@ class AccountSerializer(serializers.ModelSerializer):
 
         fields = ("id", "uid",  "email", "first_name", "last_name", "date_of_birth",
                   "phone_number", "post_code", "address_line_1", "address_line_2",
-                  "city", "county", "is_volunteer", "dbs", "latitude", "longitude", "location")
+                  "city", "county", "is_volunteer", "dbs", "latitude", "longitude", "location", "is_available")
         depth = 1
