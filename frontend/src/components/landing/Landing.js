@@ -26,7 +26,7 @@ const Landing = () => {
         (currentUser ? history.push("/myTask") : history.push("/login/volunteer") )           
     } 
     const handleUserClick =() => {
-         (currentUser ? history.push("/addTask") : history.push("/login/requestee") )
+         (currentUser ? history.push("/requestee/tasks") : history.push("/login/requestee") )
     }     
       
    
