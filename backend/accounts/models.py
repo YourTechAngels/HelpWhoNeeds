@@ -23,7 +23,7 @@ class User(AbstractUser):
 	longitude = models.FloatField(blank=True, null=True)
 	latitude = models.FloatField(blank=True, null=True)
 	location = gismodels.PointField(geography=True, null=True)
-	is_available = models.BooleanField(default=False)
+	is_available = models.BooleanField(default=True)
 
 	def __str__(self):
 		return (self.first_name + " " + self.last_name).strip() or self.username or self.email
