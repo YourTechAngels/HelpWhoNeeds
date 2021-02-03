@@ -102,6 +102,7 @@ export default function Profile(props) {
                         city : `${responseData.city}`,
                         county : `${responseData.county}`,
                         email : `${responseData.email}`                       
+
                     }
                     
 
@@ -115,6 +116,7 @@ export default function Profile(props) {
                     setLatitude(responseData.latitude)
                     setLongitude(responseData.longitude)
                     setAvailable(responseData.is_available)
+                  
                     console.log(responseData.dbs)
                     console.log("Is Available")
                     console.log(responseData.is_available)
