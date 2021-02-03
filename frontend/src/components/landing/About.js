@@ -49,27 +49,27 @@ const About = () => {
                 spacing={4}
                 justify="center" >
 
-                <Grid item xs={2} >
+                <Grid item xs={12} sm={2}>
                     <Link to={'/legal'} variant="body2">
                         Legal
                </Link> </Grid>
 
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Link to={`/cookie`} variant="body2">
                         Cookies
                </Link> </Grid>
 
-                <Grid item xs={2} >
+                <Grid item xs={12} sm={2} >
                     <Link to={`/support`} variant="body2">
                         Support
                </Link> </Grid>
 
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Link to={`/termconditions`} variant="body2">
-                        TermsConditions
+                        Terms{"&"}Conditions
                </Link> </Grid>
 
-                <Grid item xs={2}>
+                <Grid item xs={12} sm={2}>
                     <Link to={`/privacy`} variant="body2">
                         Privacy
                </Link> </Grid>

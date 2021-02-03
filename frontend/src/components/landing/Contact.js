@@ -1,10 +1,10 @@
 import React, { useState } from "react"
-import { makeStyles, Button } from "@material-ui/core"
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import { Button } from "@material-ui/core"
 
 const useStyles = {
-  textFld: { width: '85%', height: 40, paddingLeft: 8 },
+  textFld: { width: '85%', minHeight:40, paddingLeft: 8 },
   button: {
     border: '4px',
     fontWeight: 'bold',
@@ -54,8 +54,7 @@ const Contact = () => {
               label="Name"
               variant="outlined"
               inputProps={{ maxLength: 20 }}
-              style={useStyles.textFld}
-              required
+              style={useStyles.textFld}             
             />
           </Grid>
           <Grid item xs={12}>
@@ -67,8 +66,7 @@ const Contact = () => {
               label="Email"
               variant="outlined"
               inputProps={{ maxLength: 20 }}
-              style={useStyles.textFld}
-              required
+              style={useStyles.textFld}              
             />
           </Grid>
           <Grid item xs={12}>
@@ -80,10 +78,9 @@ const Contact = () => {
               label="Message"
               variant="outlined"
               inputProps={{ maxLength: 100 }}
-              style={useStyles.textFld}
-              required
+              style={useStyles.textFld}             
               multiline
-              rows={6}
+              rows={10}
             />
 
           </Grid>
@@ -91,8 +88,8 @@ const Contact = () => {
 
         <Grid container
           justify="left" alignItems="left" spacing={3} >
-          <Grid item xs={12}>
-            <button color="secondary" variant="contained" type="submit">{status} </button>
+          <Grid item xs={12} >        
+            <Button color="default" variant="outlined" type="submit">{status} </Button>
           </Grid>
         </Grid>
 
