@@ -67,11 +67,11 @@ function App() {
                 <Route path="/termconditions">
                     <TermConditions />
                 </Route>
-                <PrivateRoute path="/profile" component= {Profile} /> 
+                <PrivateRoute path="/profile" component= {Profile} />
                 <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
                 <PrivateRoute path="/mytask" component= {VolunteerWelcome} />
-                <PrivateRoute path="/addtask" component= {AddTask} />
+                <PrivateRoute path="/requestee/tasks" component= {AddTask} />
                 </Switch>
                 </div>
                 <Footer />
