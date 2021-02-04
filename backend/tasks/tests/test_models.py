@@ -47,7 +47,7 @@ class TaskModelTestCase(TestCase):
         
     
     def test__str__(self):
-        self.assertEqual(str(self.task),"Hospital Appointment: Hospital Appointment")
+        self.assertEqual(str(self.task),"Hospital: Hospital Appointment")
     
     def test_task_has_a_requestee(self):              
         self.assertEqual(self.task.requestee,self.requestee)
