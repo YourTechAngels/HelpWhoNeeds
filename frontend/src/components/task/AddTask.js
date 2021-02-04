@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react'
 import NewTaskButtons from './NewTaskButtons'
 import NewTaskForm from './NewTaskForm'
 import TasksTable from './TaskTable'
+import SearchVolunteerDialog from './SearchVolunteer'
+import VolDetails from './VolDetails'
+import ConfirmDialog from "../structure/ConfirmDialog";
 import axios from "axios"
 import moment from "moment";
 import { useAuth } from "../../contexts/AuthContext";
-import SearchVolunteerDialog from './SearchVolunteer'
+
 
 
 function AddTask() {
-    // const { currentUser } = useAuth()
-    // const userUID = "WKERfsSJNM"  // user with no tasks
-    const userUID = "BeCXXLBaHB" // currentUser.uid
+    const { currentUser } = useAuth()
+    // const userUID = "TfZgotIRogvPmoGEcKiB" // currentUser.uid
+    const userUID = currentUser.uid
     const [reqId, setReqId] = useState(-1)
     const [taskList, setTaskList] = useState([])
     const [taskTypeList, setTaskTypeList] = useState({})
@@ -28,6 +31,9 @@ function AddTask() {
         task.dbsReq = dbTask.dbs_required
         task.status = dbTask.status
         task.statusName = dbTask.status_name
+        task.requesteeId = dbTask.requestee
+        task.requestee = dbTask.requestee_details
+        task.reqPostcode = dbTask.requestee_details.post_code
         task.volunteerId = dbTask.volunteer
         task.volunteer = dbTask.volunteer ? dbTask.volunteer_details : null
         task.requestedVol = dbTask.requested_vol ?
@@ -116,11 +122,35 @@ function AddTask() {
             updateTask(parseDbTask(dbTask), id)
     }
 
-    const requestVolunteer =(dbTask, volId)=>
-    {
-
+    const requestVolunteer =(taskId, volId)=> {
+        axios.patch("/api/tasks/" + taskId + "/", {
+            requested_vol: volId })
+            .then(function (response) {
+                console.log(response);
+                // const assignTask = pendingTasks.map((task) =>
+                //     task.id === taskId
+                //         ? { ...task, volId: userId, status: "AS" }
+                //         : task
+                // );
+                // setPendingTasks(assignTask);
+                // console.log("assignTasks");
+                // console.log(unassignedTasks);
+                // console.log("myTask");
+                // console.log(myTasks);
+                // console.log(pendingTasks);
+                // setTaskStateUpdated(true);
+                // setNotifyMsg({
+                //     isOpen: true,
+                //     message:
+                //         "Task is successfully assigned to you.Email notification will be sent shortly.",
+                //     type: "success",
+                // });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
-    
+
 
     const taskDefaults = {
         taskDetails: "",
@@ -131,17 +161,33 @@ function AddTask() {
     }
 
     const [showAddDialog, setShowAddDialog] = React.useState(false);
-    const [showSearchDialog, setShowSearchDialog] = React.useState(false);
-    const [dialogData, setDialogData] = React.useState(null);
     const [taskType, setTaskType] = React.useState(null);
     const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
     const [updTaskId, setUpdTaskId] = React.useState(-1)
+
+    const [showSearchDialog, setShowSearchDialog] = React.useState(false);
+    const [dialogSearchData, setDialogSearchData] = React.useState({});
+
+    const [showVolDetails, setShowVolDetails] = React.useState(false);
+    const [volDetails, setVolDetails] = React.useState({});
+
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false, title: "", subTitle: "",
+    });
+
+    const findTaskType = id => {
+        return taskTypeList.find(type => type.id == id)
+    }
+
+    const findTask = id => {
+        return taskList.find(task => task.id === id)
+    }
 
     const handleClickOpen = (e, taskType) => {
         setTaskType(taskTypeList.find(type => type.task_type == taskType))
         setShowAddDialog(true)
     }
-    
+
     const handleClose = () => {
         setTaskType(null)
         setShowAddDialog(false)
@@ -149,19 +195,44 @@ function AddTask() {
         setUpdTaskId(-1)
     }
 
-    const handleSearchOpen = (e, dialogData) => {        
-        setShowSearchDialog(true);
-        setDialogData(dialogData);
+    const handleSearchVol = (e, taskId) => {
+        const taskToRequest = findTask(taskId)
+        // console.log("Task to request volunteer: ", taskToRequest)
+        // console.log("URL: ", "/api/requestee/nearby_vols?req_uid=" + reqId)
+        // axios.get("/api/requestee/nearby_vols?req_id=" + reqId)
+        //     .then((response) => {
+        //         console.log("Nearby Volunteers:", response.data)
+                // setTaskTypeList(response.data)
+                // TODO notification not all data got
+                // if (response.data.length == 0) {
+                //     alert()
+                // }
+        //     })
+        //     .catch(error => {
+        //         console.log("error")
+        //         console.log(error.message);
+        //         console.log(error.request);
+        //         console.log(error.config);
+        //     })
+        setShowSearchDialog(true)
+        setDialogSearchData(taskToRequest)
     }
 
-    const handleSearchClose = () => {      
+    const handleSearchClose = () => {
         setShowSearchDialog(false);
-        setDialogData(null);       
+        setDialogSearchData({});
     }
 
-    const findTaskType = id => {
-        return taskTypeList.find(type => type.id == id)
+    const handleContactVol = (e, id) => {
+        setVolDetails(findTask(id).volunteer)
+        setShowVolDetails(true)
     }
+
+    const handleVolDetailsClose = () => {
+        setShowVolDetails(false)
+        setVolDetails({})
+    }
+
     const handleCopy = id => {
         const taskToCopy = taskList.find(task => task.id === id)
         setTaskType(findTaskType(taskToCopy.taskType))
@@ -173,7 +244,7 @@ function AddTask() {
     }
 
     const handleEdit = id => {
-        const taskToEdit = taskList.find(task => task.id === id)
+        const taskToEdit = findTask(id)
         setTaskType(findTaskType(taskToEdit.taskType))
         setNewTaskDefaults({
             taskDetails: taskToEdit.taskDetails,
@@ -186,53 +257,60 @@ function AddTask() {
         setShowAddDialog(true)
     }
 
-    const handleSearchVol = (e, id) => {
-        const taskToRequest = taskList.find(task => task.id === id)
-        console.log(taskToRequest);
-        if (taskToRequest != null) {
-            handleSearchOpen(e, taskToRequest);
-        }
-    };
     const handleCancel = id => {
-        axios.patch("https://letmeknow.uk/api/tasks/" + id + '/', { status: "CL" })
-            .then(function (response) {
-                console.log("PATCH RESPONSE: ", response)
-                console.log("PATCH RESPONSE DATA: ", response.data.id)
-                if (response.status === 200) {
-                    const updatedTask = response.data
-                    updateTaskList(updatedTask, response.data.id)
-                    console.log("onSubmit: updated task with id: ", updTaskId)
-                    // update frontend list of task
-                    // console.log(updateTask)
-                    updateTaskList(updatedTask, id)
-                }
-                else console.log("Something went wrong on task update..",
-                    "Response status: ", response.status)
-            })
-            .catch(function (error) {
-                console.log(error.request)
-                console.log(error.config)
-            })
+        setConfirmDialog({
+            isOpen: true,
+            title: "Are you sure you wish to cancel your Task?",
+            subTitle:
+                "Once canceled nobody will be able to help you with the task.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                })
+                axios.patch("/api/tasks/" + id + '/', {status: "CL"})
+                    .then(function (response) {
+                        console.log("PATCH RESPONSE: ", response)
+                        console.log("PATCH RESPONSE DATA: ", response.data.id)
+                        if (response.status === 200) {
+                            const updatedTask = response.data
+                            updateTaskList(updatedTask, response.data.id)
+                            console.log("onSubmit: updated task with id: ", updTaskId)
+                            // update frontend list of task
+                            // console.log(updateTask)
+                            updateTaskList(updatedTask, id)
+                        }
+                        else console.log("Something went wrong on task update..",
+                            "Response status: ", response.status)
+                    })
+                    .catch(function (error) {
+                        console.log(error.request)
+                        console.log(error.config)
+                    })
+            }
+        })
     }
-
 
     return <div className="centered">
 
         <NewTaskButtons handleClickOpen={handleClickOpen} />
 
         <NewTaskForm open={showAddDialog} handleClose={handleClose} taskType={taskType}
-            defaultValues={newTaskDefaults} updTaskId={updTaskId}
-            updateTaskList={updateTaskList} reqId={reqId} />
+                     defaultValues={newTaskDefaults} updTaskId={updTaskId}
+                     updateTaskList={updateTaskList} reqId={reqId} />
 
-        <TasksTable taskList={taskList} handleCopy={handleCopy}
-            handleEdit={handleEdit} handleCancel={handleCancel} handleSearchVol={handleSearchVol}/>
-        
-        <SearchVolunteerDialog
-                            open={showSearchDialog}
-                            handleClose={handleSearchClose}
-                            title="Search Volunteer"
-                            data={dialogData}
-                        />
+        <TasksTable taskList={taskList} handleCopy={handleCopy} handleEdit={handleEdit}
+                    handleCancel={handleCancel} handleContact={handleContactVol}
+                    handleSearchVol={handleSearchVol} />
+
+        <VolDetails  open={showVolDetails} handleClose={handleVolDetailsClose}
+                     volunteer={volDetails} />
+
+        <SearchVolunteerDialog open={showSearchDialog} handleClose={handleSearchClose}
+                               data={dialogSearchData} requestVolunteer={requestVolunteer} />
+
+        <ConfirmDialog confirmDialog={confirmDialog}
+                       setConfirmDialog={setConfirmDialog} />
     </div>
 }
 

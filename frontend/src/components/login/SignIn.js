@@ -76,7 +76,7 @@ export default function SignIn() {
         { history.push("/mytask");
           console.log(process.env.PUBLIC_URL) }
         else {
-            history.push("/addtask") }
+            history.push("/requestee/tasks") }
         }
      catch {
         setError("Failed to log in")

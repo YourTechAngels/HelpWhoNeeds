@@ -66,7 +66,7 @@ export default function Profile(props) {
     const [lat, setLat] = useState()
     const [ longitude, setLongitude] = useState()
     const [ latitude, setLatitude] = useState()
-    const [available, setAvailable] = useState(false);  
+    const [available, setAvailable] = useState(true);  
 
     const [notifyMsg, setNotifyMsg] = useState({
         isOpen: false,
@@ -101,7 +101,12 @@ export default function Profile(props) {
                         address2 : `${responseData.address_line_2}`,
                         city : `${responseData.city}`,
                         county : `${responseData.county}`,
+<<<<<<< HEAD
                         email : `${responseData.email}`,
+=======
+                        email : `${responseData.email}`                       
+
+>>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
                     }
                     
 
@@ -114,7 +119,14 @@ export default function Profile(props) {
                     setDBSChecked(responseData.dbs)
                     setLatitude(responseData.latitude)
                     setLongitude(responseData.longitude)
+<<<<<<< HEAD
+=======
+                    setAvailable(responseData.is_available)
+                  
+>>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
                     console.log(responseData.dbs)
+                    console.log("Is Available")
+                    console.log(responseData.is_available)
                     console.log(formData)
                     console.log(latitude + ''+longitude)
                     console.log(isVolunteer+' '+DBSChecked);
@@ -207,7 +219,11 @@ export default function Profile(props) {
             dbs: DBSChecked,
             latitude: `${lat === undefined ? latitude : lat}`,
             longitude: `${long === undefined? longitude : long}`,
+<<<<<<< HEAD
             is_available: `${available}`
+=======
+            is_available: available
+>>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
          },
         )
        .then(function (response) {
@@ -539,10 +555,11 @@ export default function Profile(props) {
                         <Switch
                             checked={available}
                             onChange={handleToggle}
+                            color="primary"
                             aria-label="availability switch"
                         />
                     }
-                    label={available ? "Unavailable" : "Available"} />}
+                    label={available ? "Available" : "Unavailable"} />}
 
                     </Grid>
                     </Grid>

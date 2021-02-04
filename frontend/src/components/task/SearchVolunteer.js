@@ -66,9 +66,8 @@ const localVolData = [
         distance: 0.9,  
     },
 ];
-const SearchVolunteer = ({ open, handleClose, title, data, requestVolunteer }) => {
-    const selectedtask = data;
-    const[selectedVol, setSelectedVol] = useState(null) ;
+const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
+    const[selectedVol, setSelectedVol] = useState(-1) ;
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -209,11 +208,11 @@ const SearchVolunteer = ({ open, handleClose, title, data, requestVolunteer }) =
                 fullScreen={fullScreen}
                 aria-labelledby="responsive-dialog-title"
             >
-                <DialogTitle>{title}</DialogTitle>
+                <DialogTitle>"Search Volunteer"</DialogTitle>
                 <DialogContent>
                     {data && (
                         <div>
-                            <p>For your selected task you can send request to your local volunteer available below: </p>
+                            For your selected task you can send request to your local volunteer available below:
                             <MuiThemeProvider theme={muiTheme()}>
                                 <MUIDataTable
                                     title="Request volunteer"

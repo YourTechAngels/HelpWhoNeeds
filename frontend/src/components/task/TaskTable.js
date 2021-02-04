@@ -5,7 +5,8 @@ import Button from "@material-ui/core/Button"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 
-export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel, handleSearchVol }) {
+export default function TaskTable({ taskList, handleCopy, handleEdit, handleCancel,
+                                      handleContact, handleSearchVol }) {
 
 
     const theme = () => createMuiTheme({
@@ -111,7 +112,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                 sort: true,
                 filter: false,
                 width: "5%",
-                viewColumns: false
+                /*viewColumns: false*/
             },
         },
         {
@@ -140,36 +141,6 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                 },
             },
         },
-       /* {
-            name: "id",
-            label: " Task Detail",
-
-            options: {
-                filter: false,
-                sort: false,
-                viewColumns: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                                console.log(tableMeta.rowData[0])
-                                handleSearchVol(e, tableMeta.rowData[0]);
-                            }}
-                        >
-                            Search
-                        </Button>
-                    );
-                },
-            },
-        },*/
         {
             name: "start",
             label: "Time Period",
@@ -216,8 +187,9 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                                     color="primary"
                                     size="small"
                                     className="button"
-                                    onClick={() => {}}
-                                >
+                                    onClick={(e) => {
+                                        handleSearchVol(e, tableMeta.rowData[0])
+                                    }} >
                                     Search
                                 </Button> ) : null
                         }
@@ -233,7 +205,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                                 color="default"
                                 size="small"
                                 className="button"
-                                onClick={() => {}}
+                                onClick={(e) => handleContact(e, tableMeta.rowData[0])}
                             >
                                 Contact
                             </Button> : null}
