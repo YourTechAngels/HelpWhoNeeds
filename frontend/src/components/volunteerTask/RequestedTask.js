@@ -10,6 +10,7 @@ import Alert from '@material-ui/lab/Alert'
 import AlertTitle from '@material-ui/lab/AlertTitle'
 import { CircularProgress } from "@material-ui/core"
 import { TextField } from "@material-ui/core"
+import moment from "moment/moment";
 
 const useStyles = {
     textFld: { width: '85%', minHeight: 40, paddingLeft: 8,  },
@@ -150,6 +151,40 @@ const RequestedTask = () => {
         });
     };
 
+    const handleReject = (reqTaskId) => {
+
+        setConfirmDialog({
+            isOpen: true,
+            title: "Can't you help with this task?",
+            subTitle:
+                "This will only reject the request to complete the task. If you have already accepted this request and wish to return it, please do it from assigned tasks list in your cabinet.",
+            onConfirm: () => {
+                setConfirmDialog({
+                    ...confirmDialog,
+                    isOpen: false,
+                });
+                setTaskStateUpdated(false);
+                axios.patch("/api/tasks/" + reqTaskId + "/", {
+                    requested_vol: null,
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        setTaskStateUpdated(true);
+                        setNotifyMsg({
+                            isOpen: true,
+                            message:
+                                "The request has been rejected.",
+                            type: "success",
+                        });
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+        });
+    };
+
     return (
         <React.Fragment>  
             {errMessage && <Alert severity="error">
@@ -209,8 +244,10 @@ const RequestedTask = () => {
                                         id="reqAddress"
                                         type="string"
                                         label="Address"
-                                        value={[requestedTask.adressLine1 ,requestedTask.adressLine2, requestedTask.city].join(",")}                                      
-                                        variant="outlined"                                       
+                                        value={[requestedTask.adressLine1,
+                                            requestedTask.adressLine2,
+                                            requestedTask.city].filter(x => x).join(",")}
+                                        variant="outlined"
                                         style={useStyles.textFld}
                                         autoComplete="family-name"                                       
                                     />
@@ -253,7 +290,7 @@ const RequestedTask = () => {
                                         id="start"
                                         type="string"
                                         label="Start Time"
-                                        value={requestedTask.start}
+                                        value={moment(requestedTask.start).format('lll')}
                                         variant="outlined"
                                         style={useStyles.textFld}
                                         autoComplete="family-name"                                        
@@ -264,7 +301,7 @@ const RequestedTask = () => {
                                         id="end"
                                         type="string"
                                         label="End Time"
-                                        value={requestedTask.end}
+                                        value={moment(requestedTask.end).format('lll')}
                                         variant="outlined"
                                         style={useStyles.textFld}
                                         autoComplete="family-name"                                       
@@ -274,24 +311,37 @@ const RequestedTask = () => {
                                 <Grid item xs={12} sm={6}></Grid>
                                 <Grid item xs={12} sm={6}></Grid>
                             </Grid>
-                        
-                        <Button variant="contained"
-                            color="primary"
-                            size="small" 
-                            disabled={errMessage || taskAccepted ? true : false}
-                            style={{
-                                marginLeft: 2,                                
-                                backgroundColor: errMessage || taskAccepted ? "lightgrey" : "green",
-                            }}                                                      
-                            onClick={() => {
-                                handleAccept(`${taskId}`);
-                            }}
-                        >
-                            Accept
-                        </Button>
-                    </div>
-                    : (taskCancelled? <div></div> :
-                        <div >   Task not found. Invalid Request.</div>)}
+
+                            <Button variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    disabled={errMessage || taskAccepted ? true : false}
+                                    style={{
+                                        marginLeft: 2,
+                                        backgroundColor: errMessage || taskAccepted ? "lightgrey" : "green",
+                                    }}
+                                    onClick={() => {
+                                        handleAccept(`${taskId}`);
+                                    }}
+                            >
+                                Accept
+                            </Button>
+                            <Button variant="contained"
+                                    color="secondary"
+                                    size="small"
+                                    disabled={errMessage || taskAccepted ? true : false}
+                                    style={{
+                                        marginLeft: 2,
+                                        backgroundColor: errMessage || taskAccepted ? "lightgrey" : "green",
+                                    }}
+                                    onClick={() => {
+                                        handleReject(`${taskId}`);
+                                    }} >
+                                Reject
+                            </Button>
+                        </div>
+                        : (taskCancelled? <div></div> :
+                            <div >   Task not found. Invalid Request.</div>)}
 
                 <Notification
                     notify={notifyMsg}
