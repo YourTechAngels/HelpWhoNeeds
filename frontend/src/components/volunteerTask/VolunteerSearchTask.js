@@ -271,7 +271,7 @@ export default function VolunteerSearchTask() {
                             setNotifyMsg({
                                 isOpen: true,
                                 message:
-                                    "Task has been already accepted by another volunteer. Please refresh the page to get the latest new tasks",
+                                    "Task has already been accepted by another volunteer. Please refresh the page to get the latest new tasks",
                                 type: "error",
                             });
                             console.log("alert task already assigned");

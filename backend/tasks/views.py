@@ -101,15 +101,17 @@ class TaskView(viewsets.ModelViewSet):
         context = {"logged_in_volunteer": volunteer}
         queryset = Task.objects.filter((Q(Q(volunteer_id=vol_id) &~Q(status__exact = 'DN')) |
                                         Q(Q(volunteer_id__isnull=True) &Q(end_time__gte= datetime.now(timezone.utc)))
-                                        )                                        
+                                        )  
+                                        &~Q(status__exact = 'CL')                                      
                                         &Q(requestee__in =                                                                        
                                         User.objects.filter( location__distance_lte=(
                                                                                 volunteer.location,
                                                                                 Distance(mi=1)
                                                                             ))
-                                            )
-                                        &~Q(status__exact = 'CL')
+                                            )                                        
                                         )
+
+        
                                 
         serializer = self.get_serializer(queryset, context=context,many=True)
         return Response(serializer.data)

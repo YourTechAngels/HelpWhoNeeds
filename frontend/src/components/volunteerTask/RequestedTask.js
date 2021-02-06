@@ -69,9 +69,9 @@ const RequestedTask = () => {
                 }               
                 setRequestedTask(reqTask);  
                 setTaskCancelled(reqTask.status ==="CL" ? true :  false ) 
-                setErrMessage(reqTask.expiredTask === "true" ? "Task has been already expired. You can no longer accept the task": 
-                            reqTask.status === "CL" ? "Task has been already cancelled by requestee and no longer available for assignment.":
-                          (reqTask.status !== "OP" ? "Task has been already assigned to a volunteer." :  ""))
+                setErrMessage(reqTask.expiredTask === "true" ? "The task has expired. You can no longer accept this task": 
+                            reqTask.status === "CL" ? "Task has been cancelled by requestee and no longer available for assignment.":
+                          (reqTask.status !== "OP" ? "Task has been assigned to a volunteer." :  ""))
             })
             .catch(function (error) {
                 console.log("error");
@@ -209,8 +209,7 @@ const RequestedTask = () => {
                                         id="reqAddress"
                                         type="string"
                                         label="Address"
-                                        value={requestedTask.adressLine1 + ","+ requestedTask.adressLine2  
-                                                +","+ requestedTask.city}                                      
+                                        value={[requestedTask.adressLine1 ,requestedTask.adressLine2, requestedTask.city].join(",")}                                      
                                         variant="outlined"                                       
                                         style={useStyles.textFld}
                                         autoComplete="family-name"                                       
