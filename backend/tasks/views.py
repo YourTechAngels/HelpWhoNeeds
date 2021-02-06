@@ -1,15 +1,17 @@
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import parser_classes
 from rest_framework import viewsets
-from .serializers import TaskSerializer
-from .models import Task
+from .serializers import TaskSerializer, TaskTypeSerializer
+from .models import Task, TaskType
 from accounts.models import User
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.mail import EmailMessage
 from helpwhoneeds.settings import EMAIL_HOST_USER
-import datetime
+from datetime import datetime, timezone
+from django.contrib.gis.measure import Distance
+from django.contrib.gis.geos import Point
 
 
 # send email function to notify requestee about task status
@@ -76,14 +78,22 @@ class TaskView(viewsets.ModelViewSet):
     # Get the current volunteer's assigned and new tasks     
     @action(detail=False, methods=['GET'], name='Get Volunteer Task Lists')
     def get_vol_task(self, request, *args, **kwargs):
-        vol_id = self.request.query_params.get('volId')
-
-        queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
-                                        &Q(start_time__gte= datetime.datetime.now())           
-                                        &Q(end_time__gte= datetime.datetime.now())                                        
+        vol_id = self.request.query_params.get('volId')       
+        volunteer=User.objects.get(id=vol_id)
+        context = {"logged_in_volunteer": volunteer}
+        queryset = Task.objects.filter((Q(Q(volunteer_id=vol_id) &~Q(status__exact = 'DN')) |
+                                        Q(Q(volunteer_id__isnull=True) &Q(end_time__gte= datetime.now(timezone.utc)))
+                                        )                                        
+                                        &Q(requestee__in =                                                                        
+                                        User.objects.filter( location__distance_lte=(
+                                                                                volunteer.location,
+                                                                                Distance(mi=1)
+                                                                            ))
+                                            )
+                                        &~Q(status__exact = 'CL')
                                         )
                                 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, context=context,many=True)
         return Response(serializer.data)
 
     # Partial update to update task status and notify requestee
@@ -128,3 +138,8 @@ class RequesteeTasksView(viewsets.ReadOnlyModelViewSet):
         req_uid = self.request.query_params.get('requid')
         queryset = Task.objects.filter(requestee=User.objects.get(uid=req_uid).id)
         return queryset
+    
+
+class TaskTypeView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskTypeSerializer
+    queryset = TaskType.objects.all()

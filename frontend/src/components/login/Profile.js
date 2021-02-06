@@ -4,7 +4,7 @@ import { useParams, Link, useHistory } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import  { FormControlLabel, Switch } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
@@ -64,13 +64,15 @@ export default function Profile(props) {
     const [open, setOpen] = React.useState(false);
     const [long, setLong] = useState()
     const [lat, setLat] = useState()
+    const [ longitude, setLongitude] = useState()
+    const [ latitude, setLatitude] = useState()
+    const [available, setAvailable] = useState(true);  
+
     const [notifyMsg, setNotifyMsg] = useState({
         isOpen: false,
         message: " ",
         type: " ",
     });
-    // const param = useParams();
-    // const user = param.user;
 
     const getFormDate = date => {
         let year = date.getFullYear();
@@ -99,7 +101,8 @@ export default function Profile(props) {
                         address2 : `${responseData.address_line_2}`,
                         city : `${responseData.city}`,
                         county : `${responseData.county}`,
-                        email : `${responseData.email}`
+                        email : `${responseData.email}`                       
+
                     }
                     
 
@@ -110,8 +113,15 @@ export default function Profile(props) {
                     console.log(responseData.is_volunteer)
                     setIsVolunteer(responseData.is_volunteer)                   
                     setDBSChecked(responseData.dbs)
+                    setLatitude(responseData.latitude)
+                    setLongitude(responseData.longitude)
+                    setAvailable(responseData.is_available)
+                  
                     console.log(responseData.dbs)
+                    console.log("Is Available")
+                    console.log(responseData.is_available)
                     console.log(formData)
+                    console.log(latitude + ''+longitude)
                     console.log(isVolunteer+' '+DBSChecked);
                 })
                 .catch(function (error) {
@@ -127,6 +137,12 @@ export default function Profile(props) {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
+
+    const handleToggle = (e) => {
+        setAvailable(e.target.checked);
+    }
+    
+
     const handleChecked = (e) => {
         console.log('inside check handle'+DBSChecked)
         setDBSChecked(e.target.checked)
@@ -194,8 +210,9 @@ export default function Profile(props) {
             city: `${addCity}`,
             county: `${addCounty}`,
             dbs: DBSChecked,
-            latitude: `${lat}`,
-            longitude: `${long}`,
+            latitude: `${lat === undefined ? latitude : lat}`,
+            longitude: `${long === undefined? longitude : long}`,
+            is_available: available
          },
         )
        .then(function (response) {
@@ -506,7 +523,7 @@ export default function Profile(props) {
                      />
                     </Grid>
                   
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6}>
 
                         {(isVolunteer === true) && (DBSChecked === true) &&
                             <FormControlLabel
@@ -518,9 +535,23 @@ export default function Profile(props) {
                                 control={<Checkbox color="secondary" style={{ marginLeft: '5px' }} name="DBSChecked" value={DBSChecked} onChange={handleChecked}  />}
                                 label="I have a valid DBS certificate"
                             />}  
+                     </Grid>
+                    <Grid item xs={12} sm={6}>
+
+                        {(isVolunteer === true) && 
+                        <FormControlLabel
+                            control={
+                        <Switch
+                            checked={available}
+                            onChange={handleToggle}
+                            color="primary"
+                            aria-label="availability switch"
+                        />
+                    }
+                    label={available ? "Available" : "Unavailable"} />}
 
                     </Grid>
-                </Grid>
+                    </Grid>
                 <Grid container justify="center" spacing={3} direction="row">
                     <ButtonGroup className="w-100 text-center mt-2">
                         <Grid item xs={12} >
