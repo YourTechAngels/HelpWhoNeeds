@@ -63,8 +63,9 @@ def send_email(task, **kwargs):
         subject=vol_subject,
         body=vol_body_first_line + common_body +
             f'Requestee: {task.requestee.first_name} {task.requestee.last_name}\n' +
-            'Address: ' + ','.join([task.requestee.address_line_1, task.requestee.address_line_2,
-                                task.requestee.city]) + '\n' +
+            'Address: ' + ','.join(x.strip() for x in
+                                   [task.requestee.address_line_1, task.requestee.address_line_2,
+                                    task.requestee.city] if x.strip()) + '\n' +
             f'PostCode: {task.requestee.post_code}\n\n' +
             f'Phone no: {task.requestee.phone_number}\n' +
             f'Email: {task.requestee.email}\n\n' +\
