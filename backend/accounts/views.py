@@ -1,13 +1,10 @@
-from django.shortcuts import render
 from rest_framework import viewsets
-from .serializers import AccountSerializer
-from .models import User
 from rest_framework.response import Response
 from rest_framework.decorators import action
-import datetime
-from django.db.models import Q
-from django.contrib.gis.measure import Distance
+from django.db.models import F, Func, Value, FloatField
 from django.contrib.gis.geos import Point
+from .serializers import AccountSerializer
+from .models import User
 
 
 class AccountView(viewsets.ModelViewSet):
@@ -55,5 +52,50 @@ class AccountView(viewsets.ModelViewSet):
         print(serializer.data.get("location"))
 
 
+class ReqNearbyVolsView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = AccountSerializer
 
-    
+    def get_queryset(self, *args, **kwargs):
+        req_id = self.request.query_params.get('req_id')
+        closest_vols = nearby_users(req_id).filter(dist__lte=2000)[:10]
+        return closest_vols
+
+
+def nearby_users(user_id):
+    """
+    By default this function returns a queryset of users within 11-14 km along
+    each direction of user's lat/lon.
+    Calculations are based on the fact that 1° of latitude at 0° long. contains
+    about 110 km and 1° of longitude at 50°-60° latitudes (UK lat. range)
+    contains 55-70 km.
+    The method does not treat date-change longitude and polar latitudes as
+    it's out of the project scope"""
+    user_obj = User.objects.get(id=user_id)
+
+    if user_obj.is_staff or user_obj.is_superuser:
+        # the queryset is not applicable to admins
+        return User.objects.none()
+
+    if not (user_obj.latitude and user_obj.longitude):
+        raise ValueError(f"User {user_id} does not have location specified. "
+                         f"Could not find nearby users.")
+
+    # everyone who is not admin or volunteer is a requestee
+    # volunteers search for requestees and otherwise
+    search_volunteer = not user_obj.is_volunteer
+    lat_range = [user_obj.latitude - 0.1, user_obj.latitude + 0.1]
+    lon_range = [user_obj.longitude - 0.2, user_obj.longitude + 0.2]
+    close_users = User.objects.filter(location__isnull=False) \
+        .filter(latitude__range=lat_range,
+                longitude__range=lon_range,
+                is_volunteer=search_volunteer,
+                is_staff=False, is_superuser=False,
+                is_available=True, is_active=True) \
+        .annotate(dist=Func(F('location'),
+                            Func(
+                                Value(str(user_obj.location)),
+                                function='ST_GeographyFromText'
+                            ),
+                            function="ST_Distance", output_field=FloatField())) \
+        .order_by("dist")
+    return close_users
