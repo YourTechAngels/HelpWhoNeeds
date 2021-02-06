@@ -70,7 +70,12 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
     const[selectedVol, setSelectedVol] = useState(-1) ;
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+    const[tableData, setTableData]= useState([])
+    useEffect(() => {
+        setTableData(data)
+    },[data]);
+console.log("Volunteers to show: ", data)
+console.log("Volunteers to show in table: ", tableData)
     const muiTheme = () =>
         createMuiTheme({
             overrides: {
@@ -98,20 +103,10 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                 },
             },
         });
-
-    const cols = [
+    //volId fullName distance taskId
+    const cols = [       
         {
-            name: "reqId",
-            label: "requestee ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "reqVolId",
+            name: "volId",
             label: "volunteer ID",
             options: {
                 display: false,
@@ -119,46 +114,18 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                 filter: false,
                 viewColumns: false,
             },
-        },
+        },        
         {
-            name: "firstName",
-            label: "First name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
+            name: "fullName",
             label: "Full Name",
             options: {
                 filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
+                sort: true,               
             },
         },
         {
             name: "distance",
-            label: "Dist",
+            label: "Dist(mi)",
             options: {
                 filter: true,
                 sort: true,
@@ -166,7 +133,7 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             },
         },
         {
-            name: "reqVolId",
+            name: "volId",
             label: "Request",
 
             options: {
@@ -185,11 +152,9 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                             }}
                             value={value}
                             onClick={(e) => {
-                                
-                                console.log("selectedtask" + data.id)
                                 console.log("selected volunteer" + value)
-                                setSelectedVol(value)
-                               // requestVolunteer(value);
+                                setSelectedVol(value)                              
+                                
                             }}
                         >
                             Request
@@ -199,7 +164,6 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             },
         },
     ];
-    console.log(data);
     return (
         <div>
             <Dialog
@@ -210,14 +174,13 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             >
                 <DialogTitle>"Search Volunteer"</DialogTitle>
                 <DialogContent>
-                    {data && (
+                {tableData && (
                         <div>
                             For your selected task you can send request to your local volunteer available below:
                             <MuiThemeProvider theme={muiTheme()}>
                                 <MUIDataTable
                                     title="Request volunteer"
-                                    data={localVolData}
-
+                                    data={tableData}
                                     columns={cols}
                                     options={options}
                                 />
