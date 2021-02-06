@@ -33,7 +33,6 @@ export default function VolunteerSearchTask() {
                 params: { uid: userUID },
             })
             .then((response) => {
-                //if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -44,10 +43,7 @@ export default function VolunteerSearchTask() {
 
                 console.log("userId by uuid");
                 console.log(user.id);
-                setUserId(user.id);
-                /*}else{
-                            console.log("error in fetching user data");                
-                        }*/
+                setUserId(user.id);                
             })
             .catch(function (error) {
                 console.log("error");
@@ -55,66 +51,60 @@ export default function VolunteerSearchTask() {
                 console.log(error.config);
                 console.log(error.message);
             });
-        console.log("set UserId");
-        console.log(userId);
-    }, [userUID, userId]);
+    }, [userUID]);
 
     useEffect(() => {
-        axios            
-            .get("/api/tasks/get_vol_task", {
-                params: {
-                    volId: userId,
-                },
-            })
-            .then((response) => {
-                //if (response.status === 200) {
-                const data = response.data;
-                console.log(data);
-                const allTask = data.map((task) => {
-                    return {
-                        id: `${task.id}`,
-                        lastName: `${task.requestee_details.last_name}`,
-                        firstName: `${task.requestee_details.first_name}`,                        
-                        taskType: `${task.task_type_details.task_type_name}`,
-                        taskDetails: `${task.description}`,
-                        start: `${task.start_time}`,
-                        end: `${task.end_time}`,
-                        distance: `${task.distance}`,
-                        volId: `${task.volunteer}`,
-                        status: `${task.status}`,
-                        postCode: `${task.requestee_details.post_code}`,
-                    
-                    };
+        if (userId != null) {
+            axios
+                .get("/api/tasks/get_vol_task", {
+                    params: {
+                        volId: userId,
+                    },
+                })
+                .then((response) => {
+                    const data = response.data;
+                    //console.log(data);
+                    const allTask = data.map((task) => {
+                        return {
+                            id: `${task.id}`,
+                            lastName: `${task.requestee_details.last_name}`,
+                            firstName: `${task.requestee_details.first_name}`,
+                            taskType: `${task.task_type_details.task_type_name}`,
+                            taskDetails: `${task.description}`,
+                            start: `${task.start_time}`,
+                            end: `${task.end_time}`,
+                            distance: `${task.distance}`,
+                            volId: `${task.volunteer}`,
+                            status: `${task.status}`,
+                            postCode: `${task.requestee_details.post_code}`,
+                            expiredTask: `${task.expired}`,
+                        };
+                    });
+                    setPendingTasks(allTask);
+                    setDataFetched(true);
+                    console.log("tasks");
+                    console.log(allTask);
+                })
+                .catch(function (error) {
+                    console.log("error");
+                    console.log(error.request);
+                    console.log(error.config);
+                    console.log(error.message);
                 });
-                setPendingTasks(allTask);
-                setDataFetched(true);
-                console.log("tasks");
-                console.log(allTask);
-                /*}
-                        else{//error on getting data
-                            console.log("error in fetching data");
-                        }*/
-            })
-            .catch(function (error) {
-                console.log("error");
-                console.log(error.request);
-                console.log(error.config);
-                console.log(error.message);
-            });
+        }
     }, [userId]);
 
-    console.log("database json out ");
-    console.log(pendingTasks);
+    console.log("database task");
+    // console.log(pendingTasks);
     const classes = useStyles();
 
     const myTasks = pendingTasks
         ? pendingTasks.filter(
-            (task) => task.status === "AS" //|| task.status === "CL" 
+            (task) => task.status === "AS"
         )
         : null;
     const unassignedTasks = pendingTasks.filter(
-        (task) =>           
-            task.status === "OP"
+        (task) => task.status === "OP" && task.expiredTask === "false"
     );
 
     const [hideMyTask, setHideMyTask] = useState(false);
@@ -363,7 +353,7 @@ export default function VolunteerSearchTask() {
     };
 
     return (
-        <React.Fragment>
+        <React.Fragment>          
             {!dataFetched ? (
                 <div>
                     <CircularProgress />
@@ -384,7 +374,7 @@ export default function VolunteerSearchTask() {
                             container
                             spacing={2}
                             direction="row"
-                            justify="center"
+                            justify="left"
                         >
                             {!hideMyTask && (
                                 <Grid className="my-tasks" item xs={12} sm={6} align="right">
@@ -399,7 +389,7 @@ export default function VolunteerSearchTask() {
                                             }}
                                         >
                                             Search New Tasks
-                                    </Button>{" "}
+                  </Button>{" "}
                                     </Hidden>
 
                                     <h4 className={classes.h5}>{"My Assigned Tasks"}</h4>
@@ -428,7 +418,7 @@ export default function VolunteerSearchTask() {
                                             }}
                                         >
                                             View My Tasks
-                                        </Button>
+                  </Button>
                                     </Hidden>
                                     <h4 className={classes.h5}>{"Search New Tasks"}</h4>
                                     <TaskListTable
@@ -460,6 +450,7 @@ export default function VolunteerSearchTask() {
                         />
                     </div>
                 )}
+                
         </React.Fragment>
     );
 }

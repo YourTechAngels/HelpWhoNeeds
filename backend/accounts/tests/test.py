@@ -24,7 +24,9 @@ class UserTest(TestCase):
             'post_code': 'RG24 7JU',
             'address_line_1': '1 Belle vue road',
             'city': 'Basingstoke',
-            'dbs': 0
+            'dbs': 0,
+            'latitude': 51.268568,
+            'longitude': -1.041016
         }
         self.invalid_payload = {
             'first_name': None,

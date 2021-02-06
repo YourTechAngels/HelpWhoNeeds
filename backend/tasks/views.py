@@ -1,5 +1,6 @@
-import datetime
+from datetime import datetime, timezone
 from django.contrib.gis.measure import Distance
+from django.contrib.gis.geos import Point
 from django.db.models import Q, Subquery
 from django.core.mail import EmailMessage
 from rest_framework.response import Response
@@ -98,15 +99,16 @@ class TaskView(viewsets.ModelViewSet):
         vol_id = self.request.query_params.get('volId')       
         volunteer=User.objects.get(id=vol_id)
         context = {"logged_in_volunteer": volunteer}
-        queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
-                                        &Q(start_time__gte= datetime.datetime.now())           
-                                        &Q(end_time__gte= datetime.datetime.now())   
+        queryset = Task.objects.filter((Q(Q(volunteer_id=vol_id) &~Q(status__exact = 'DN')) |
+                                        Q(Q(volunteer_id__isnull=True) &Q(end_time__gte= datetime.now(timezone.utc)))
+                                        )                                        
                                         &Q(requestee__in =                                                                        
                                         User.objects.filter( location__distance_lte=(
                                                                                 volunteer.location,
                                                                                 Distance(mi=1)
                                                                             ))
-                                        )                                     
+                                            )
+                                        &~Q(status__exact = 'CL')
                                         )
                                 
         serializer = self.get_serializer(queryset, context=context,many=True)
