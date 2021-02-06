@@ -178,7 +178,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                 width: "10%",
                 customBodyRender: (value, tableMeta) => {
                     return <div>
-                        {tableMeta.rowData[6] == "Open" && !tableMeta.rowData[8] ?
+                        {tableMeta.rowData[6] === "Open" && !tableMeta.rowData[8] ?
                             /* Open status*/
                             (tableMeta.rowData[9] ?
                                 <b>Requested</b> :
@@ -193,7 +193,7 @@ export default function TaskTable({ taskList, handleCopy, handleEdit, handleCanc
                                     Search
                                 </Button> ) : null
                         }
-                        {tableMeta.rowData[6] == "Open" && tableMeta.rowData[8] ?
+                        {tableMeta.rowData[6] === "Open" && tableMeta.rowData[8] ?
                             /* Open Expired*/
                             tableMeta.rowData[9]
                             : null

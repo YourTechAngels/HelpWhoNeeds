@@ -211,8 +211,11 @@ function AddTask() {
                         "taskId": taskId
                     }
                 })
-                setDialogSearchData({})
+               // setDialogSearchData({})
+               if(volunteers != null ){
+               setDialogSearchData(volunteers)
                 setShowSearchDialog(true)
+               }
             })
             .catch(error => {
                 console.log("Error: ", error.message);
