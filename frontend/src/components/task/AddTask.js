@@ -211,13 +211,16 @@ function AddTask() {
                         "taskId": taskId
                     }
                 })
-                setDialogSearchData({})
+               // setDialogSearchData({})
+               if(volunteers != null ){
+               setDialogSearchData(volunteers)
                 setShowSearchDialog(true)
+               }
             })
-            // .catch(error => {
-            //     console.log("Error: ", error.message);
-            //     console.log("Request error: ", error.request);
-            // })
+            .catch(error => {
+                console.log("Error: ", error.message);
+                console.log("Request error: ", error.request);
+            })
     }
 
     const handleSearchClose = () => {
