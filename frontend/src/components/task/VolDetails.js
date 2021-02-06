@@ -10,7 +10,6 @@ function VolDetails({open, handleClose, volunteer}) {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Volunteer Contact Details</DialogTitle>
         <DialogContent>
-            {console.log(volunteer)}
             Name: <b>{volunteer.first_name + " " + volunteer.last_name}</b> <br /><br />
             Email: <b>{volunteer.email}</b> <br /><br />
             Phone: <b>{volunteer.phone_number}</b> <br /><br />

@@ -31,45 +31,27 @@ const useStyles = (theme) => ({
 
 const options = {
     selectableRows: "none", //can also be single/mulitple
-    rowsPerPage: 5,
-    rowsPerPageOptions: [5, 10, 15, 20],
+    responsive: "standard",
+    rowsPerPage: 3,
+    rowsPerPageOptions: [3, 5, 10],
     print: false,
     download: false,
     filter: false,
     viewColumns: false,
     sortOrder: {
         name: "distance",
-        direction: "desc",
+        direction: "asc",
     },
 };
 
-const localVolData = [
-    {
-        reqId: 1,
-        reqVolId: 2, 
-        lastName: "Snow", 
-        firstName: "Jon",      
-        distance: 1,        
-    },
-    {
-        reqId: 1,
-        reqVolId: 3, 
-        lastName: "Kate", 
-        firstName: "Kelly",      
-        distance: 0.8,  
-    },
-    {
-        reqId: 1,
-        reqVolId: 4, 
-        lastName: "Caroline", 
-        firstName: "Gardener",      
-        distance: 0.9,  
-    },
-];
 const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
-    const[selectedVol, setSelectedVol] = useState(-1) ;
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+    const [tableData, setTableData]= useState([])
+
+    useEffect(() => {
+        setTableData(data)
+    },[data]);
 
     const muiTheme = () =>
         createMuiTheme({
@@ -101,17 +83,7 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
 
     const cols = [
         {
-            name: "reqId",
-            label: "requestee ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "reqVolId",
+            name: "volId",
             label: "volunteer ID",
             options: {
                 display: false,
@@ -121,44 +93,16 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             },
         },
         {
-            name: "firstName",
-            label: "First name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
+            name: "fullName",
             label: "Full Name",
             options: {
                 filter: false,
-                sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
+                sort: true,
             },
         },
         {
             name: "distance",
-            label: "Dist",
+            label: "Dist(mi)",
             options: {
                 filter: true,
                 sort: true,
@@ -166,14 +110,14 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             },
         },
         {
-            name: "reqVolId",
+            name: "volId",
             label: "Request",
 
             options: {
                 filter: false,
                 sort: false,
-                viewColumns: false,                
-                customBodyRender: (value, tableMeta, updateValue) => {
+                viewColumns: false,
+                customBodyRender: (value, tableMeta) => {
                     return (
                         <Button
                             variant="contained"
@@ -185,11 +129,9 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                             }}
                             value={value}
                             onClick={(e) => {
-                                
-                                console.log("selectedtask" + data.id)
-                                console.log("selected volunteer" + value)
-                                setSelectedVol(value)
-                               // requestVolunteer(value);
+                                console.log("selected volunteer: " + value)
+                                requestVolunteer(value, tableMeta.rowData[4])
+                                handleClose()
                             }}
                         >
                             Request
@@ -198,8 +140,17 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                 },
             },
         },
+        {
+            name: "taskId",
+            label: "task ID",
+            options: {
+                display: false,
+                sort: false,
+                filter: false,
+                viewColumns: false,
+            },
+        },
     ];
-    console.log(data);
     return (
         <div>
             <Dialog
@@ -210,14 +161,13 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             >
                 <DialogTitle>"Search Volunteer"</DialogTitle>
                 <DialogContent>
-                    {data && (
+                    {tableData && (
                         <div>
                             For your selected task you can send request to your local volunteer available below:
                             <MuiThemeProvider theme={muiTheme()}>
                                 <MUIDataTable
                                     title="Request volunteer"
-                                    data={localVolData}
-
+                                    data={tableData}
                                     columns={cols}
                                     options={options}
                                 />
@@ -228,7 +178,7 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                 <DialogActions>
                     <Button autoFocus onClick={handleClose} color="primary">
                         Close
-        </Button>
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>
