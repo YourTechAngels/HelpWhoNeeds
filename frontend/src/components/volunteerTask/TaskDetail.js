@@ -54,6 +54,7 @@ const TaskDialog = ({ open, handleClose, title, data }) => {
                                         variant="outlined"
                                         style={useStyles.textFld}
                                         autoComplete="family-name"
+                                        disabled
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={12}>
@@ -67,6 +68,7 @@ const TaskDialog = ({ open, handleClose, title, data }) => {
                                         rows={6}
                                         style={useStyles.textFld}
                                         autoComplete="family-name"
+                                        disabled
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}></Grid>

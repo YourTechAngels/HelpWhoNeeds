@@ -21,6 +21,7 @@ import VolunteerWelcome from "./components/volunteerTask/VolunteerWelcomePage"
 import { BrowserRouter as Router,  Route, Switch } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import PrivateRoute from "./components/PrivateRoute"
+import RequestedTask from "./components/volunteerTask/RequestedTask";
     
 function App() {
     
@@ -67,6 +68,7 @@ function App() {
                 <Route path="/termconditions">
                     <TermConditions />
                 </Route>
+                <Route path="/requestedtask/:taskid" component = {RequestedTask}/>                   
                 <PrivateRoute path="/profile" component= {Profile} />
                 <PrivateRoute path="/registrationpage/:user" component= {RegistrationPage} />
                 <PrivateRoute path="/searchtask" component= {VolunteerSearchTask} />
@@ -77,8 +79,7 @@ function App() {
                 <Footer />
             </div>
             </AuthProvider>
-        </Router>
-       
+        </Router>       
     );
 
 }

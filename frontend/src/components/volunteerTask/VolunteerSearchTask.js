@@ -33,7 +33,6 @@ export default function VolunteerSearchTask() {
                 params: { uid: userUID },
             })
             .then((response) => {
-                //if (response.status === 200) {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
@@ -44,10 +43,7 @@ export default function VolunteerSearchTask() {
 
                 console.log("userId by uuid");
                 console.log(user.id);
-                setUserId(user.id);
-                /*}else{
-                                            console.log("error in fetching user data");                
-                                        }*/
+                setUserId(user.id);                
             })
             .catch(function (error) {
                 console.log("error");
@@ -98,13 +94,13 @@ export default function VolunteerSearchTask() {
         }
     }, [userId]);
 
-    console.log("database json out ");
+    console.log("database task");
     // console.log(pendingTasks);
     const classes = useStyles();
 
     const myTasks = pendingTasks
         ? pendingTasks.filter(
-            (task) => task.status === "AS" //|| task.status === "CL"
+            (task) => task.status === "AS"
         )
         : null;
     const unassignedTasks = pendingTasks.filter(
@@ -357,7 +353,7 @@ export default function VolunteerSearchTask() {
     };
 
     return (
-        <React.Fragment>
+        <React.Fragment>          
             {!dataFetched ? (
                 <div>
                     <CircularProgress />
@@ -378,7 +374,7 @@ export default function VolunteerSearchTask() {
                             container
                             spacing={2}
                             direction="row"
-                            justify="center"
+                            justify="left"
                         >
                             {!hideMyTask && (
                                 <Grid className="my-tasks" item xs={12} sm={6} align="right">
@@ -454,6 +450,7 @@ export default function VolunteerSearchTask() {
                         />
                     </div>
                 )}
+                
         </React.Fragment>
     );
 }
