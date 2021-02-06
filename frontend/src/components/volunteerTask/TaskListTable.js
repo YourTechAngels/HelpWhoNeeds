@@ -107,8 +107,7 @@ export default function TaskListTable({
             options: {
                 filter: false,
                 sort: true,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
+                customBodyRender: (value, tableMeta, updateValue) => {                    
                     return (
                         <div>
                             {tableMeta.rowData[3]} {tableMeta.rowData[4]}
@@ -200,17 +199,15 @@ export default function TaskListTable({
                 filter: false,
                 viewColumns: false,
                 display: isMyTask === true ? true : false,
-                customBodyRender: (value, tableMeta) => {
-                    //const volId = tableMeta.rowData[1];
+                customBodyRender: (value, tableMeta) => {                    
                     const status = tableMeta.rowData[2];
                     return (
                         <Button
                             variant="contained"
                             color="secondary"
-                            size="small"
-                            //disabled={(volId === null ||status === "Completed") ? true : false}
+                            size="small"                           
                             disabled={status !== "DN" && status !== "CL" ? false : true}
-                            style={{ marginLeft: 2, minWidth: "70px" }}
+                            style={{ marginLeft: 0, minWidth: "70px" }}
                             className="button"
                             value={value}
                             onClick={() => {
@@ -239,9 +236,8 @@ export default function TaskListTable({
                             variant="contained"
                             color="default"
                             size="small"
-                            // disabled={ status !== "Completed" ? false : true}
                             disabled={status !== "DN" && status !== "CL" ? false : true}
-                            style={{ marginLeft: 2, minWidth: "90px" }}
+                            style={{ marginLeft: 0, minWidth: "90px" }}
                             className="button"
                             value={value}
                             onClick={() => {
@@ -263,24 +259,21 @@ export default function TaskListTable({
                 filter: false,
                 viewColumns: false,
                 display: isMyTask ? false : true,
-                customBodyRender: (value, tableMeta) => {
-                    //const volId = tableMeta.rowData[1];
+                customBodyRender: (value, tableMeta) => {                    
                     const status = tableMeta.rowData[2];
                     return (
                         <Button
                             variant="contained"
                             color="primary"
-                            size="small"
-                            //disabled={volId === null ? false : true}
+                            size="small"                            
                             disabled={status !== "OP" ? true : false}
                             style={{
-                                marginLeft: 2,
+                                marginLeft: 0,
                                 backgroundColor: status !== "OP" ? "lightgrey" : "green",
                             }}
                             className="button"
                             value={value}
-                            onClick={() => {
-                                //console.log(tableMeta.rowData[1]);
+                            onClick={() => {                               
                                 console.log("value");
                                 console.log(value);
                                 handleAccept(value);
@@ -307,7 +300,7 @@ export default function TaskListTable({
                             color="primary"
                             size="small"
                             style={{
-                                marginLeft: 2,
+                                marginLeft: 0,
                                 minWidth: "70px",
                             }}
                             value={value}
