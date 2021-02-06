@@ -1,24 +1,39 @@
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import parser_classes
-from rest_framework import viewsets
-from .serializers import TaskSerializer, TaskTypeSerializer
-from .models import Task, TaskType
-from accounts.models import User
-from django.db.models import Q
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from django.core.mail import EmailMessage
-from helpwhoneeds.settings import EMAIL_HOST_USER
 import datetime
 from django.contrib.gis.measure import Distance
-from django.contrib.gis.geos import Point
+from django.db.models import Q, Subquery
+from django.core.mail import EmailMessage
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import viewsets
+from accounts.models import User
+from accounts.views import nearby_users
+from accounts.serializers import AccountSerializer
+from helpwhoneeds.settings import EMAIL_HOST_USER
+from .models import Task, TaskType
+from .serializers import TaskSerializer, TaskTypeSerializer
 
 
 # send email function to notify requestee about task status
-def send_email(task, prev_state_task, prev_assigned_vol):
+def send_email(task, **kwargs):
     time_format = "%d %B %Y, %H:%M"
+    ending = ""
 
-    if (task.status == "AS") and (prev_state_task =="OP"): # for accepted task
+    requested_vol = kwargs.get("requested_vol")
+    prev_state_task = kwargs.get("prev_state_task")
+    prev_assigned_vol = kwargs.get("prev_assigned_vol")
+
+    # requestee asking a volunteer to take a task
+    if kwargs.get("requested_vol"):
+        volunteer = requested_vol
+        vol_subject = f'Could you please help me with {task.task_type_name} ?'
+        vol_body_first_line = 'Request to complete task.\n'
+        ending = f"Please follow the link to take it...\n" \
+                 f"https://yourtechangelsgithub.io/requestedtask/{task.id}"
+        req_subject = 'Task Was Requested'
+        req_body_first_line = 'Your request to complete task has been sent to the volunteer.\n'
+
+    # emails notifying about status change
+    elif (task.status == "AS") and (prev_state_task =="OP"): # for accepted task
         volunteer = task.volunteer
         vol_subject = 'Task Assigned'
         vol_body_first_line = 'You have accepted new task.\n'
@@ -52,7 +67,8 @@ def send_email(task, prev_state_task, prev_assigned_vol):
                                 task.requestee.city]) + '\n' +
             f'PostCode: {task.requestee.post_code}\n\n' +
             f'Phone no: {task.requestee.phone_number}\n' +
-            f'Email: {task.requestee.email}\n',
+            f'Email: {task.requestee.email}\n\n' +\
+             ending,
         from_email=EMAIL_HOST_USER,
         to=[volunteer.email]
         )
@@ -119,12 +135,16 @@ class TaskView(viewsets.ModelViewSet):
             task_object.save()
             serializer = TaskSerializer(task_object)
 
-            send_email(task_object, prev_state_task, prev_assigned_vol)
+            send_email(task=task_object, prev_state_task=prev_state_task,
+                       prev_assigned_vol=prev_assigned_vol)
 
             return Response(serializer.data)
 
         # any standard partial task update
         else:
+            if req_vol := data.get("requested_vol", None):
+                send_email(task_object, requested_vol=req_vol)
+                return
             kwargs['partial'] = True
             return self.update(request, *args, **kwargs)
 
