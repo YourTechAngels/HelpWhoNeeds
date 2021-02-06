@@ -5,7 +5,8 @@ from .models import User
 from rest_framework.response import Response
 from rest_framework.decorators import action
 import datetime
-from django.db.models import Q
+from django.db.models import F, Func, Value, FloatField
+from django.contrib.gis.db import models as geomodels
 from django.contrib.gis.measure import Distance
 from django.contrib.gis.geos import Point
 
@@ -55,5 +56,75 @@ class AccountView(viewsets.ModelViewSet):
         print(serializer.data.get("location"))
 
 
+class ReqNearbyVolsView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = AccountSerializer
 
-    
+    def get_queryset(self, *args, **kwargs):
+        req_id = self.request.query_params.get('req_id')
+        print(req_id)
+        print(f"Num of all volunteers: {len(User.objects.filter(is_volunteer=True))}")
+        print(f"Num of close volunteers: {len(nearby_users(req_id))}")
+        closest_vols = nearby_users(req_id).filter(dist__lte=2000)[:10]
+        print(f"Closest user num: {len(closest_vols)}")
+        return closest_vols
+
+
+def nearby_users(user_id):
+    """
+    By default this function returns a queryset of users within 11-14 km along
+    each direction of user's lat/lon.
+    Calculations are based on the fact that 1° of latitude at 0° long. contains
+    about 110 km and 1° of longitude at 50°-60° latitudes (UK lat. range)
+    contains 55-70 km.
+    The method does not treat date-change longitude and polar latitudes as
+    it's out of the project scope"""
+    user_obj = User.objects.get(id=user_id)
+
+    if user_obj.is_staff or user_obj.is_superuser:
+        # the queryset is not applicable to admins
+        return User.objects.none()
+
+    if not (user_obj.latitude and user_obj.longitude):
+        raise ValueError(f"User {user_id} does not have location specified. "
+                         f"Could not find nearby users.")
+
+    # everyone who is not admin or volunteer is a requestee
+    # volunteers search for requestees and otherwise
+    search_volunteer = not user_obj.is_volunteer
+    lat_range = [user_obj.latitude - 0.1, user_obj.latitude + 0.1]
+    lon_range = [user_obj.longitude - 0.2, user_obj.longitude + 0.2]
+    print(user_obj.location)
+    from time import perf_counter
+    # t1_x = perf_counter()
+    # close_users = User.objects.filter(location__isnull=False) \
+    #     .filter(latitude__range=lat_range,
+    #             longitude__range=lon_range,
+    #             is_volunteer=search_volunteer,
+    #             is_staff=False, is_superuser=False,
+    #             is_available=True, is_active=True) \
+    #     .annotate(dist=Func(F('location'),
+    #                         Func(
+    #                             Value(str(user_obj.location)),
+    #                             function='ST_GeographyFromText'
+    #                         ),
+    #                         function="ST_Distance", output_field=FloatField())) \
+    #     .order_by("dist")
+    # t2_x = perf_counter()
+    # print(f"Query time with optimization: {t2_x-t1_x} s. Number of users: {len(close_users)}")
+    t1 = perf_counter()
+    close_users = User.objects.filter(location__isnull=False)\
+        .filter(
+                is_volunteer=search_volunteer,
+                is_staff=False, is_superuser=False,
+                is_available=True, is_active=True) \
+        .annotate(dist=Func(F('location'),
+                            Func(
+                                Value(str(user_obj.location)),
+                                function='ST_GeographyFromText'
+                            ),
+                            function="ST_Distance", output_field=FloatField())) \
+        .order_by("dist")
+    t2 = perf_counter()
+    print(f"WTF?? Query time without optimization: {t2-t1} s. Number of users: {len(close_users)}")
+
+    return close_users

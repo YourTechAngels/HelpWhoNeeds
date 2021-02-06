@@ -27,49 +27,50 @@ export default function VolunteerSearchTask() {
     const [pendingTasks, setPendingTasks] = useState([]);
     const [dataFetched, setDataFetched] = useState(false);
     const [taskStateUpdated, setTaskStateUpdated] = useState(true);
-    useEffect(() => {
-        axios
-            .get("/api/accounts/get_user_by_id/", {
-                params: { uid: userUID },
-            })
-            .then((response) => {
-                //if (response.status === 200) {
-                const data = response.data;
-                console.log("userdata");
-                console.log(data);
-                console.log(data[0]);
-                const user = {
-                    id: `${data[0].id}`,
-                };
-
-                console.log("userId by uuid");
-                console.log(user.id);
-                setUserId(user.id);
-                /*}else{
-                            console.log("error in fetching user data");                
-                        }*/
-            })
-            .catch(function (error) {
-                console.log("error");
-                console.log(error.request);
-                console.log(error.config);
-                console.log(error.message);
-            });
-        console.log("set UserId");
-        console.log(userId);
-    }, [userUID, userId]);
+    // useEffect(() => {
+    //     axios
+    //         .get("/api/accounts/get_user_by_id/", {
+    //             params: { uid: userUID },
+    //         })
+    //         .then((response) => {
+    //             //if (response.status === 200) {
+    //             const data = response.data;
+    //             console.log("userdata");
+    //             console.log(data);
+    //             console.log(data[0]);
+    //             const user = {
+    //                 id: `${data[0].id}`,
+    //             };
+    //
+    //             console.log("userId by uuid");
+    //             console.log(user.id);
+    //             setUserId(user.id);
+    //             /*}else{
+    //                         console.log("error in fetching user data");
+    //                     }*/
+    //         })
+    //         .catch(function (error) {
+    //             console.log("error");
+    //             console.log(error.request);
+    //             console.log(error.config);
+    //             console.log(error.message);
+    //         });
+    //     console.log("set UserId");
+    //     console.log(userId);
+    // }, [userUID, userId]);
 
     useEffect(() => {
         axios            
             .get("/api/tasks/get_vol_task", {
                 params: {
-                    volId: userId,
+                    volId: userUID,
                 },
             })
             .then((response) => {
                 //if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
+                console.log(data.length)
                 const allTask = data.map((task) => {
                     return {
                         id: `${task.id}`,
@@ -101,7 +102,7 @@ export default function VolunteerSearchTask() {
                 console.log(error.config);
                 console.log(error.message);
             });
-    }, [userId]);
+    }, []);
 
     console.log("database json out ");
     console.log(pendingTasks);

@@ -60,6 +60,9 @@ class Task(models.Model):
         return f"{self.task_type}: {self.description}"
     
     class Meta:
-        ordering = ['start_time']
+        # ordering = ['start_time']
+        indexes = [
+            models.Index(fields=['start_time']),
+            models.Index(fields=['end_time'])]
 
 

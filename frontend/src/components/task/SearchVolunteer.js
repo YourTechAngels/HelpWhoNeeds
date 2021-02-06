@@ -13,21 +13,21 @@ import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import React, { useState, useEffect } from 'react'
 
-const useStyles = (theme) => ({
-    button: {
-        border: "4px",
-        color: "default",
-        fontWeight: "bold",
-        marginLeft: 10,
-        marginTop: "10px",
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        margin: "auto",
-        width: "fit-content",
-    },
-});
+// const useStyles = (theme) => ({
+//     button: {
+//         border: "4px",
+//         color: "default",
+//         fontWeight: "bold",
+//         marginLeft: 10,
+//         marginTop: "10px",
+//     },
+//     form: {
+//         display: "flex",
+//         flexDirection: "column",
+//         margin: "auto",
+//         width: "fit-content",
+//     },
+// });
 
 const options = {
     selectableRows: "none", //can also be single/mulitple
@@ -39,38 +39,38 @@ const options = {
     viewColumns: false,
     sortOrder: {
         name: "distance",
-        direction: "desc",
+        direction: "asc",
     },
 };
 
 const localVolData = [
     {
-        reqId: 1,
-        reqVolId: 2, 
-        lastName: "Snow", 
+        taskId: 1,
+        volId: 2,
+        fullName: "Snow",
         firstName: "Jon",      
         distance: 1,        
     },
     {
-        reqId: 1,
-        reqVolId: 3, 
-        lastName: "Kate", 
+        taskId: 1,
+        volId: 3,
+        fullName: "Kate",
         firstName: "Kelly",      
         distance: 0.8,  
     },
     {
-        reqId: 1,
-        reqVolId: 4, 
-        lastName: "Caroline", 
+        taskId: 1,
+        volId: 4,
+        fullName: "Caroline",
         firstName: "Gardener",      
         distance: 0.9,  
     },
 ];
-const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
+const SearchVolunteerDialog = ({ open, handleClose, data, requestVolunteer }) => {
     const[selectedVol, setSelectedVol] = useState(-1) ;
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+console.log("Volunteers to show: ", data)
     const muiTheme = () =>
         createMuiTheme({
             overrides: {
@@ -98,20 +98,10 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
                 },
             },
         });
-
+    //volId fullName distance taskId
     const cols = [
         {
-            name: "reqId",
-            label: "requestee ID",
-            options: {
-                display: false,
-                sort: false,
-                filter: false,
-                viewColumns: false,
-            },
-        },
-        {
-            name: "reqVolId",
+            volId: "volId",
             label: "volunteer ID",
             options: {
                 display: false,
@@ -121,83 +111,74 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
             },
         },
         {
-            name: "firstName",
-            label: "First name",
-
+            taskId: "taskId",
+            label: "task ID",
             options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "lastName",
-            label: "Last name",
-
-            options: {
-                display: false,
-                filter: true,
-                sort: true,
-            },
-        },
-        {
-            name: "firstName",
-            label: "Full Name",
-            options: {
-                filter: false,
+                display: true,
                 sort: false,
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    //console.log(tableMeta.rowData, '......');
-                    return (
-                        <div>
-                            {tableMeta.rowData[2]} {tableMeta.rowData[3]}
-                        </div>
-                    );
-                },
-            },
-        },
-        {
-            name: "distance",
-            label: "Dist",
-            options: {
-                filter: true,
-                sort: true,
-                // width: "5%",
-            },
-        },
-        {
-            name: "reqVolId",
-            label: "Request",
-
-            options: {
                 filter: false,
-                sort: false,
-                viewColumns: false,                
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            style={{
-                                marginLeft: 2,
-                                minWidth: "70px",
-                            }}
-                            value={value}
-                            onClick={(e) => {
-                                
-                                console.log("selectedtask" + data.id)
-                                console.log("selected volunteer" + value)
-                                setSelectedVol(value)
-                               // requestVolunteer(value);
-                            }}
-                        >
-                            Request
-                        </Button>
-                    );
-                },
+                viewColumns: false,
             },
         },
+        // {
+        //     name: "fullName",
+        //     label: "Full name",
+        //
+        //     options: {
+        //         display: true,
+        //         filter: true,
+        //         sort: true,
+        //     },
+        // },
+        // {
+        //     name: "distance",
+        //     label: "Dist (mi)",
+        //     options: {
+        //         filter: true,
+        //         sort: true,
+        //         // customBodyRender: (value, tableMeta, updateValue) => {
+        //         //     //console.log(tableMeta.rowData, '......');
+        //         //     return (
+        //         //         <div>
+        //         //             {distance / 1600}
+        //         //         </div>
+        //         //     );
+        //         // },
+        //     },
+        // },
+        // {
+        //     name: "volId",
+        //     label: "Request",
+        //
+        //     options: {
+        //         filter: false,
+        //         sort: false,
+        //         // viewColumns: false,
+        //         // customBodyRender: (value, tableMeta, updateValue) => {
+        //         //     return (
+        //         //         <Button
+        //         //             variant="contained"
+        //         //             color="primary"
+        //         //             size="small"
+        //         //             style={{
+        //         //                 marginLeft: 2,
+        //         //                 minWidth: "70px",
+        //         //             }}
+        //         //             value={value}
+        //         //             onClick={(e) => {
+        //         //
+        //         //                 console.log("selectedtask" + data.taskId)
+        //         //                 console.log("selected volunteer" + value)
+        //         //                 // setSelectedVol(value)
+        //         //                // requestVolunteer(value);
+        //         //             }}
+        //         //         >
+        //         //             Request
+        //         //         </Button>
+        //         //     );
+        //         // },
+        //     },
+        // },
     ];
     console.log(data);
     return (
@@ -235,4 +216,4 @@ const SearchVolunteer = ({ open, handleClose, data, requestVolunteer }) => {
     );
 };
 
-export default SearchVolunteer;
+export default SearchVolunteerDialog;

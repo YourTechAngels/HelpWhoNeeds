@@ -1,24 +1,38 @@
-from rest_framework.parsers import JSONParser
-from rest_framework.decorators import parser_classes
-from rest_framework import viewsets
-from .serializers import TaskSerializer, TaskTypeSerializer
-from .models import Task, TaskType
-from accounts.models import User
-from django.db.models import Q
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from django.core.mail import EmailMessage
-from helpwhoneeds.settings import EMAIL_HOST_USER
 import datetime
 from django.contrib.gis.measure import Distance
-from django.contrib.gis.geos import Point
+from django.db.models import Q, Subquery
+from django.core.mail import EmailMessage
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import viewsets
+from accounts.models import User
+from accounts.views import nearby_users
+from accounts.serializers import AccountSerializer
+from helpwhoneeds.settings import EMAIL_HOST_USER
+from .models import Task, TaskType
+from .serializers import TaskSerializer, TaskTypeSerializer
 
 
 # send email function to notify requestee about task status
-def send_email(task, prev_state_task, prev_assigned_vol):
+def send_email(task, **kwargs):
     time_format = "%d %B %Y, %H:%M"
+    ending = ""
 
-    if (task.status == "AS") and (prev_state_task =="OP"): # for accepted task
+    requested_vol = kwargs.get("requested_vol")
+    prev_state_task = kwargs.get("prev_state_task")
+    prev_assigned_vol = kwargs.get("prev_assigned_vol")
+
+    # requestee asking a volunteer to take a task
+    if kwargs.get("requested_vol"):
+        volunteer = requested_vol
+        vol_subject = f'Could you please help me with {task.task_type_name} ?'
+        vol_body_first_line = 'Request to complete task.\n'
+        ending = "Please follow the link to take it..."
+        req_subject = 'Task Was Requested'
+        req_body_first_line = 'Your request to complete task has been sent to the volunteer.\n'
+
+    # emails notifying about status change
+    elif (task.status == "AS") and (prev_state_task =="OP"): # for accepted task
         volunteer = task.volunteer
         vol_subject = 'Task Assigned'
         vol_body_first_line = 'You have accepted new task.\n'
@@ -52,7 +66,8 @@ def send_email(task, prev_state_task, prev_assigned_vol):
                                 task.requestee.city]) + '\n' +
             f'PostCode: {task.requestee.post_code}\n\n' +
             f'Phone no: {task.requestee.phone_number}\n' +
-            f'Email: {task.requestee.email}\n',
+            f'Email: {task.requestee.email}\n\n' +\
+             ending,
         from_email=EMAIL_HOST_USER,
         to=[volunteer.email]
         )
@@ -67,33 +82,33 @@ def send_email(task, prev_state_task, prev_assigned_vol):
         to=[task.requestee.email]
     )
 
-    volunteer_email.send()
-    requestee_email.send()
+    # volunteer_email.send()
+    # requestee_email.send()
+    print('--------------')
+    print(volunteer_email)
+    print('--------------')
+    print(requestee_email)
 
 
 class TaskView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     queryset = Task.objects.all()
 
-    # Get the current volunteer's assigned and new tasks     
-    @action(detail=False, methods=['GET'], name='Get Volunteer Task Lists')
-    def get_vol_task(self, request, *args, **kwargs):
-        vol_id = self.request.query_params.get('volId')       
-        volunteer=User.objects.get(id=vol_id)
-        context = {"logged_in_volunteer": volunteer}
-        queryset = Task.objects.filter((Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
-                                        &Q(start_time__gte= datetime.datetime.now())           
-                                        &Q(end_time__gte= datetime.datetime.now())   
-                                        &Q(requestee__in =                                                                        
-                                        User.objects.filter( location__distance_lte=(
-                                                                                volunteer.location,
-                                                                                Distance(mi=1)
-                                                                            ))
-                                        )                                     
-                                        )
-                                
-        serializer = self.get_serializer(queryset, context=context,many=True)
-        return Response(serializer.data)
+    # # Get the current volunteer's assigned and new tasks
+    # @action(detail=False, methods=['GET'], name='Get Volunteer Task Lists')
+    # def get_vol_task(self, request, *args, **kwargs):
+    #     vol_id = self.request.query_params.get('volId')
+    #     volunteer=User.objects.get(id=vol_id)
+    #     context = {"logged_in_volunteer": volunteer}
+    #     queryset = Task.objects.filter(
+	 #        (Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True))
+	 #        &Q(start_time__gte= datetime.datetime.now())
+	 #        &Q(end_time__gte= datetime.datetime.now())
+	 #        &Q(requestee__in = User.objects.filter(
+		#         location__distance_lte=(volunteer.location, Distance(mi=1)) )))
+    #
+    #     serializer = self.get_serializer(queryset, context=context,many=True)
+    #     return Response(serializer.data)
 
     # Partial update to update task status and notify requestee
     def partial_update(self, request, *args, **kwargs):
@@ -119,12 +134,17 @@ class TaskView(viewsets.ModelViewSet):
             task_object.save()
             serializer = TaskSerializer(task_object)
 
-            send_email(task_object, prev_state_task, prev_assigned_vol)
+            send_email(task=task_object, prev_state_task=prev_state_task,
+                       prev_assigned_vol=prev_assigned_vol)
 
             return Response(serializer.data)
 
         # any standard partial task update
         else:
+            if req_vol := data.get("requested_vol", None):
+                print(data, task_object)
+                send_email(task_object, requested_vol=req_vol)
+                return
             kwargs['partial'] = True
             return self.update(request, *args, **kwargs)
 
@@ -135,10 +155,36 @@ class RequesteeTasksView(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         req_uid = self.request.query_params.get('requid')
+        print(f"req_uid: {req_uid}")
         queryset = Task.objects.filter(requestee=User.objects.get(uid=req_uid).id)
         return queryset
-    
+
 
 class TaskTypeView(viewsets.ReadOnlyModelViewSet):
     serializer_class = TaskTypeSerializer
     queryset = TaskType.objects.all()
+
+
+class VolTaskView(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        vol_uid = self.request.query_params.get('volId')
+        vol_id = User.objects.get(uid=vol_uid).id
+        close_vul = nearby_users(vol_id).filter(dist__lte=1600)
+        from time import perf_counter
+        print("query started}")
+        t1 = perf_counter()
+        queryset = Task.objects.\
+            filter(end_time__gte=datetime.datetime.now(datetime.timezone.utc)).\
+            filter(Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True)).\
+                filter(requestee__in=close_vul)[:20]
+        t2 = perf_counter()
+        print(f"Time elapsed: {t2-t1}")
+        print(len(queryset))
+        # print(Task.objects.\
+        #     filter(end_time__gte=datetime.datetime.now(datetime.timezone.utc)).\
+        #     filter(Q(volunteer_id=vol_id) | Q(volunteer_id__isnull=True)). \
+        #       filter(requestee__in=close_vul).explain(verbose=True, analyze=True))
+
+        return queryset
