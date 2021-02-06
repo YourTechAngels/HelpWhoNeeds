@@ -8,6 +8,7 @@ import ConfirmDialog from "../structure/ConfirmDialog";
 import axios from "axios"
 import moment from "moment";
 import { useAuth } from "../../contexts/AuthContext";
+import Notification from "../structure/Notification";
 
 
 
@@ -18,6 +19,11 @@ function AddTask() {
     const [reqId, setReqId] = useState(-1)
     const [taskList, setTaskList] = useState([])
     const [taskTypeList, setTaskTypeList] = useState({})
+    const [notifyMsg, setNotifyMsg] = useState({
+        isOpen: false,
+        message: " ",
+        type: " ",
+    });
 
     const parseDbTask = (dbTask) => {
         let task = {}
@@ -88,12 +94,14 @@ function AddTask() {
     useEffect(() => {
         axios.get("/api/tasktypes/")
             .then((response) => {
-                // console.log("Task types:", response.data)
                 setTaskTypeList(response.data)
-                // TODO notification not all data got
-                // if (response.data.length == 0) {
-                //     alert()
-                // }
+                if (response.data.length == 0) {
+                    setNotifyMsg({
+                        isOpen: true,
+                        message: "Please reload the page. Vital data has not been received from server. Application may be functioning wrong.",
+                        type: "warning",
+                    });
+                }
             })
             .catch(error => {
                 console.log("error")
@@ -122,33 +130,31 @@ function AddTask() {
             updateTask(parseDbTask(dbTask), id)
     }
 
-    const requestVolunteer =(taskId, volId)=> {
+    const requestVolunteer =(volId, taskId)=> {
+        console.log("Vol num: ", volId)
         axios.patch("/api/tasks/" + taskId + "/", {
-            requested_vol: volId })
+            requested_vol: volId
+        })
             .then(function (response) {
-                console.log(response);
-                // const assignTask = pendingTasks.map((task) =>
-                //     task.id === taskId
-                //         ? { ...task, volId: userId, status: "AS" }
-                //         : task
-                // );
-                // setPendingTasks(assignTask);
-                // console.log("assignTasks");
-                // console.log(unassignedTasks);
-                // console.log("myTask");
-                // console.log(myTasks);
-                // console.log(pendingTasks);
-                // setTaskStateUpdated(true);
-                // setNotifyMsg({
-                //     isOpen: true,
-                //     message:
-                //         "Task is successfully assigned to you.Email notification will be sent shortly.",
-                //     type: "success",
-                // });
+                console.log(response)
+                if (response.status === 200) {
+                    const updatedTask = response.data
+                    updateTaskList(updatedTask, response.data.id)
+                    console.log("onSubmit: updated task with id: ", updTaskId)
+                    updateTaskList(updatedTask, taskId)
+                    setNotifyMsg({
+                        isOpen: true,
+                        message: "Your request has been sent to the volunteer.",
+                        type: "success",
+                    })
+                }
+                else console.log("Something went wrong on task update..",
+                    "Response status: ", response.status)
             })
             .catch(function (error) {
-                console.log(error);
-            });
+                console.log(error.request)
+                console.log(error.config)
+            })
     }
 
 
@@ -196,10 +202,7 @@ function AddTask() {
     }
 
     const handleSearchVol = (e, taskId) => {
-        console.log("Task ID:", typeof taskId)
         const taskToRequest = findTask(taskId)
-        // console.log("Task to request volunteer: ", taskToRequest)
-        // console.log("URL: ", "/api/requestee/nearby_vols?req_uid=" + reqId)
         axios.get("/api/requestee/nearby_vols?req_id=" + reqId)
             .then((response) => {
                 console.log("Nearby Volunteers:", response.data)
@@ -207,15 +210,14 @@ function AddTask() {
                     return {
                         volId: `${vol.id}`,
                         fullName: `${vol.first_name} ${vol.last_name}`,
-                        distance: `${vol.distance}`,
+                        distance: (parseFloat(`${vol.distance}`) / 1609).toFixed(2),
                         "taskId": taskId
                     }
                 })
-               // setDialogSearchData({})
-               if(volunteers != null ){
-               setDialogSearchData(volunteers)
-                setShowSearchDialog(true)
-               }
+                if(volunteers != null ){
+                    setDialogSearchData(volunteers)
+                    setShowSearchDialog(true)
+                }
             })
             .catch(error => {
                 console.log("Error: ", error.message);
@@ -224,8 +226,8 @@ function AddTask() {
     }
 
     const handleSearchClose = () => {
-        setShowSearchDialog(false);
-        setDialogSearchData({});
+        setShowSearchDialog(false)
+        setDialogSearchData([])
     }
 
     const handleContactVol = (e, id) => {
@@ -275,8 +277,8 @@ function AddTask() {
                 })
                 axios.patch("/api/tasks/" + id + '/', {status: "CL"})
                     .then(function (response) {
-                        console.log("PATCH RESPONSE: ", response)
-                        console.log("PATCH RESPONSE DATA: ", response.data.id)
+                        // console.log("PATCH RESPONSE: ", response)
+                        // console.log("PATCH RESPONSE DATA: ", response.data.id)
                         if (response.status === 200) {
                             const updatedTask = response.data
                             updateTaskList(updatedTask, response.data.id)
@@ -316,6 +318,10 @@ function AddTask() {
 
         <ConfirmDialog confirmDialog={confirmDialog}
                        setConfirmDialog={setConfirmDialog} />
+
+        <Notification notify={notifyMsg} setNotify={setNotifyMsg}
+                      verticalPosTop={true} />
+
     </div>
 }
 
