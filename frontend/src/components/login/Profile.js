@@ -95,7 +95,7 @@ export default function Profile(props) {
                         firstName : `${responseData.first_name}`,
                         lastName : `${responseData.last_name}`,
                         dateOfBirth: `${responseData.date_of_birth === '1900-01-01'?'' : responseData.date_of_birth}`,
-                        phoneNumber : `${responseData.phone_number}`,
+                        phoneNumber : `${responseData.phone_number === 'undefined' ?'' : responseData.phone_number}`,
                         postcode: `${responseData.post_code}`,
                         address1 : `${responseData.address_line_1}`,
                         address2 : `${responseData.address_line_2}`,
