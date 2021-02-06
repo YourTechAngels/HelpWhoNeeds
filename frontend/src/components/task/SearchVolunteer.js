@@ -70,7 +70,12 @@ const SearchVolunteerDialog = ({ open, handleClose, data, requestVolunteer }) =>
     const[selectedVol, setSelectedVol] = useState(-1) ;
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+    const[tableData, setTableData]= useState([])
+    useEffect(() => {
+        setTableData(data)
+    },[data]);
 console.log("Volunteers to show: ", data)
+console.log("Volunteers to show in table: ", tableData)
     const muiTheme = () =>
         createMuiTheme({
             overrides: {
@@ -99,9 +104,9 @@ console.log("Volunteers to show: ", data)
             },
         });
     //volId fullName distance taskId
-    const cols = [
+    const cols = [       
         {
-            volId: "volId",
+            name: "volId",
             label: "volunteer ID",
             options: {
                 display: false,
@@ -109,78 +114,56 @@ console.log("Volunteers to show: ", data)
                 filter: false,
                 viewColumns: false,
             },
-        },
+        },        
         {
-            taskId: "taskId",
-            label: "task ID",
+            name: "fullName",
+            label: "Full Name",
             options: {
-                display: true,
-                sort: false,
                 filter: false,
-                viewColumns: false,
+                sort: true,               
             },
         },
-        // {
-        //     name: "fullName",
-        //     label: "Full name",
-        //
-        //     options: {
-        //         display: true,
-        //         filter: true,
-        //         sort: true,
-        //     },
-        // },
-        // {
-        //     name: "distance",
-        //     label: "Dist (mi)",
-        //     options: {
-        //         filter: true,
-        //         sort: true,
-        //         // customBodyRender: (value, tableMeta, updateValue) => {
-        //         //     //console.log(tableMeta.rowData, '......');
-        //         //     return (
-        //         //         <div>
-        //         //             {distance / 1600}
-        //         //         </div>
-        //         //     );
-        //         // },
-        //     },
-        // },
-        // {
-        //     name: "volId",
-        //     label: "Request",
-        //
-        //     options: {
-        //         filter: false,
-        //         sort: false,
-        //         // viewColumns: false,
-        //         // customBodyRender: (value, tableMeta, updateValue) => {
-        //         //     return (
-        //         //         <Button
-        //         //             variant="contained"
-        //         //             color="primary"
-        //         //             size="small"
-        //         //             style={{
-        //         //                 marginLeft: 2,
-        //         //                 minWidth: "70px",
-        //         //             }}
-        //         //             value={value}
-        //         //             onClick={(e) => {
-        //         //
-        //         //                 console.log("selectedtask" + data.taskId)
-        //         //                 console.log("selected volunteer" + value)
-        //         //                 // setSelectedVol(value)
-        //         //                // requestVolunteer(value);
-        //         //             }}
-        //         //         >
-        //         //             Request
-        //         //         </Button>
-        //         //     );
-        //         // },
-        //     },
-        // },
+        {
+            name: "distance",
+            label: "Dist(mi)",
+            options: {
+                filter: true,
+                sort: true,
+                // width: "5%",
+            },
+        },
+        {
+            name: "volId",
+            label: "Request",
+
+            options: {
+                filter: false,
+                sort: false,
+                viewColumns: false,                
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            style={{
+                                marginLeft: 2,
+                                minWidth: "70px",
+                            }}
+                            value={value}
+                            onClick={(e) => {
+                                console.log("selected volunteer" + value)
+                                setSelectedVol(value)                              
+                                
+                            }}
+                        >
+                            Request
+                        </Button>
+                    );
+                },
+            },
+        },
     ];
-    console.log(data);
     return (
         <div>
             <Dialog
@@ -191,14 +174,13 @@ console.log("Volunteers to show: ", data)
             >
                 <DialogTitle>"Search Volunteer"</DialogTitle>
                 <DialogContent>
-                    {data && (
+                {tableData && (
                         <div>
                             For your selected task you can send request to your local volunteer available below:
                             <MuiThemeProvider theme={muiTheme()}>
                                 <MUIDataTable
                                     title="Request volunteer"
-                                    data={localVolData}
-
+                                    data={tableData}
                                     columns={cols}
                                     options={options}
                                 />
