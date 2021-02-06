@@ -160,20 +160,20 @@ function AddTask() {
         endTime: "20:00"
     }
 
-    const [showAddDialog, setShowAddDialog] = React.useState(false);
-    const [taskType, setTaskType] = React.useState(null);
+    const [showAddDialog, setShowAddDialog] = React.useState(false)
+    const [taskType, setTaskType] = React.useState(null)
     const [newTaskDefaults, setNewTaskDefaults] = React.useState(taskDefaults)
     const [updTaskId, setUpdTaskId] = React.useState(-1)
 
-    const [showSearchDialog, setShowSearchDialog] = React.useState(false);
-    const [dialogSearchData, setDialogSearchData] = React.useState({});
+    const [showSearchDialog, setShowSearchDialog] = React.useState(false)
+    const [dialogSearchData, setDialogSearchData] = React.useState({})
 
-    const [showVolDetails, setShowVolDetails] = React.useState(false);
-    const [volDetails, setVolDetails] = React.useState({});
+    const [showVolDetails, setShowVolDetails] = React.useState(false)
+    const [volDetails, setVolDetails] = React.useState({})
 
     const [confirmDialog, setConfirmDialog] = useState({
         isOpen: false, title: "", subTitle: "",
-    });
+    })
 
     const findTaskType = id => {
         return taskTypeList.find(type => type.id == id)
@@ -196,26 +196,28 @@ function AddTask() {
     }
 
     const handleSearchVol = (e, taskId) => {
+        console.log("Task ID:", typeof taskId)
         const taskToRequest = findTask(taskId)
         // console.log("Task to request volunteer: ", taskToRequest)
         // console.log("URL: ", "/api/requestee/nearby_vols?req_uid=" + reqId)
-        // axios.get("/api/requestee/nearby_vols?req_id=" + reqId)
-        //     .then((response) => {
-        //         console.log("Nearby Volunteers:", response.data)
-                // setTaskTypeList(response.data)
-                // TODO notification not all data got
-                // if (response.data.length == 0) {
-                //     alert()
-                // }
-        //     })
-        //     .catch(error => {
-        //         console.log("error")
-        //         console.log(error.message);
-        //         console.log(error.request);
-        //         console.log(error.config);
-        //     })
-        setShowSearchDialog(true)
-        setDialogSearchData(taskToRequest)
+        axios.get("/api/requestee/nearby_vols?req_id=" + reqId)
+            .then((response) => {
+                console.log("Nearby Volunteers:", response.data)
+                const volunteers = response.data.map(vol => {
+                    return {
+                        volId: `${vol.id}`,
+                        fullName: `${vol.first_name} ${vol.last_name}`,
+                        distance: `${vol.distance}`,
+                        "taskId": taskId
+                    }
+                })
+                setDialogSearchData({})
+                setShowSearchDialog(true)
+            })
+            .catch(error => {
+                console.log("Error: ", error.message);
+                console.log("Request error: ", error.request);
+            })
     }
 
     const handleSearchClose = () => {
