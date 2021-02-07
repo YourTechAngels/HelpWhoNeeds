@@ -114,7 +114,7 @@ export default function RegistrationPage(props) {
         console.log(response);
         setMessage("Data has been saved successfully")
         setDataSaved(true)
-        console.log(dataSaved)
+        console.log('data saved value'+dataSaved)
         console.log('user type'+user)
       })
       .catch(function (error) {
