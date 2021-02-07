@@ -70,12 +70,12 @@ function AddTask() {
                 else {
                     console.log("Asking user id..")
                     axios.get("https://letmeknow.uk/api/accounts/get_user_by_id/", {
-                        params: { uId: userUID, },
+                        params: { uid: userUID, },
                     })
                         .then((response) => {
-                            console.log(response)
-                            console.log("Requestee id: ", response.data[0]);
-                            setReqId(response.data[0])
+                            // console.log(response)
+                            console.log("Requestee id: ", response.data.id);
+                            setReqId(response.data.id)
                         })
                         .catch(error => {
                             console.log("error");

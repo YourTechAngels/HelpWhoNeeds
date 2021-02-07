@@ -36,9 +36,8 @@ export default function VolunteerSearchTask() {
                 const data = response.data;
                 console.log("userdata");
                 console.log(data);
-                console.log(data[0]);
                 const user = {
-                    id: `${data[0].id}`,
+                    id: `${data.id}`,
                 };
 
                 console.log("userId by uuid");

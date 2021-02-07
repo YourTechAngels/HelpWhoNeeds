@@ -62,9 +62,7 @@ function FormDialog({ open, handleClose, taskType, defaultValues,
         item["dbs_required"] = data.dbsReq
         item["start_time"] = start
         item["end_time"] = end
-        // TODO correct!!!! Requestee ID hardcoded!!!!!
-        console.log("Requestee ID: ", reqId)
-        item["requestee"] = reqId > 0 ? reqId : 100
+        item["requestee"] = reqId
         item["volunteer"] = null
         console.log("item created: ", item)
         return item
