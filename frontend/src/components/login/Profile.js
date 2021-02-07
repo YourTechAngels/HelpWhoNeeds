@@ -89,7 +89,7 @@ export default function Profile(props) {
             })
             .then(
                 (response) => {
-                    const responseData = (response.data[0]);
+                    const responseData = (response.data);
                     console.log(responseData);
                     const userDataSet = {
                         firstName : `${responseData.first_name}`,
