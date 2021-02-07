@@ -14,9 +14,9 @@ class AccountView(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], name='Get User By Id')
     def get_user_by_id(self, request, *args, **kwargs):
         user_uid = self.request.query_params.get('uid')
-        queryset = User.objects.filter(uid=user_uid)
+        queryset = User.objects.get(uid=user_uid)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=False)
 
         return Response(serializer.data)
 
