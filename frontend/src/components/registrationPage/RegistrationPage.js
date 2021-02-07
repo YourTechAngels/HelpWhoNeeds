@@ -92,7 +92,7 @@ export default function RegistrationPage(props) {
     console.log('longit before sending to db'+long)
     console.log('latit before sending to db'+lat)
 
-    axios.post("/api/accounts/", {
+    axios.post("https://letmeknow.uk/api/accounts/", {
       first_name: `${formData.firstName}`,
       last_name: `${formData.lastName}`,
       uid: `${uID}`,

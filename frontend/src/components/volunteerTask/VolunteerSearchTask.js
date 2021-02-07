@@ -29,7 +29,7 @@ export default function VolunteerSearchTask() {
     const [taskStateUpdated, setTaskStateUpdated] = useState(true);
     useEffect(() => {
         axios
-            .get("/api/accounts/get_user_by_id/", {
+            .get("https://letmeknow.uk/api/accounts/get_user_by_id/", {
                 params: { uid: userUID },
             })
             .then((response) => {
@@ -56,7 +56,7 @@ export default function VolunteerSearchTask() {
     useEffect(() => {
         if (userId != null) {
             axios
-                .get("/api/tasks/get_vol_task", {
+                .get("https://letmeknow.uk/api/tasks/get_vol_task", {
                     params: {
                         volId: userId,
                     },
@@ -153,7 +153,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("/api/tasks/" + taskId + "/")
+                    .get("https://letmeknow.uk/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -165,7 +165,7 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("/api/tasks/" + taskId + "/", {
+                                .patch("https://letmeknow.uk/api/tasks/" + taskId + "/", {
                                     status: "OP",
                                     volId: null,
                                     isUpdatedByVol: true,
@@ -224,7 +224,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("/api/tasks/" + taskId + "/")
+                    .get("https://letmeknow.uk/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -236,7 +236,7 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "OP") {
                             axios
-                                .patch("/api/tasks/" + taskId + "/", {
+                                .patch("https://letmeknow.uk/api/tasks/" + taskId + "/", {
                                     status: "AS",
                                     volId: userId,
                                     isUpdatedByVol: true,
@@ -300,7 +300,7 @@ export default function VolunteerSearchTask() {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("/api/tasks/" + taskId + "/")
+                    .get("https://letmeknow.uk/api/tasks/" + taskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -312,7 +312,7 @@ export default function VolunteerSearchTask() {
                         console.log(selectedTask);
                         if (selectedTask.status === "AS") {
                             axios
-                                .patch("/api/tasks/" + taskId + "/", {
+                                .patch("https://letmeknow.uk/api/tasks/" + taskId + "/", {
                                     status: "DN",
                                     isUpdatedByVol: true,
                                 })

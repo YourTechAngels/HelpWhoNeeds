@@ -51,7 +51,7 @@ function AddTask() {
     useEffect(() => {
         const options = {
             method: 'GET',
-            url: "/api/requestee/tasks/",
+            url: "https://letmeknow.uk/api/requestee/tasks/",
             timeout: 8000,
             params: {
                 requid: userUID,
@@ -69,7 +69,7 @@ function AddTask() {
                 }
                 else {
                     console.log("Asking user id..")
-                    axios.get("/api/accounts/get_user_by_id/", {
+                    axios.get("https://letmeknow.uk/api/accounts/get_user_by_id/", {
                         params: { uId: userUID, },
                     })
                         .then((response) => {
@@ -92,7 +92,7 @@ function AddTask() {
     }, [])
 
     useEffect(() => {
-        axios.get("/api/tasktypes/")
+        axios.get("https://letmeknow.uk/api/tasktypes/")
             .then((response) => {
                 setTaskTypeList(response.data)
                 if (response.data.length == 0) {
@@ -132,7 +132,7 @@ function AddTask() {
 
     const requestVolunteer =(volId, taskId)=> {
         console.log("Vol num: ", volId)
-        axios.patch("/api/tasks/" + taskId + "/", {
+        axios.patch("https://letmeknow.uk/api/tasks/" + taskId + "/", {
             requested_vol: volId
         })
             .then(function (response) {
@@ -203,7 +203,7 @@ function AddTask() {
 
     const handleSearchVol = (e, taskId) => {
         const taskToRequest = findTask(taskId)
-        axios.get("/api/requestee/nearby_vols?req_id=" + reqId)
+        axios.get("https://letmeknow.uk/api/requestee/nearby_vols?req_id=" + reqId)
             .then((response) => {
                 console.log("Nearby Volunteers:", response.data)
                 const volunteers = response.data.map(vol => {
@@ -275,7 +275,7 @@ function AddTask() {
                     ...confirmDialog,
                     isOpen: false,
                 })
-                axios.patch("/api/tasks/" + id + '/', {status: "CL"})
+                axios.patch("https://letmeknow.uk/api/tasks/" + id + '/', {status: "CL"})
                     .then(function (response) {
                         // console.log("PATCH RESPONSE: ", response)
                         // console.log("PATCH RESPONSE DATA: ", response.data.id)

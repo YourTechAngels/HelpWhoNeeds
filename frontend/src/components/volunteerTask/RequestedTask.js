@@ -44,7 +44,7 @@ const RequestedTask = () => {
     console.log("set UserId");
     useEffect(() => {
         console.log("call task")
-        axios.get("/api/tasks/" + taskId + "/")
+        axios.get("https://letmeknow.uk/api/tasks/" + taskId + "/")
             .then((response) => {
                 const data = response.data;
                 console.log(data);
@@ -98,7 +98,7 @@ const RequestedTask = () => {
                 });
                 setTaskStateUpdated(false);
                 axios
-                    .get("/api/tasks/" + reqTaskId + "/")
+                    .get("https://letmeknow.uk/api/tasks/" + reqTaskId + "/")
                     .then((response) => {
                         const data = response.data;
                         console.log(data);
@@ -111,7 +111,7 @@ const RequestedTask = () => {
                         if (selectedTask.status === "OP") {
                             console.log(requestedTask.reqVolId)
                             axios
-                                .patch("/api/tasks/" + reqTaskId + "/", {
+                                .patch("https://letmeknow.uk/api/tasks/" + reqTaskId + "/", {
                                     status: "AS",
                                     volId: requestedTask.reqVolId,
                                     isUpdatedByVol: true,
@@ -164,7 +164,7 @@ const RequestedTask = () => {
                     isOpen: false,
                 });
                 setTaskStateUpdated(false);
-                axios.patch("/api/tasks/" + reqTaskId + "/", {
+                axios.patch("https://letmeknow.uk/api/tasks/" + reqTaskId + "/", {
                     requested_vol: null,
                     })
                     .then(function (response) {
