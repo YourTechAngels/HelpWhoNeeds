@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/helpwhoneeds/static/css/main.0c897a77.chunk.css",
-    "main.js": "/helpwhoneeds/static/js/main.149d1a7b.chunk.js",
-    "main.js.map": "/helpwhoneeds/static/js/main.149d1a7b.chunk.js.map",
+    "main.js": "/helpwhoneeds/static/js/main.ff3f2b19.chunk.js",
+    "main.js.map": "/helpwhoneeds/static/js/main.ff3f2b19.chunk.js.map",
     "runtime-main.js": "/helpwhoneeds/static/js/runtime-main.0d5abadf.js",
     "runtime-main.js.map": "/helpwhoneeds/static/js/runtime-main.0d5abadf.js.map",
-    "static/js/2.b8b5a44f.chunk.js": "/helpwhoneeds/static/js/2.b8b5a44f.chunk.js",
-    "static/js/2.b8b5a44f.chunk.js.map": "/helpwhoneeds/static/js/2.b8b5a44f.chunk.js.map",
+    "static/js/2.a66a1b60.chunk.js": "/helpwhoneeds/static/js/2.a66a1b60.chunk.js",
+    "static/js/2.a66a1b60.chunk.js.map": "/helpwhoneeds/static/js/2.a66a1b60.chunk.js.map",
     "static/js/3.92e0e144.chunk.js": "/helpwhoneeds/static/js/3.92e0e144.chunk.js",
     "static/js/3.92e0e144.chunk.js.map": "/helpwhoneeds/static/js/3.92e0e144.chunk.js.map",
     "index.html": "/helpwhoneeds/index.html",
     "static/css/main.0c897a77.chunk.css.map": "/helpwhoneeds/static/css/main.0c897a77.chunk.css.map",
-    "static/js/2.b8b5a44f.chunk.js.LICENSE.txt": "/helpwhoneeds/static/js/2.b8b5a44f.chunk.js.LICENSE.txt"
+    "static/js/2.a66a1b60.chunk.js.LICENSE.txt": "/helpwhoneeds/static/js/2.a66a1b60.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.0d5abadf.js",
-    "static/js/2.b8b5a44f.chunk.js",
+    "static/js/2.a66a1b60.chunk.js",
     "static/css/main.0c897a77.chunk.css",
-    "static/js/main.149d1a7b.chunk.js"
+    "static/js/main.ff3f2b19.chunk.js"
   ]
 }
