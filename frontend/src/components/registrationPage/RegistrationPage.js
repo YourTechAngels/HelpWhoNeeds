@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
@@ -8,7 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from "@material-ui/core/Button";
 import axios from "axios"
-import { ButtonGroup, Input } from '@material-ui/core';
+import { ButtonGroup } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -36,6 +36,7 @@ export default function RegistrationPage(props) {
   const postcodeRef = useRef()
   const address1Ref = useRef()
   const address2Ref = useRef()
+  const history = useHistory()
   const cityRef = useRef()
   const countyRef = useRef()
   const [countyName, setCountyName] = useState("");
@@ -54,7 +55,7 @@ export default function RegistrationPage(props) {
   const [long, setLong] = useState()
   const [lat, setLat] = useState()
   const [postCodeSearched, setpostCodeSearched] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [dataSaved, setDataSaved] = useState(false);
   const [notifyMsg, setNotifyMsg] = useState({
       isOpen: false,
       message: " ",
@@ -112,6 +113,9 @@ export default function RegistrationPage(props) {
       .then(function (response) {
         console.log(response);
         setMessage("Data has been saved successfully")
+        setDataSaved(true)
+        console.log(dataSaved)
+        console.log('user type'+user)
       })
       .catch(function (error) {
         console.log(error);
@@ -384,10 +388,18 @@ export default function RegistrationPage(props) {
               />}
           </Grid>
         </Grid>
-        <Grid container justify="center" spacing={3} direction="row">
-          <Grid item xs={12} align="center">
+        <Grid container alignItems="center"  justify="center" spacing={3} direction="row">
+          <Grid item xs={6} sm={3} >
             <Button variant="contained" className="btn btn-primary w-100" type="submit">Submit</Button>
           </Grid>
+          <Grid item xs={6} sm={3} >
+            { (`${user}` !== 'volunteer') && (dataSaved) &&
+            <Button variant="contained" className="btn btn-primary w-100" onClick={() => history.push('/requestee/tasks')}>Request Help</Button>
+            }
+            { (`${user}` === 'volunteer') && (dataSaved) &&
+            <Button variant="contained" className="btn btn-primary w-100" onClick={() => history.push('/myTask')}>Search Tasks</Button>
+            }
+          </Grid>  
         </Grid>
       </form>
     </React.Fragment>

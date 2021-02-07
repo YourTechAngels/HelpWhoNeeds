@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { useParams, Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
@@ -46,9 +46,9 @@ export default function Profile(props) {
     const countyRef = useRef()    
     const { currentUser, updatePassword, updateEmail } = useAuth()
     const uID = currentUser.uid
-    const emailID = currentUser.email
+    // const emailID = currentUser.email
     const [DBSChecked, setDBSChecked] = useState(false);
-    const [checked, setChecked] = React.useState(true);
+    // const [checked, setChecked] = React.useState(true);
     const [addressLine1, setAddressLine1] = useState("")
     const [addressLine2, setAddressLine2] = useState("")
     const [countyName, setCountyName] = useState("");
@@ -60,8 +60,6 @@ export default function Profile(props) {
     const[isVolunteer, setIsVolunteer] = useState(false)
     const [errorpostcode, setErrorpostcode] = useState("")
     const [loading, setLoading] = useState(false)
-    const history = useHistory()
-    const [open, setOpen] = React.useState(false);
     const [long, setLong] = useState()
     const [lat, setLat] = useState()
     const [ longitude, setLongitude] = useState()
@@ -101,12 +99,7 @@ export default function Profile(props) {
                         address2 : `${responseData.address_line_2}`,
                         city : `${responseData.city}`,
                         county : `${responseData.county}`,
-<<<<<<< HEAD
                         email : `${responseData.email}`,
-=======
-                        email : `${responseData.email}`                       
-
->>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
                     }
                     
 
@@ -119,11 +112,6 @@ export default function Profile(props) {
                     setDBSChecked(responseData.dbs)
                     setLatitude(responseData.latitude)
                     setLongitude(responseData.longitude)
-<<<<<<< HEAD
-=======
-                    setAvailable(responseData.is_available)
-                  
->>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
                     console.log(responseData.dbs)
                     console.log("Is Available")
                     console.log(responseData.is_available)
@@ -219,11 +207,7 @@ export default function Profile(props) {
             dbs: DBSChecked,
             latitude: `${lat === undefined ? latitude : lat}`,
             longitude: `${long === undefined? longitude : long}`,
-<<<<<<< HEAD
-            is_available: `${available}`
-=======
             is_available: available
->>>>>>> 2c638d119c1e5778031dfdfb5e561fdb0b97e31f
          },
         )
        .then(function (response) {
@@ -339,7 +323,6 @@ export default function Profile(props) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
-                        required
                         id="phoneNumber"
                         name="phoneNumber"
                         // type="number"
