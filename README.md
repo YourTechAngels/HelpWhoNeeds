@@ -1,10 +1,10 @@
-# helpwhoneeds -
+# HelpWHoNeeds 
 
 This is our app deployed to github pages:
 
 https://yourtechangels.github.io/helpwhoneeds/
 
-# HelpWHoNeeds Project
+# Project Description
 
 Our app HelpWhoNeeds serves to establish a link between Vulnerable people who are shielding especially in these pandemic times and a Volunteer who will help them with 
 their needs. Since some may not like being referred to as "Vulnerable" we will using the label Requestee for them in this app and it's forms.
@@ -19,10 +19,14 @@ We have used Firebase for front end authentication after researching several opt
 
 In the About pages you will find information on User data, GDPR, Privacy & Term and Conditions.
 
-Django - Gelocation features & Rest Framework have been used.
+#Technical Architecture
+ Front End- REACT (Materila UI), Client-side Rendering
+ BackEnd -Django framework- Gelocation features & Rest Framework, PostGresSQL RDS in AWS
+ AWS Cloud Hosting- EC2 server
 
-Future Enhancements include but are not limited to:
+#Future Enhancements include but are not limited to:
 
 Feedback rating for Volunteer Service
 Feedback Rating for App - hease of use etc
 Video/Voice Features
+Submit Rota by Volunteer
